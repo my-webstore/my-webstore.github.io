@@ -1,0 +1,488 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <title>Men's Collection - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32', themeLight: '#F5EBE0' } } } }</script>
+    
+    <style>
+        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #E6D8C5; }
+        ::-webkit-scrollbar-thumb { background: #4A3B32; }
+        .active-filter { background-color: #4A3B32; color: #E6D8C5; border-color: #4A3B32; }
+        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+    </style>
+</head>
+<body class="bg-themeBg text-themeText flex flex-col min-h-screen">
+
+    <div id="preloader" class="loader-overlay">
+        <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
+    </div>
+
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6 border-b border-transparent">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="relative z-50">
+                    <h1 id="nav-logo" class="text-3xl font-serif font-bold tracking-widest text-white transition-colors duration-300">BRAND.</h1>
+                </a>
+                
+                <div id="nav-links" class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-white/90 transition-colors duration-300">
+                    <a href="men.html" class="opacity-100 border-b border-current transition-all hover:scale-105 cursor-pointer">Men</a>
+                    <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
+                    <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
+                </div>
+
+                <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
+                    <div id="auth-container"></div>
+
+                    <div onclick="toggleCart()" class="relative cursor-pointer group">
+                        <i class="fa-solid fa-bag-shopping text-xl group-hover:scale-110 transition"></i>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#E6D8C5]">0</span>
+                    </div>
+                    
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl"><i class="fa-solid fa-bars-staggered"></i></button>
+                </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="fixed inset-0 bg-[#E6D8C5] text-themeText z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8">
+            <a href="men.html" class="text-3xl font-serif font-bold text-themeSub border-b-2 border-themeSub">Men</a>
+            <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub">Women</a>
+            <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub">Kids</a>
+            <div id="mobile-auth-links" class="mt-8"></div>
+            <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-2xl"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+    </nav>
+
+    <header class="relative h-[60vh] w-full overflow-hidden flex items-center justify-center">
+        <div class="absolute inset-0 z-0">
+            <div class="absolute inset-0 bg-black/40 z-10"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-[#E6D8C5] via-transparent to-black/50 z-10"></div>
+            <img src="https://images.unsplash.com/photo-1617137984095-74e4e5e3613f?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover fixed top-0 left-0 -z-10" alt="Men Fashion">
+        </div>
+        
+        <div class="relative z-20 text-center px-4" data-aos="fade-up">
+            <p class="text-[#F5EBE0] text-xs font-bold uppercase tracking-[0.5em] mb-4">The Men's Edit</p>
+            <h2 class="text-5xl md:text-7xl font-serif font-bold text-white mb-4 leading-none tracking-tighter shadow-sm">
+                MODERN CLASSICS
+            </h2>
+            <p class="text-white/90 max-w-lg mx-auto text-sm md:text-base font-light">Refined tailoring and premium fabrics crafted for the modern gentleman.</p>
+        </div>
+    </header>
+
+    <section class="container mx-auto px-6 py-12 sticky top-20 z-30 bg-[#E6D8C5]/95 backdrop-blur-sm transition-all" data-aos="fade-up">
+        <div class="flex flex-wrap justify-center gap-4 border-b border-[#D6C8B5] pb-4 uppercase text-[10px] font-bold tracking-widest">
+            <button onclick="filterItems('All')" class="filter-btn active-filter px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn">All</button>
+            <button onclick="filterItems('Cloths')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn">Clothing</button>
+            <button onclick="filterItems('Shoes')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn">Shoes</button>
+            <button onclick="filterItems('Accessories')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn">Accessories</button>
+        </div>
+        
+        <div class="flex justify-end mt-4">
+             <select onchange="sortProducts(this.value)" class="bg-transparent text-xs font-bold uppercase outline-none cursor-pointer hover:text-themeSub">
+                <option value="default">Sort By: Featured</option>
+                <option value="price-asc">Price: Low to High</option>
+                <option value="price-desc">Price: High to Low</option>
+            </select>
+        </div>
+    </section>
+
+    <div class="container mx-auto px-6 pb-24 flex-grow min-h-[500px]">
+        <div id="product-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-12">
+            <div class="col-span-full flex flex-col items-center justify-center py-20">
+                <i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeSub mb-4"></i>
+                <p class="text-themeSub animate-pulse text-xs font-bold uppercase tracking-widest">Curating Collection...</p>
+            </div>
+        </div>
+    </div>
+
+    <div id="quick-view-modal" class="fixed inset-0 bg-black/60 hidden z-[70] flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300 px-4">
+        <div class="bg-white p-0 max-w-4xl w-full flex flex-col md:flex-row gap-0 rounded-sm shadow-2xl relative transform scale-95 transition-transform duration-300 overflow-hidden">
+            <button onclick="closeQuickView()" class="absolute top-4 right-4 text-2xl z-20 w-8 h-8 flex items-center justify-center bg-white/80 rounded-full hover:bg-red-500 hover:text-white transition">&times;</button>
+            <div class="md:w-1/2 h-[300px] md:h-[500px]"><img id="qv-image" src="" class="w-full h-full object-cover"></div>
+            <div class="md:w-1/2 p-10 flex flex-col justify-center text-left bg-[#F9F5F0]">
+                <p class="text-xs font-bold text-themeSub uppercase tracking-widest mb-3">Men's Collection</p>
+                <h2 id="qv-name" class="text-3xl font-serif font-bold mb-4 text-themeText"></h2>
+                <div id="qv-price" class="text-xl text-themeText mb-6 font-mono border-b border-[#D6C8B5] pb-4 inline-block"></div>
+                <p class="text-sm text-gray-500 mb-8 leading-relaxed">Expertly crafted using premium materials. This piece offers both durability and timeless style, making it an essential addition to any wardrobe.</p>
+                <button id="qv-btn" onclick="" class="bg-themeBtn text-[#E6D8C5] py-4 px-8 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg w-full md:w-auto text-xs rounded-sm">View Full Details</button>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] relative z-20">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-1">
+                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
+                <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
+                <ul class="space-y-3 text-xs text-[#A89F91]">
+                    <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
+                    <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
+                    <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
+                <ul class="space-y-3 text-xs text-[#A89F91]">
+                    <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
+                    <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-white hover:underline transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
+                <div class="flex gap-4 text-lg text-white">
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+            <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+            </div>
+        </div>
+    </footer>
+
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
+        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
+            <h2 class="text-2xl font-serif font-bold">Shopping Bag</h2>
+            <button onclick="toggleCart()" class="text-2xl hover:text-red-500 transition transform hover:rotate-90">&times;</button>
+        </div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
+        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]">
+            <div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div>
+            <button onclick="checkout()" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg">Checkout</button>
+        </div>
+    </div>
+    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
+
+    <button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 transform translate-y-20 opacity-0 invisible z-50 flex items-center justify-center border border-[#E6D8C5]"><i class="fa-solid fa-arrow-up text-xl"></i></button>
+
+    <script type="module">
+        import { db, collection, getDocs, auth, onAuthStateChanged, signOut, query, where, addDoc, deleteDoc, doc } from './firebase-config.js';
+        
+        let allProds = [];
+        let filter = 'All';
+        let cart = JSON.parse(localStorage.getItem('myCart')) || [];
+        let currentUser = null;
+        let wishlistMap = new Map();
+
+        // 0. PRELOADER & NAVBAR SCROLL
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.style.display = 'none', 500);
+        });
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            const logo = document.getElementById('nav-logo');
+            const links = document.getElementById('nav-links');
+            const icons = document.getElementById('nav-icons');
+            const cartBadge = document.getElementById('cart-count');
+
+            if(window.scrollY > 50) {
+                nav.classList.add('bg-[#E6D8C5]/95', 'backdrop-blur-md', 'shadow-sm', 'py-4');
+                nav.classList.remove('py-6', 'border-transparent');
+                logo.classList.replace('text-white', 'text-[#4A3B32]');
+                links.classList.replace('text-white/90', 'text-[#4A3B32]');
+                icons.classList.replace('text-white', 'text-[#4A3B32]');
+                cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+                cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+            } else {
+                nav.classList.remove('bg-[#E6D8C5]/95', 'backdrop-blur-md', 'shadow-sm', 'py-4');
+                nav.classList.add('py-6', 'border-transparent');
+                logo.classList.replace('text-[#4A3B32]', 'text-white');
+                links.classList.replace('text-[#4A3B32]', 'text-white/90');
+                icons.classList.replace('text-[#4A3B32]', 'text-white');
+                cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
+                cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
+            }
+            const scrollBtn = document.getElementById('scrollTopBtn');
+            if (window.scrollY > 300) scrollBtn.classList.remove('translate-y-20', 'opacity-0', 'invisible');
+            else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
+        });
+
+        // 1. SMART AUTH & SYNC (Standardized)
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user; 
+            setupNavbar(user);
+            await loadWishlist();
+            
+            const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
+            cart.length = 0;
+            cart.push(...latestCart);
+            
+            init(); 
+            updateCartUI();
+        });
+
+        function setupNavbar(u) {
+            const container = document.getElementById('auth-container');
+            const mobileLinks = document.getElementById('mobile-auth-links');
+
+            if (u) {
+                const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
+                container.innerHTML = `
+                    <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
+                        Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                    </button>
+                    <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
+                        <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
+                        <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
+                        <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
+                        <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
+                    </div>`;
+                
+                mobileLinks.innerHTML = `
+                    <div class="flex flex-col gap-4 w-64 text-center">
+                        <p class="text-xs uppercase tracking-widest text-[#7A6B63]">Welcome, ${name}</p>
+                        <a href="profile.html" class="text-xl font-serif font-bold hover:text-themeSub">My Profile</a>
+                        <a href="wishlist.html" class="text-xl font-serif font-bold hover:text-themeSub text-[#D97706]">My Wishlist</a>
+                        <a href="orders.html" class="text-xl font-serif font-bold hover:text-themeSub">My Orders</a>
+                        <button onclick="handleLogout()" class="text-xl font-serif font-bold text-red-500">Sign Out</button>
+                    </div>`;
+            } else {
+                container.innerHTML = `<a href="login.html" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2"><span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i></a>`;
+                mobileLinks.innerHTML = `<a href="login.html" class="text-3xl font-serif font-bold underline decoration-themeSub decoration-2 underline-offset-8">Sign In</a>`;
+            }
+        }
+
+        window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
+        window.toggleMobileMenu = () => { 
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        }
+        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
+
+        // 2. LOAD WISHLIST DATA
+        async function loadWishlist() {
+            if (!currentUser) return;
+            try {
+                const q = query(collection(db, "wishlist"), where("userId", "==", currentUser.uid));
+                const snap = await getDocs(q);
+                wishlistMap.clear();
+                snap.forEach(doc => wishlistMap.set(doc.data().productId, doc.id));
+            } catch (e) { console.error("Wishlist error", e); }
+        }
+
+        // 3. FETCH PRODUCTS (Filtered for MEN)
+        async function init() {
+            try {
+                const snap = await getDocs(collection(db, "products"));
+                allProds = [];
+                snap.forEach(d => { 
+                    const p = d.data();
+                    if(p.category === "Men" && p.isVisible !== false) {
+                        allProds.push({id:d.id, ...p});
+                    }
+                });
+                allProds.sort((a,b) => (b.priority || 0) - (a.priority || 0));
+                render();
+            } catch (e) {
+                console.error(e);
+                document.getElementById('product-grid').innerHTML = '<p class="col-span-full text-center text-red-500">Error loading collection.</p>';
+            }
+        }
+        
+        window.filterItems = (cat) => {
+            if(window.playClick) window.playClick();
+            filter = cat;
+            document.querySelectorAll('.filter-btn').forEach(b => {
+                b.classList.remove('active-filter', 'bg-themeBtn', 'text-[#E6D8C5]');
+                b.classList.add('text-themeBtn', 'bg-transparent');
+            });
+            event.target.classList.add('active-filter', 'bg-themeBtn', 'text-[#E6D8C5]');
+            render();
+        }
+
+        window.sortProducts = (val) => {
+            if(val === 'price-asc') allProds.sort((a,b) => (a.discountPrice||a.price) - (b.discountPrice||b.price));
+            else if(val === 'price-desc') allProds.sort((a,b) => (b.discountPrice||b.price) - (a.discountPrice||a.price));
+            else allProds.sort((a,b) => (b.priority || 0) - (a.priority || 0));
+            render();
+        }
+        
+        function render() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = '';
+            const list = filter === 'All' ? allProds : allProds.filter(p => p.subcategory === filter);
+            
+            if(!list.length) {
+                grid.innerHTML = '<p class="col-span-full text-center text-themeSub py-20 font-serif italic text-lg">No items found.</p>';
+                return;
+            }
+            
+            list.forEach((p, index) => {
+                const priceDisplay = p.discountPrice > 0 
+                    ? `<span class="text-red-600 font-bold mr-2">Rs. ${p.discountPrice.toLocaleString()}</span> <span class="line-through text-xs text-gray-400">Rs. ${p.price.toLocaleString()}</span>`
+                    : `Rs. ${p.price.toLocaleString()}`;
+
+                // --- STOCK WARNING ---
+                let stockBadge = '';
+                const currentStock = p.stock !== undefined ? p.stock : 10;
+                if (currentStock <= 0) {
+                    stockBadge = `<div class="absolute top-0 right-0 bg-gray-500 text-white text-[8px] font-bold px-3 py-1 z-20 uppercase tracking-widest">Sold Out</div>`;
+                } else if (currentStock <= 5) {
+                    stockBadge = `<div class="absolute top-0 right-0 bg-orange-600 text-white text-[8px] font-bold px-3 py-1 z-20 uppercase tracking-widest animate-pulse">Only ${currentStock} Left</div>`;
+                }
+
+                const isFav = wishlistMap.has(p.id);
+                const heartIconClass = isFav ? 'fa-solid text-red-500' : 'fa-regular text-gray-400';
+                const delay = index * 50; 
+
+                grid.innerHTML += `
+                <div data-aos="fade-up" data-aos-delay="${delay}" class="group relative bg-white hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden rounded-sm border border-transparent hover:border-[#D6C8B5]">
+                    ${p.discountPrice > 0 ? '<div class="absolute top-0 left-0 bg-[#4A3B32] text-[#E6D8C5] text-[9px] font-bold px-3 py-1 z-20 uppercase tracking-widest">Sale</div>' : ''}
+                    
+                    ${stockBadge}
+
+                    <button onclick="toggleWishlist(this, '${p.id}', '${p.name.replace(/'/g, "\\'")}', ${p.discountPrice || p.price}, '${p.image}', '${p.category}'); event.stopPropagation();" 
+                        class="absolute top-3 right-3 z-30 bg-white/80 rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:scale-110 transition">
+                        <i class="${heartIconClass} text-lg"></i>
+                    </button>
+                    <div class="h-[350px] overflow-hidden relative bg-gray-100 ${currentStock <= 0 ? 'opacity-60' : ''}">
+                        <a href="${currentStock > 0 ? 'product-details.html?id='+p.id : '#'}">
+                            <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition duration-1000 ease-out">
+                            <div class="absolute inset-0 bg-black/10 opacity-0 group-hover:opacity-100 transition duration-300"></div>
+                        </a>
+                        ${currentStock > 0 ? `
+                        <button onclick="openQuickView('${p.id}', '${p.name.replace(/'/g, "\\'")}', '${p.price}', '${p.discountPrice}', '${p.image}'); event.stopPropagation();" 
+                            class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-themeText px-8 py-3 text-[10px] font-bold uppercase tracking-widest opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-xl hover:bg-themeBtn hover:text-white w-[80%]">
+                            Quick View
+                        </button>` : ''}
+                    </div>
+                    <div class="p-6 text-center">
+                        <p class="text-[9px] text-[#7A6B63] uppercase tracking-widest mb-2">${p.subcategory}</p>
+                        <a href="${currentStock > 0 ? 'product-details.html?id='+p.id : '#'}"><h3 class="font-serif font-bold text-lg mb-2 group-hover:text-themeBtn transition line-clamp-1">${p.name}</h3></a>
+                        <p class="text-themeBtn text-sm font-medium font-mono">${priceDisplay}</p>
+                    </div>
+                </div>`;
+            });
+        }
+
+        // 4. WISHLIST TOGGLE (Instant Feedback)
+        window.toggleWishlist = async (btn, id, name, price, img, cat) => {
+            if(!currentUser) { alert("Please Sign In."); window.location.href = "login.html"; return; }
+            const icon = btn.querySelector('i');
+            const isFav = icon.classList.contains('fa-solid');
+
+            // INSTANT UI CHANGE
+            if(isFav) {
+                icon.className = 'fa-regular fa-heart text-gray-400 text-lg';
+            } else {
+                icon.className = 'fa-solid fa-heart text-red-500 text-lg';
+            }
+
+            try {
+                if(isFav) {
+                    const docId = wishlistMap.get(id);
+                    if(docId) { await deleteDoc(doc(db, "wishlist", docId)); wishlistMap.delete(id); }
+                } else {
+                    const ref = await addDoc(collection(db, "wishlist"), { userId: currentUser.uid, productId: id, name, price, image: img, category: cat });
+                    wishlistMap.set(id, ref.id);
+                }
+            } catch (e) { 
+                console.error(e);
+                // Revert UI if DB call fails
+                icon.classList.toggle('fa-solid'); icon.classList.toggle('text-red-500');
+                icon.classList.toggle('fa-regular'); icon.classList.toggle('text-gray-400');
+            }
+        }
+
+        // 5. QUICK VIEW
+        window.openQuickView = (id, name, price, discount, image) => {
+            if(window.playClick) window.playClick();
+            const modal = document.getElementById('quick-view-modal');
+            document.getElementById('qv-image').src = image;
+            document.getElementById('qv-name').innerText = name;
+            const dPrice = parseFloat(discount); const oPrice = parseFloat(price);
+            document.getElementById('qv-price').innerHTML = dPrice > 0 
+                ? `<span class="text-red-600 font-bold mr-2 text-2xl">Rs. ${dPrice.toLocaleString()}</span> <span class="line-through text-gray-400">Rs. ${oPrice.toLocaleString()}</span>` 
+                : `Rs. ${oPrice.toLocaleString()}`;
+            document.getElementById('qv-btn').onclick = () => window.location.href = `product-details.html?id=${id}`;
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.add('scale-100'); }, 10);
+        }
+
+        window.closeQuickView = () => {
+            const modal = document.getElementById('quick-view-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        // 6. CART SYSTEM
+        window.updateCartUI = () => {
+            document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0);
+            const con = document.getElementById('cart-items');
+            con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10 font-serif italic">Your bag is empty.</p>';
+            let t = 0;
+            cart.forEach(i => { 
+                const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price;
+                t += finalPrice * i.qty; 
+                con.innerHTML += `
+                    <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
+                        <div class="flex gap-3">
+                            <img src="${i.image}" class="w-16 h-20 object-cover rounded-sm">
+                            <div>
+                                <p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p>
+                                <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
+                                <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
+                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button>
+                                    <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-right flex flex-col justify-between">
+                            <p class="font-bold text-sm">Rs. ${(finalPrice*i.qty).toLocaleString()}</p>
+                            <button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:text-red-700 underline uppercase tracking-wider">Remove</button>
+                        </div>
+                    </div>`; 
+            });
+            document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString();
+        }
+
+        window.changeQty = (uid, change) => {
+            const item = cart.find(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
+            if(item) {
+                item.qty += change;
+                if(item.qty < 1) item.qty = 1; 
+                localStorage.setItem('myCart', JSON.stringify(cart));
+                updateCartUI();
+            }
+        }
+
+        window.toggleCart = () => { 
+            const sb = document.getElementById('cart-sidebar'); const ov = document.getElementById('overlay');
+            if (sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); updateCartUI(); } 
+            else { sb.classList.add('translate-x-full'); ov.classList.add('hidden'); } 
+        }
+        window.removeItem = (uid) => { 
+            const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
+            if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } 
+        }
+        window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="sounds.js"></script>
+    <script>AOS.init({ duration: 1000, once: true, offset: 50 });</script>
+</body>
+</html>

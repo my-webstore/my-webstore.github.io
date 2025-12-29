@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Admin Dashboard - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .sidebar-link { transition: all 0.3s; opacity: 0.8; }
+        .sidebar-link:hover { opacity: 1; background-color: rgba(255,255,255,0.1); }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+
+    <header class="bg-[#1a1a1a] text-white py-4 px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
+        <div class="flex items-center gap-4">
+            <h1 class="text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-xs align-top bg-gray-800 px-2 py-0.5 rounded">ADMIN</span></h1>
+        </div>
+        <div class="flex items-center gap-6 text-xs font-bold uppercase tracking-wider">
+            <span id="admin-user-display" class="text-gray-500 normal-case hidden md:inline">...</span>
+            <div class="h-4 w-px bg-gray-700 hidden md:block"></div>
+            <a href="setup_products.html" class="sidebar-link px-3 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-database"></i> Seeder</a>
+            <a href="admin-orders.html" class="sidebar-link px-3 py-2 rounded flex items-center gap-2 relative">
+                <i class="fa-solid fa-box-open"></i> Orders
+                <span class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full animate-pulse"></span>
+            </a>
+            <a href="index.html" target="_blank" class="sidebar-link px-3 py-2 rounded flex items-center gap-2"><i class="fa-solid fa-store"></i> Storefront</a>
+            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 transition flex items-center gap-2"><i class="fa-solid fa-right-from-bracket"></i> Logout</button>
+        </div>
+    </header>
+
+    <div class="container mx-auto px-6 py-10 flex-grow">
+        
+        <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4" data-aos="fade-down">
+            <div>
+                <h2 class="text-3xl font-serif font-bold text-[#4A3B32]">Product Inventory</h2>
+                <p class="text-gray-500 text-sm mt-1">Manage your catalog, stock, and pricing details.</p>
+            </div>
+            <button onclick="openModal()" class="bg-[#4A3B32] text-[#E6D8C5] px-8 py-3 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-xl text-xs rounded-sm flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i> Add New Product
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10" data-aos="fade-up">
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-blue-500">
+                <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Total Items</p>
+                <p id="stat-total" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-[#4A3B32]">
+                <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Men</p>
+                <p id="stat-men" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-pink-500">
+                <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Women</p>
+                <p id="stat-women" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+            </div>
+            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-yellow-500">
+                <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest">Kids</p>
+                <p id="stat-kids" class="text-3xl font-bold text-gray-800 mt-1">0</p>
+            </div>
+        </div>
+
+        <div class="bg-white rounded-lg shadow-md border border-gray-200 overflow-hidden" data-aos="fade-up" data-aos-delay="100">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead class="bg-gray-50 text-xs uppercase font-bold text-gray-500 tracking-wider">
+                        <tr>
+                            <th class="p-5 border-b border-gray-200">Product Details</th>
+                            <th class="p-5 border-b border-gray-200">Category</th>
+                            <th class="p-5 border-b border-gray-200">Stock</th>
+                            <th class="p-5 border-b border-gray-200">Price</th>
+                            <th class="p-5 border-b border-gray-200">Status</th>
+                            <th class="p-5 border-b border-gray-200 text-right">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-table-body" class="text-sm divide-y divide-gray-100">
+                        <tr><td colspan="6" class="p-10 text-center text-gray-400 animate-pulse">Loading inventory data...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="product-modal" class="fixed inset-0 bg-black/60 hidden z-[70] flex items-center justify-center backdrop-blur-sm px-4 opacity-0 transition-opacity duration-300">
+        <div class="bg-white w-full max-w-3xl rounded-lg shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
+            
+            <div class="bg-[#4A3B32] text-[#E6D8C5] px-8 py-5 flex justify-between items-center">
+                <h3 id="modal-title" class="font-bold uppercase tracking-widest text-lg">Product Manager</h3>
+                <button onclick="closeModal()" class="hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+            </div>
+
+            <div class="p-8 overflow-y-auto flex-grow bg-gray-50">
+                <form id="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <input type="hidden" id="p-id"> 
+                    
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Product Name</label>
+                        <input type="text" id="p-name" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" required placeholder="e.g. Classic Leather Jacket">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Price (Rs)</label>
+                        <input type="number" id="p-price" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" required placeholder="5000">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Discount Price (Optional)</label>
+                        <input type="number" id="p-discount" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" placeholder="0">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Inventory Stock</label>
+                        <input type="number" id="p-stock" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" required placeholder="50">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Category</label>
+                        <select id="p-category" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm cursor-pointer">
+                            <option value="Men">Men</option>
+                            <option value="Women">Women</option>
+                            <option value="Kids">Kids</option>
+                        </select>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Sub-Category</label>
+                        <select id="p-subcategory" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm cursor-pointer">
+                            <option value="Cloths">Clothing</option>
+                            <option value="Shoes">Shoes</option>
+                            <option value="Accessories">Accessories</option>
+                        </select>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Image URL</label>
+                        <div class="relative">
+                            <input type="text" id="p-image" class="w-full p-3 pl-10 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" required placeholder="https://...">
+                            <i class="fa-solid fa-link absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                        </div>
+                    </div>
+
+                    <div class="md:col-span-2">
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Colors (Comma Separated)</label>
+                        <input type="text" id="p-colors" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" placeholder="e.g. Red, Blue, Black">
+                        <p class="text-[10px] text-gray-400 mt-1">Leave empty if no specific colors.</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Priority (1-100)</label>
+                        <input type="number" id="p-priority" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm" value="50">
+                    </div>
+
+                    <div>
+                        <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Visibility</label>
+                        <select id="p-visible" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm cursor-pointer">
+                            <option value="true">Visible</option>
+                            <option value="false">Hidden</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-gray-100 px-8 py-5 flex justify-end gap-4 border-t border-gray-200">
+                <button onclick="closeModal()" class="px-6 py-3 text-xs font-bold uppercase tracking-widest text-gray-500 hover:text-gray-800 transition">Cancel</button>
+                <button onclick="saveProduct()" id="btn-save" class="bg-[#4A3B32] text-[#E6D8C5] px-8 py-3 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">Save Product</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, auth, onAuthStateChanged, signOut } from './firebase-config.js';
+
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
+
+        let allProducts = [];
+
+        onAuthStateChanged(auth, (user) => {
+            if (!user) {
+                window.location.href = "login.html";
+            } else if (user.email !== ADMIN_EMAIL) {
+                alert("Access Denied: Admins Only.");
+                window.location.href = "profile.html";
+            } else {
+                document.getElementById('admin-user-display').innerText = user.email;
+                loadProducts();
+            }
+        });
+
+        window.handleLogout = async () => {
+            if(window.playClick) window.playClick();
+            if(confirm("Logout from Admin Panel?")) {
+                await signOut(auth);
+                localStorage.removeItem('myCart'); 
+                window.location.href = "login.html";
+            }
+        }
+
+        async function loadProducts() {
+            const tbody = document.getElementById('product-table-body');
+            try {
+                const snap = await getDocs(collection(db, "products"));
+                allProducts = [];
+                let counts = { Men: 0, Women: 0, Kids: 0 };
+
+                snap.forEach(d => {
+                    const data = d.data();
+                    allProducts.push({ id: d.id, ...data });
+                    if(counts[data.category] !== undefined) counts[data.category]++;
+                });
+
+                document.getElementById('stat-total').innerText = allProducts.length;
+                document.getElementById('stat-men').innerText = counts.Men;
+                document.getElementById('stat-women').innerText = counts.Women;
+                document.getElementById('stat-kids').innerText = counts.Kids;
+
+                renderTable();
+            } catch (error) {
+                console.error(error);
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-red-500 font-bold">Error loading database.</td></tr>`;
+            }
+        }
+
+        function renderTable() {
+            const tbody = document.getElementById('product-table-body');
+            tbody.innerHTML = '';
+            allProducts.sort((a,b) => (b.priority || 0) - (a.priority || 0));
+
+            if(allProducts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 italic">No products found in database.</td></tr>`;
+                return;
+            }
+
+            allProducts.forEach(p => {
+                const priceDisplay = p.discountPrice > 0 
+                    ? `<span class="text-red-600 font-bold mr-1">Rs. ${p.discountPrice.toLocaleString()}</span> <span class="line-through text-gray-400 text-xs">${p.price.toLocaleString()}</span>` 
+                    : `Rs. ${p.price.toLocaleString()}`;
+
+                const visibilityBadge = p.isVisible !== false 
+                    ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] uppercase font-bold tracking-wide border border-green-200">Active</span>`
+                    : `<span class="bg-gray-100 text-gray-500 px-2 py-1 rounded text-[10px] uppercase font-bold tracking-wide border border-gray-200">Hidden</span>`;
+
+                const stock = p.stock !== undefined ? p.stock : 0;
+                const stockBadge = stock < 5 
+                    ? `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold border border-red-200">Low: ${stock}</span>`
+                    : `<span class="text-gray-600 font-bold">${stock}</span>`;
+
+                const colorsBadge = p.colors && p.colors.length > 0 
+                    ? `<span class="text-[10px] bg-purple-50 text-purple-600 px-2 py-0.5 rounded border border-purple-100 ml-2">${p.colors.length} Colors</span>`
+                    : '';
+
+                tbody.innerHTML += `
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition group bg-white">
+                        <td class="p-5 flex items-center gap-4">
+                            <div class="w-12 h-12 rounded bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
+                                <img src="${p.image}" class="w-full h-full object-cover">
+                            </div>
+                            <div>
+                                <p class="font-bold text-gray-800 line-clamp-1">${p.name}</p>
+                                <div class="flex items-center gap-2 mt-1">
+                                    <span class="text-[10px] text-gray-400 font-mono uppercase tracking-wide bg-gray-100 px-1.5 rounded">${p.serialNumber || 'No ID'}</span>
+                                    ${colorsBadge}
+                                </div>
+                            </div>
+                        </td>
+                        <td class="p-5 text-gray-600">
+                            <div class="flex flex-col">
+                                <span class="text-xs font-bold uppercase tracking-wider text-[#4A3B32]">${p.category}</span>
+                                <span class="text-[10px] text-gray-400 uppercase tracking-wide">${p.subcategory}</span>
+                            </div>
+                        </td>
+                        <td class="p-5">${stockBadge}</td>
+                        <td class="p-5 font-mono text-sm text-gray-700">${priceDisplay}</td>
+                        <td class="p-5">${visibilityBadge}</td>
+                        <td class="p-5 text-right">
+                            <button onclick="editProduct('${p.id}')" class="bg-blue-50 text-blue-600 hover:bg-blue-600 hover:text-white border border-blue-100 p-2 rounded transition mr-2" title="Edit"><i class="fa-solid fa-pen-to-square text-sm"></i></button>
+                            <button onclick="deleteProduct('${p.id}')" class="bg-red-50 text-red-500 hover:bg-red-500 hover:text-white border border-red-100 p-2 rounded transition" title="Delete"><i class="fa-solid fa-trash-can text-sm"></i></button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        window.openModal = () => {
+            if(window.playClick) window.playClick();
+            document.getElementById('productForm').reset();
+            document.getElementById('p-id').value = '';
+            document.getElementById('modal-title').innerText = "Create New Product";
+            const modal = document.getElementById('product-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); }, 10);
+        }
+
+        window.closeModal = () => {
+            if(window.playClick) window.playClick();
+            const modal = document.getElementById('product-modal');
+            modal.classList.add('opacity-0');
+            modal.querySelector('div').classList.remove('scale-100');
+            modal.querySelector('div').classList.add('scale-95');
+            setTimeout(() => modal.classList.add('hidden'), 300);
+        }
+
+        window.saveProduct = async () => {
+            if(window.playClick) window.playClick();
+            const btn = document.getElementById('btn-save');
+            const id = document.getElementById('p-id').value;
+            const rawColors = document.getElementById('p-colors').value;
+            const colorsArray = rawColors ? rawColors.split(',').map(c => c.trim()).filter(c => c !== "") : [];
+
+            const data = {
+                name: document.getElementById('p-name').value,
+                price: Number(document.getElementById('p-price').value),
+                discountPrice: Number(document.getElementById('p-discount').value || 0),
+                stock: Number(document.getElementById('p-stock').value || 0),
+                category: document.getElementById('p-category').value,
+                subcategory: document.getElementById('p-subcategory').value,
+                image: document.getElementById('p-image').value,
+                colors: colorsArray,
+                priority: Number(document.getElementById('p-priority').value || 50),
+                isVisible: document.getElementById('p-visible').value === 'true',
+                media: [{type: 'image', url: document.getElementById('p-image').value }]
+            };
+
+            if(!data.name || !data.price || !data.image) return alert("Please fill required fields (Name, Price, Image).");
+
+            btn.innerText = "Saving...";
+            btn.disabled = true;
+
+            try {
+                if(id) {
+                    await updateDoc(doc(db, "products", id), data);
+                } else {
+                    const serial = 'BRD-' + Math.floor(100000 + Math.random() * 900000);
+                    await addDoc(collection(db, "products"), { ...data, serialNumber: serial, createdAt: new Date() });
+                }
+                closeModal();
+                loadProducts(); 
+            } catch(e) {
+                console.error(e);
+                alert("Error saving: " + e.message);
+            } finally {
+                btn.innerText = "Save Product";
+                btn.disabled = false;
+            }
+        }
+
+        window.editProduct = (id) => {
+            if(window.playClick) window.playClick();
+            const p = allProducts.find(x => x.id === id);
+            if(!p) return;
+
+            document.getElementById('p-id').value = p.id;
+            document.getElementById('p-name').value = p.name;
+            document.getElementById('p-price').value = p.price;
+            document.getElementById('p-discount').value = p.discountPrice || 0;
+            document.getElementById('p-stock').value = p.stock || 0;
+            document.getElementById('p-category').value = p.category;
+            document.getElementById('p-subcategory').value = p.subcategory;
+            document.getElementById('p-image').value = p.image;
+            document.getElementById('p-priority').value = p.priority || 50;
+            document.getElementById('p-visible').value = p.isVisible !== false ? 'true' : 'false';
+            document.getElementById('p-colors').value = p.colors ? p.colors.join(', ') : '';
+
+            document.getElementById('modal-title').innerText = "Edit Product Details";
+            const modal = document.getElementById('product-modal');
+            modal.classList.remove('hidden');
+            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.remove('scale-95'); modal.querySelector('div').classList.add('scale-100'); }, 10);
+        }
+
+        window.deleteProduct = async (id) => {
+            if(window.playClick) window.playClick();
+            if(confirm("Are you sure? This cannot be undone.")) {
+                try {
+                    await deleteDoc(doc(db, "products", id));
+                    loadProducts();
+                } catch(e) {
+                    alert("Error deleting: " + e.message);
+                }
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="sounds.js"></script>
+    <script>AOS.init({ duration: 800, once: true });</script>
+</body>
+</html>

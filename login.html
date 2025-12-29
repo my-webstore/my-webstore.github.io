@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign In - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
+        h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
+        .input-field { background: transparent; border-bottom: 1px solid #D6C8B5; transition: all 0.3s ease; }
+        .input-field:focus { border-color: #4A3B32; outline: none; }
+        .phone-input-container { display: flex; align-items: center; border-bottom: 1px solid #D6C8B5; transition: all 0.3s ease; }
+        .phone-input-container:focus-within { border-color: #4A3B32; }
+        .phone-input-field { flex-grow: 1; background: transparent; border: none; outline: none; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-0">
+
+    <div class="bg-white rounded-sm shadow-2xl w-full max-w-5xl h-[650px] md:h-[700px] flex overflow-hidden border border-[#D6C8B5]" data-aos="zoom-in">
+        
+        <div class="hidden md:block w-1/2 relative">
+            <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1887&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Fashion Model">
+            <div class="absolute inset-0 bg-[#4A3B32]/40 mix-blend-multiply"></div>
+            <div class="absolute bottom-10 left-10 text-white z-10">
+                <h2 class="text-4xl font-serif font-bold mb-2">Welcome Back.</h2>
+                <p class="text-sm opacity-90 font-light max-w-xs">Access your curated wishlist, order history, and exclusive member privileges.</p>
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+            <div class="absolute top-6 right-6"><a href="index.html" class="text-xs font-bold uppercase text-[#7A6B63] hover:text-[#4A3B32] transition">Back to Store</a></div>
+            
+            <div class="mb-6">
+                <h2 class="text-3xl font-serif font-bold text-[#4A3B32] mb-1">Sign In</h2>
+                <p class="text-xs text-[#7A6B63] uppercase tracking-widest">New here? <a href="signup.html" class="underline font-bold text-[#4A3B32]">Create Account</a></p>
+            </div>
+
+            <button onclick="handleGoogleLogin()" class="w-full border border-[#D6C8B5] hover:border-[#4A3B32] text-[#4A3B32] py-3 flex items-center justify-center gap-3 transition mb-6 group rounded-sm">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:scale-110 transition-transform">
+                <span class="text-xs font-bold uppercase tracking-wide">Continue with Google</span>
+            </button>
+
+            <div class="relative mb-6 text-center">
+                <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-[#E5E7EB]"></span></div>
+                <div class="relative"><span class="bg-white px-2 text-[10px] uppercase text-gray-400 tracking-widest">Or Login With Credentials</span></div>
+            </div>
+
+            <div class="flex border-b border-[#E5E7EB] mb-8">
+                <button onclick="switchTab('email')" id="tab-email" class="w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-[#4A3B32] text-[#4A3B32] transition tracking-widest">Email</button>
+                <button onclick="switchTab('phone')" id="tab-phone" class="w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-transparent text-gray-400 hover:text-[#7A6B63] transition tracking-widest">Phone Number</button>
+            </div>
+
+            <form id="email-form" class="space-y-6">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Email Address</label>
+                    <input type="email" id="email" class="w-full py-3 text-sm input-field" placeholder="name@example.com" required>
+                </div>
+                <div class="relative">
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Password</label>
+                    <input type="password" id="email-password" class="w-full py-3 text-sm input-field" placeholder="••••••" required>
+                    <button type="button" onclick="forgotPassword()" class="absolute right-0 top-8 text-[10px] font-bold text-[#7A6B63] hover:text-[#4A3B32] uppercase tracking-wider">Forgot?</button>
+                </div>
+                <button type="submit" id="btn-email-login" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm mt-4">
+                    Sign In
+                </button>
+            </form>
+
+            <form id="phone-form" class="space-y-6 hidden">
+                <div>
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Mobile Number</label>
+                    <div class="phone-input-container">
+                        <span class="text-sm font-bold text-gray-500 pr-2 border-r border-[#D6C8B5] select-none">+92</span>
+                        <input type="text" id="phoneInput" class="py-3 text-sm pl-3 phone-input-field" placeholder="300 1234567" required>
+                    </div>
+                </div>
+                <div class="relative">
+                    <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Password</label>
+                    <input type="password" id="phone-password" class="w-full py-3 text-sm input-field" placeholder="••••••" required>
+                </div>
+                <button type="submit" id="btn-phone-login" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm mt-4">
+                    Sign In
+                </button>
+            </form>
+
+            <p id="status" class="mt-6 text-center text-xs font-bold text-red-600 min-h-[20px]"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, doc, getDoc, setDoc, signInWithEmailAndPassword, sendPasswordResetEmail } from './firebase-config.js';
+        import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // ==========================================
+        // ADMIN EMAIL SETTING (Robust)
+        // Using lowercase helps prevent mismatches
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
+        // ==========================================
+
+        let activeTab = 'email';
+
+        // --- UPDATED REDIRECT LOGIC ---
+        const handleSuccessRedirect = (userEmail) => {
+            console.log("Logged in user email:", userEmail); // DEBUG: Check console (F12) to see exact email
+
+            // 1. ROBUST ADMIN CHECK
+            // We use .toLowerCase() and .trim() to ensure "Gmail" matches "gmail" and no hidden spaces exist
+            if (userEmail && userEmail.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()) {
+                console.log("Admin identified. Redirecting to Admin Panel...");
+                window.location.href = "admin.html";
+                return;
+            }
+
+            // 2. NORMAL USER REDIRECT
+            // If they have items in cart -> Checkout
+            // If empty cart -> Index (Home)
+            const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+            if (cart.length > 0) {
+                window.location.href = "checkout.html";
+            } else {
+                window.location.href = "index.html"; // Changed from profile.html as requested
+            }
+        };
+
+        // TAB SWITCHING
+        window.switchTab = (tab) => {
+            if(window.playClick) window.playClick();
+            activeTab = tab;
+            document.getElementById('status').innerText = "";
+            const formEmail = document.getElementById('email-form');
+            const formPhone = document.getElementById('phone-form');
+            const tabEmail = document.getElementById('tab-email');
+            const tabPhone = document.getElementById('tab-phone');
+
+            if(tab === 'email') {
+                formEmail.classList.remove('hidden');
+                formPhone.classList.add('hidden');
+                tabEmail.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-[#4A3B32] text-[#4A3B32] transition tracking-widest";
+                tabPhone.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-transparent text-gray-400 hover:text-[#7A6B63] transition tracking-widest";
+            } else {
+                formEmail.classList.add('hidden');
+                formPhone.classList.remove('hidden');
+                tabPhone.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-[#4A3B32] text-[#4A3B32] transition tracking-widest";
+                tabEmail.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-transparent text-gray-400 hover:text-[#7A6B63] transition tracking-widest";
+            }
+        }
+
+        // 1. GOOGLE LOGIN
+        window.handleGoogleLogin = async () => {
+            if(window.playClick) window.playClick();
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                // Create user doc if new
+                const docRef = doc(db, "users", result.user.uid);
+                const docSnap = await getDoc(docRef);
+                if (!docSnap.exists()) {
+                    await setDoc(docRef, {
+                        email: result.user.email,
+                        firstName: result.user.displayName.split(' ')[0],
+                        lastName: "",
+                        createdAt: new Date(),
+                        verifiedBy: "google"
+                    });
+                }
+                handleSuccessRedirect(result.user.email);
+            } catch (error) {
+                document.getElementById('status').innerText = "Google Error: " + error.message;
+            }
+        };
+
+        // 2. EMAIL LOGIN
+        document.getElementById('email-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(window.playClick) window.playClick();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('email-password').value;
+            const btn = document.getElementById('btn-email-login');
+            
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
+            btn.disabled = true;
+            document.getElementById('status').innerText = "";
+
+            try {
+                const res = await signInWithEmailAndPassword(auth, email, password);
+                handleSuccessRedirect(res.user.email);
+            } catch (error) {
+                handleAuthError(error, btn);
+            }
+        });
+
+        // 3. PHONE LOGIN
+        document.getElementById('phone-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if(window.playClick) window.playClick();
+
+            const phoneInput = document.getElementById('phoneInput').value.trim();
+            const password = document.getElementById('phone-password').value;
+            const btn = document.getElementById('btn-phone-login');
+            
+            if(phoneInput.length < 10) { document.getElementById('status').innerText = "Invalid Phone Number"; return; }
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Authenticating...';
+            btn.disabled = true;
+            document.getElementById('status').innerText = "";
+
+            let cleanPhone = phoneInput.replace(/^0+/, ''); 
+            const internalEmail = `92${cleanPhone}@brand.com`;
+
+            try {
+                await signInWithEmailAndPassword(auth, internalEmail, password);
+                // Phone login users likely aren't admins, but we pass email anyway
+                handleSuccessRedirect(internalEmail); 
+            } catch (error) {
+                handleAuthError(error, btn);
+            }
+        });
+
+        function handleAuthError(error, btn) {
+            console.error(error);
+            btn.innerHTML = "Sign In";
+            btn.disabled = false;
+            const status = document.getElementById('status');
+            
+            if (error.code === 'auth/invalid-credential' || error.code === 'auth/wrong-password' || error.code === 'auth/user-not-found') {
+                status.innerText = "Incorrect credentials. Please check your details.";
+            } else if (error.code === 'auth/too-many-requests') {
+                status.innerText = "Too many attempts. Try again later.";
+            } else {
+                status.innerText = "Login failed: " + error.message;
+            }
+        }
+
+        // 4. FORGOT PASSWORD
+        window.forgotPassword = async () => {
+            if(window.playClick) window.playClick();
+            if(activeTab !== 'email') { switchTab('email'); document.getElementById('status').innerText = "Please enter email to reset password."; return; }
+            
+            const email = document.getElementById('email').value;
+            if (!email) { document.getElementById('status').innerText = "Please enter your email address first."; return; }
+
+            if(confirm(`Send password reset link to ${email}?`)) {
+                try {
+                    await sendPasswordResetEmail(auth, email);
+                    document.getElementById('status').className = "mt-6 text-center text-xs font-bold text-green-600";
+                    document.getElementById('status').innerHTML = `<i class="fa-solid fa-check-circle"></i> Link sent to ${email}`;
+                } catch (error) {
+                    document.getElementById('status').innerText = error.message;
+                }
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="sounds.js"></script>
+    <script>AOS.init({ duration: 800, once: true });</script>
+</body>
+</html>

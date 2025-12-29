@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Create Account - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
+        h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Standard Input Style */
+        .input-field { 
+            background: transparent; 
+            border-bottom: 1px solid #D6C8B5; 
+            transition: all 0.3s ease; 
+        }
+        .input-field:focus { 
+            border-color: #4A3B32; 
+            outline: none; 
+        }
+
+        /* Phone Input Container Style */
+        .phone-input-container {
+            display: flex;
+            align-items: center;
+            border-bottom: 1px solid #D6C8B5;
+            transition: all 0.3s ease;
+        }
+        .phone-input-container:focus-within {
+            border-color: #4A3B32;
+        }
+        .phone-input-field {
+            flex-grow: 1;
+            background: transparent;
+            border: none;
+            outline: none;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 md:p-0">
+
+    <div class="bg-white rounded-sm shadow-2xl w-full max-w-5xl h-[600px] md:h-[700px] flex overflow-hidden border border-[#D6C8B5]" data-aos="zoom-in">
+        
+        <div class="hidden md:block w-1/2 relative">
+            <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Luxury Shopping">
+            <div class="absolute inset-0 bg-[#4A3B32]/30 mix-blend-multiply"></div>
+            <div class="absolute bottom-10 left-10 text-white z-10">
+                <h2 class="text-4xl font-serif font-bold mb-2">Join the Legacy.</h2>
+                <p class="text-sm opacity-90 font-light max-w-xs">Experience luxury redefined. Create your account to access exclusive collections and priority support.</p>
+            </div>
+        </div>
+
+        <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
+            
+            <div class="absolute top-6 right-6">
+                <a href="index.html" class="text-xs font-bold uppercase text-[#7A6B63] hover:text-[#4A3B32] transition">Back to Store</a>
+            </div>
+
+            <div class="mb-8">
+                <h2 class="text-3xl font-serif font-bold text-[#4A3B32] mb-1">Create Account</h2>
+                <p class="text-xs text-[#7A6B63] uppercase tracking-widest">Already a member? <a href="login.html" class="underline font-bold text-[#4A3B32]">Sign In</a></p>
+            </div>
+
+            <button onclick="handleGoogleSignup()" class="w-full border border-[#D6C8B5] hover:border-[#4A3B32] text-[#4A3B32] py-3 flex items-center justify-center gap-3 transition mb-6 group rounded-sm">
+                <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:scale-110 transition-transform">
+                <span class="text-xs font-bold uppercase tracking-wide">Continue with Google</span>
+            </button>
+
+            <div class="relative mb-8 text-center">
+                <div class="absolute inset-0 flex items-center"><span class="w-full border-t border-[#E5E7EB]"></span></div>
+                <div class="relative"><span class="bg-white px-2 text-[10px] uppercase text-gray-400 tracking-widest">Or Verify With</span></div>
+            </div>
+
+            <div class="flex border-b border-[#E5E7EB] mb-6">
+                <button onclick="switchTab('email')" id="tab-email" class="w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-[#4A3B32] text-[#4A3B32] transition tracking-widest">Email</button>
+                <button onclick="switchTab('phone')" id="tab-phone" class="w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-transparent text-gray-400 hover:text-[#7A6B63] transition tracking-widest">Phone</button>
+            </div>
+
+            <div id="step-verify">
+                <div id="input-group-email" class="mb-6">
+                    <input type="email" id="emailInput" class="w-full py-3 text-sm input-field" placeholder="Email Address">
+                </div>
+                <div id="input-group-phone" class="mb-6 hidden">
+                    <div class="phone-input-container">
+                        <span class="text-sm font-bold text-gray-500 pr-2 border-r border-[#D6C8B5] select-none">+92</span>
+                        <input type="text" id="phoneInput" class="py-3 text-sm pl-3 phone-input-field" placeholder="300 1234567">
+                    </div>
+                </div>
+                <div id="recaptcha-container"></div>
+                <button id="btn-send-otp" onclick="sendOTP()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
+                    Send Code
+                </button>
+            </div>
+
+            <div id="step-confirm" class="hidden space-y-6">
+                <div class="flex justify-between items-center">
+                    <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Enter Code</span>
+                    <button onclick="location.reload()" class="text-[10px] text-red-500 underline font-bold uppercase">Change</button>
+                </div>
+                <input type="number" id="otpInput" class="w-full py-3 text-center text-3xl tracking-[0.5em] font-bold text-[#4A3B32] input-field" placeholder="••••••">
+                <button id="btn-verify-otp" onclick="verifyOTP()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
+                    Verify
+                </button>
+            </div>
+
+            <div id="step-finalize" class="hidden space-y-6">
+                <div class="flex items-center gap-2 text-green-600 bg-green-50 p-3 rounded-sm border border-green-100">
+                    <i class="fa-solid fa-check-circle"></i>
+                    <span class="text-xs font-bold uppercase tracking-wide">Verified</span>
+                </div>
+                <div>
+                    <input type="password" id="newPassword" class="w-full py-3 text-sm input-field" placeholder="Set Password (Min. 6 chars)">
+                </div>
+                <button id="btn-signup" onclick="finalizeAccount()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
+                    Complete Setup
+                </button>
+            </div>
+
+            <p id="status" class="mt-4 text-center text-xs font-bold text-red-600 min-h-[20px]"></p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { auth, db, createUserWithEmailAndPassword, doc, setDoc } from './firebase-config.js';
+        
+        import { 
+            RecaptchaVerifier, 
+            signInWithPhoneNumber,
+            GoogleAuthProvider, 
+            signInWithPopup 
+        } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+        // EMAIL JS INIT
+        const EMAILJS_SERVICE_ID = "service_mystore"; 
+        const EMAILJS_TEMPLATE_ID = "template_f67099k"; 
+        const EMAILJS_PUBLIC_KEY = "lVW1R0WvfpJLVWeah"; 
+        (function(){ emailjs.init(EMAILJS_PUBLIC_KEY); })();
+
+        let activeTab = 'email';
+        let generatedEmailOTP = null;
+        let phoneConfirmationResult = null;
+        let verifiedEmail = "";
+        let verifiedPhone = "";
+
+        // 1. GOOGLE SIGNUP
+        window.handleGoogleSignup = async () => {
+            if(window.playClick) window.playClick();
+            const provider = new GoogleAuthProvider();
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                
+                await setDoc(doc(db, "users", user.uid), {
+                    email: user.email,
+                    firstName: user.displayName ? user.displayName.split(' ')[0] : "User",
+                    lastName: user.displayName && user.displayName.split(' ').length > 1 ? user.displayName.split(' ')[1] : "",
+                    phone: "",
+                    address: "",
+                    createdAt: new Date(),
+                    verifiedBy: "google"
+                }, { merge: true });
+
+                window.location.href = "profile.html";
+            } catch (error) {
+                console.error("Google Error:", error);
+                document.getElementById('status').innerText = "Error: " + error.message;
+            }
+        };
+
+        // 2. SWITCH TABS
+        window.switchTab = (tab) => {
+            if(window.playClick) window.playClick();
+            activeTab = tab;
+            document.getElementById('status').innerText = "";
+            
+            const emailInput = document.getElementById('input-group-email');
+            const phoneInput = document.getElementById('input-group-phone');
+            const tabEmail = document.getElementById('tab-email');
+            const tabPhone = document.getElementById('tab-phone');
+
+            if(tab === 'email') {
+                emailInput.classList.remove('hidden');
+                phoneInput.classList.add('hidden');
+                tabEmail.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-[#4A3B32] text-[#4A3B32] transition tracking-widest";
+                tabPhone.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-transparent text-gray-400 hover:text-[#7A6B63] transition tracking-widest";
+            } else {
+                emailInput.classList.add('hidden');
+                phoneInput.classList.remove('hidden');
+                tabPhone.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-[#4A3B32] text-[#4A3B32] transition tracking-widest";
+                tabEmail.className = "w-1/2 py-3 text-xs font-bold uppercase border-b-2 border-transparent text-gray-400 hover:text-[#7A6B63] transition tracking-widest";
+            }
+        }
+
+        // 3. SEND OTP (Updated for fixed +92)
+        window.sendOTP = async () => {
+            if(window.playClick) window.playClick();
+            const btn = document.getElementById('btn-send-otp');
+            const status = document.getElementById('status');
+            status.innerText = "";
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Sending...';
+            btn.disabled = true;
+
+            try {
+                if(activeTab === 'email') {
+                    const email = document.getElementById('emailInput').value;
+                    if(!email.includes('@')) throw new Error("Invalid Email");
+                    
+                    generatedEmailOTP = Math.floor(100000 + Math.random() * 900000);
+                    
+                    const templateParams = { email: email, otp_code: generatedEmailOTP };
+                    await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, templateParams);
+                    
+                    verifiedEmail = email; 
+                    showVerifyStep();
+
+                } else {
+                    // **UPDATED PHONE LOGIC**
+                    let phone = document.getElementById('phoneInput').value.trim();
+                    // Remove any leading '0' the user might have typed
+                    if(phone.startsWith('0')) phone = phone.substring(1);
+
+                    if(phone.length < 10) throw new Error("Invalid Phone Number. Please enter the 10 digits after +92.");
+
+                    if(!window.recaptchaVerifier) {
+                        window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {'size': 'invisible'});
+                    }
+
+                    // Combine +92 with the user's input, removing spaces
+                    const finalPhone = '+92' + phone.replace(/\s+/g, '');
+
+                    phoneConfirmationResult = await signInWithPhoneNumber(auth, finalPhone, window.recaptchaVerifier);
+                    verifiedPhone = finalPhone; 
+                    showVerifyStep();
+                }
+            } catch(e) {
+                console.error(e);
+                status.innerText = e.message || "Failed to send OTP.";
+                btn.innerHTML = 'Send Code';
+                btn.disabled = false;
+            }
+        }
+
+        function showVerifyStep() {
+            document.getElementById('step-verify').classList.add('hidden');
+            document.getElementById('step-confirm').classList.remove('hidden');
+            document.getElementById('status').innerText = "";
+        }
+
+        // 4. VERIFY OTP
+        window.verifyOTP = async () => {
+            if(window.playClick) window.playClick();
+            const code = document.getElementById('otpInput').value;
+            const btn = document.getElementById('btn-verify-otp');
+            const status = document.getElementById('status');
+            
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying...';
+            
+            try {
+                if(activeTab === 'email') {
+                    if(parseInt(code) === generatedEmailOTP) showFinalizeStep();
+                    else throw new Error("Incorrect Email OTP");
+                } else {
+                    await phoneConfirmationResult.confirm(code);
+                    showFinalizeStep();
+                }
+            } catch(e) {
+                status.innerText = "Invalid Code. Please try again.";
+                btn.innerHTML = 'Verify';
+            }
+        }
+
+        function showFinalizeStep() {
+            document.getElementById('step-confirm').classList.add('hidden');
+            document.getElementById('step-finalize').classList.remove('hidden');
+            document.getElementById('status').innerText = "";
+        }
+
+        // 5. FINALIZE ACCOUNT
+        window.finalizeAccount = async () => {
+            if(window.playClick) window.playClick();
+            const password = document.getElementById('newPassword').value;
+            const btn = document.getElementById('btn-signup');
+            const status = document.getElementById('status');
+
+            if(password.length < 6) { status.innerText = "Password must be 6+ chars"; return; }
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Creating...';
+
+            try {
+                let finalEmail = verifiedEmail;
+                if(activeTab === 'phone') {
+                    finalEmail = `${verifiedPhone.replace('+','')}@brand.com`; 
+                    alert(`NOTE: Your Login ID is ${finalEmail}`);
+                }
+
+                const userCredential = await createUserWithEmailAndPassword(auth, finalEmail, password);
+                const user = userCredential.user;
+
+                await setDoc(doc(db, "users", user.uid), {
+                    email: finalEmail,
+                    phone: verifiedPhone || "",
+                    createdAt: new Date(),
+                    verifiedBy: activeTab,
+                    firstName: "", lastName: "", address: ""
+                });
+
+                window.location.href = "profile.html";
+
+            } catch(e) {
+                console.error(e);
+                status.innerText = e.message;
+                btn.innerHTML = 'Complete Setup';
+            }
+        }
+    </script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="sounds.js"></script>
+    <script>AOS.init({ duration: 800, once: true });</script>
+</body>
+</html>

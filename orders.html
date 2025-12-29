@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Orders - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+    
+    <style>
+        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
+        body { 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            background-color: var(--theme-bg); 
+            background-image: radial-gradient(circle at center, transparent 0%, rgba(74, 59, 50, 0.03) 100%);
+            overflow-x: hidden;
+        }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #E6D8C5; }
+        ::-webkit-scrollbar-thumb { background: #4A3B32; }
+
+        /* Timeline Styles */
+        .step-active .step-dot { background-color: #4A3B32; border-color: #4A3B32; color: #E6D8C5; }
+        .step-active .step-line { background-color: #4A3B32; }
+        .step-completed .step-dot { background-color: #4A3B32; border-color: #4A3B32; color: #E6D8C5; }
+        .step-completed .step-line { background-color: #4A3B32; }
+        
+        /* Loader */
+        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+    </style>
+</head>
+<body class="bg-themeBg text-themeText flex flex-col min-h-screen">
+
+    <div id="preloader" class="loader-overlay">
+        <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
+    </div>
+
+    <nav class="sticky top-0 z-50 bg-[#E6D8C5]/95 backdrop-blur-md border-b border-[#D6C8B5] shadow-sm py-4">
+        <div class="container mx-auto px-6">
+            <div class="flex justify-between items-center">
+                <a href="index.html" class="relative z-50">
+                    <h1 class="text-3xl font-serif font-bold tracking-widest text-[#4A3B32]">BRAND.</h1>
+                </a>
+                
+                <div class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-[#4A3B32]">
+                    <a href="men.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Men</a>
+                    <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
+                    <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
+                </div>
+
+                <div class="flex items-center gap-6 relative z-50 text-[#4A3B32]">
+                    <a href="profile.html" class="text-xs font-bold uppercase hover:text-themeSub transition flex items-center gap-2">
+                        <i class="fa-solid fa-user"></i> My Profile
+                    </a>
+                    <div onclick="toggleCart()" class="relative cursor-pointer hover:opacity-75 transition">
+                        <i class="fa-solid fa-bag-shopping text-2xl"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#4A3B32]">0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-12 max-w-5xl flex-grow">
+        <div class="mb-12 text-center" data-aos="fade-down">
+            <h2 class="text-4xl md:text-5xl font-serif font-bold mb-4">Order History</h2>
+            <p class="text-xs text-themeSub uppercase tracking-[0.2em]">Track your current and past purchases</p>
+        </div>
+
+        <div id="loading" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn"></i></div>
+        
+        <div id="orders-container" class="space-y-10 hidden">
+            </div>
+        
+        <div id="no-orders" class="hidden text-center py-24 border border-dashed border-[#D6C8B5] rounded bg-white/30 backdrop-blur-sm">
+            <div class="w-20 h-20 bg-[#4A3B32] rounded-full flex items-center justify-center mx-auto mb-6 text-[#E6D8C5] text-3xl shadow-lg"><i class="fa-solid fa-box-open"></i></div>
+            <p class="text-[#4A3B32] mb-8 font-serif text-2xl font-bold">No orders yet</p>
+            <a href="index.html" class="bg-[#4A3B32] text-[#E6D8C5] px-10 py-4 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-xl">Start Shopping</a>
+        </div>
+    </div>
+
+    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
+            <div class="flex justify-center gap-8 text-xs uppercase tracking-widest mb-8 text-[#A89F91]">
+                <a href="#" class="hover:text-white transition">About</a>
+                <a href="#" class="hover:text-white transition">Contact</a>
+                <a href="#" class="hover:text-white transition">FAQ</a>
+            </div>
+            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
+        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
+        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
+        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]"><div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div><button onclick="window.location.href='checkout.html'" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22]">Checkout</button></div>
+    </div>
+    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
+
+    <script type="module">
+        import { auth, db, collection, query, where, getDocs, onAuthStateChanged, signOut } from './firebase-config.js';
+
+        // 0. PRELOADER
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.style.display = 'none', 500);
+        });
+
+        // 1. AUTH CHECK
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                loadOrders(user.uid);
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        // 2. LOAD ORDERS
+        async function loadOrders(uid) {
+            const container = document.getElementById('orders-container');
+            const loading = document.getElementById('loading');
+            const noOrders = document.getElementById('no-orders');
+
+            try {
+                const q = query(collection(db, "orders"), where("userId", "==", uid));
+                const querySnapshot = await getDocs(q);
+                
+                let orders = [];
+                querySnapshot.forEach((doc) => { orders.push({ id: doc.id, ...doc.data() }); });
+
+                // Sort Newest First
+                orders.sort((a, b) => b.timestamp - a.timestamp);
+
+                if (orders.length === 0) {
+                    loading.classList.add('hidden');
+                    noOrders.classList.remove('hidden');
+                    return;
+                }
+
+                container.innerHTML = "";
+                orders.forEach(order => {
+                    // 1. Calculate Status State for Timeline
+                    let step = 0; // 0=Placed, 1=Processing, 2=Shipped, 3=Delivered
+                    if (order.status === 'Processing') step = 1;
+                    if (order.status === 'Shipped') step = 2;
+                    if (order.status === 'Delivered') step = 3;
+                    
+                    const isCancelled = (order.status === 'Cancelled');
+
+                    // 2. Timeline HTML Generator
+                    let timelineHTML = '';
+                    if (!isCancelled) {
+                        timelineHTML = `
+                        <div class="px-8 py-8 bg-[#F9F5F0] border-t border-[#D6C8B5]/30">
+                            <div class="flex items-center justify-between relative">
+                                <div class="absolute top-1/2 left-0 w-full h-0.5 bg-gray-200 -z-0 -translate-y-1/2"></div>
+                                
+                                <div class="relative z-10 text-center ${step >= 0 ? 'step-completed' : ''}">
+                                    <div class="step-dot w-8 h-8 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center text-xs transition-colors duration-500 mx-auto shadow-sm"><i class="fa-solid fa-clipboard-check"></i></div>
+                                    <p class="text-[9px] font-bold uppercase mt-3 text-gray-400 tracking-wider">Placed</p>
+                                </div>
+                                <div class="absolute top-1/2 left-0 w-1/3 h-0.5 bg-gray-200 -z-0 -translate-y-1/2 ${step >= 1 ? 'bg-themeBtn' : ''} transition-colors duration-700"></div>
+
+                                <div class="relative z-10 text-center ${step >= 1 ? 'step-completed' : ''}">
+                                    <div class="step-dot w-8 h-8 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center text-xs transition-colors duration-500 mx-auto shadow-sm"><i class="fa-solid fa-box"></i></div>
+                                    <p class="text-[9px] font-bold uppercase mt-3 text-gray-400 tracking-wider">Processing</p>
+                                </div>
+                                <div class="absolute top-1/2 left-1/3 w-1/3 h-0.5 bg-gray-200 -z-0 -translate-y-1/2 ${step >= 2 ? 'bg-themeBtn' : ''} transition-colors duration-700"></div>
+
+                                <div class="relative z-10 text-center ${step >= 2 ? 'step-completed' : ''}">
+                                    <div class="step-dot w-8 h-8 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center text-xs transition-colors duration-500 mx-auto shadow-sm"><i class="fa-solid fa-truck-fast"></i></div>
+                                    <p class="text-[9px] font-bold uppercase mt-3 text-gray-400 tracking-wider">Shipped</p>
+                                </div>
+                                <div class="absolute top-1/2 left-2/3 w-1/3 h-0.5 bg-gray-200 -z-0 -translate-y-1/2 ${step >= 3 ? 'bg-themeBtn' : ''} transition-colors duration-700"></div>
+
+                                <div class="relative z-10 text-center ${step >= 3 ? 'step-completed' : ''}">
+                                    <div class="step-dot w-8 h-8 rounded-full bg-white border-2 border-gray-300 flex items-center justify-center text-xs transition-colors duration-500 mx-auto shadow-sm"><i class="fa-solid fa-house-chimney"></i></div>
+                                    <p class="text-[9px] font-bold uppercase mt-3 text-gray-400 tracking-wider">Delivered</p>
+                                </div>
+                            </div>
+                        </div>`;
+                    } else {
+                        // Cancelled View
+                        timelineHTML = `
+                        <div class="px-8 py-6 bg-red-50 border-t border-red-100 flex items-center gap-4 text-red-800">
+                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center"><i class="fa-solid fa-ban text-lg"></i></div>
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-wide">Order Cancelled</p>
+                                <p class="text-[10px] opacity-70">Please contact support if this was a mistake.</p>
+                            </div>
+                        </div>`;
+                    }
+
+                    // 3. Items List Generator
+                    let itemsHtml = order.items.map(item => `
+                        <div class="flex items-center gap-4 bg-gray-50 p-3 rounded-sm border border-gray-100">
+                            <div class="w-14 h-16 bg-gray-200 rounded-sm overflow-hidden flex-shrink-0">
+                                <img src="${item.image}" class="w-full h-full object-cover">
+                            </div>
+                            <div class="flex-grow">
+                                <p class="text-xs font-bold text-themeText font-serif line-clamp-1">${item.name}</p>
+                                <p class="text-[10px] text-gray-500 font-medium mt-1">Qty: ${item.qty} <span class="mx-1 text-gray-300">|</span> Size: ${item.selectedSize}</p>
+                            </div>
+                            <p class="text-xs font-bold text-themeText font-mono">Rs. ${(item.discountPrice||item.price).toLocaleString()}</p>
+                        </div>
+                    `).join('');
+
+                    // 4. Final Card HTML
+                    const html = `
+                        <div class="bg-white rounded-sm shadow-xl border border-[#D6C8B5]/50 overflow-hidden group" data-aos="fade-up">
+                            
+                            <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between md:items-center gap-6 border-b border-gray-100">
+                                <div class="flex items-center gap-5">
+                                    <div class="w-12 h-12 bg-[#4A3B32] rounded-full flex items-center justify-center text-[#E6D8C5] shadow-lg"><i class="fa-solid fa-bag-shopping text-lg"></i></div>
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase text-gray-400 tracking-widest mb-1">Order #${order.id.slice(0, 8).toUpperCase()}</p>
+                                        <p class="text-sm font-bold text-themeText font-serif">${order.date}</p>
+                                    </div>
+                                </div>
+                                <div class="text-right">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-widest mb-1">Total Amount</p>
+                                    <p class="font-serif font-bold text-2xl text-themeText">Rs. ${order.totalAmount.toLocaleString()}</p>
+                                </div>
+                            </div>
+
+                            ${timelineHTML}
+
+                            <div class="p-6 md:p-8">
+                                <p class="text-[10px] font-bold uppercase text-gray-400 mb-4 tracking-widest">Items Purchased</p>
+                                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                    ${itemsHtml}
+                                </div>
+                                
+                                <div class="mt-6 pt-6 border-t border-gray-100 flex justify-between items-center">
+                                    <p class="text-[10px] text-gray-400 uppercase tracking-wider">Paid via <span class="font-bold text-gray-600">${order.paymentMethod}</span></p>
+                                    <a href="https://wa.me/923001234567?text=Help with Order ID ${order.id}" target="_blank" class="text-[10px] font-bold text-themeBtn hover:underline flex items-center gap-2"><i class="fa-brands fa-whatsapp"></i> Need Help?</a>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    container.innerHTML += html;
+                });
+
+                loading.classList.add('hidden');
+                container.classList.remove('hidden');
+
+            } catch (e) {
+                console.error("Error loading orders:", e);
+                loading.innerHTML = '<p class="text-red-500">Failed to load order history.</p>';
+            }
+        }
+
+        // CART LOGIC
+        const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+        function updateCartUI() {
+            document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0);
+            const con = document.getElementById('cart-items');
+            con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>';
+            let t = 0;
+            cart.forEach(i => {
+                const price = i.discountPrice > 0 ? i.discountPrice : i.price; t += price * i.qty;
+                con.innerHTML += `<div class="flex justify-between border-b border-[#D6C8B5] pb-2"><div><p class="font-bold text-sm">${i.name}</p><p class="text-xs text-gray-500">Size: ${i.selectedSize}</p><div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white"><button onclick="changeQty('${i.id}-${i.selectedSize}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button><span class="text-xs font-bold w-4 text-center">${i.qty}</span><button onclick="changeQty('${i.id}-${i.selectedSize}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button></div></div><div class="text-right"><p class="font-bold text-sm">Rs. ${(price*i.qty).toLocaleString()}</p><button onclick="removeItem('${i.id}-${i.selectedSize}')" class="text-xs text-red-500 hover:underline">Remove</button></div></div>`;
+            });
+            document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString();
+        }
+        window.changeQty = (id, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}` === id); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
+        window.toggleCart = () => { const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay'); if(s.classList.contains('translate-x-full')) { s.classList.remove('translate-x-full'); o.classList.remove('hidden'); updateCartUI(); } else { s.classList.add('translate-x-full'); o.classList.add('hidden'); } }
+        window.removeItem = (id) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}` === id); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
+        updateCartUI();
+    </script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script src="sounds.js"></script>
+    <script>AOS.init({ duration: 800, once: true });</script>
+</body>
+</html>

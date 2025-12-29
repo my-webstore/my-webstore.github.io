@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>My Wishlist - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        .glass-panel { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); }
+    </style>
+</head>
+<body class="bg-themeBg text-themeText min-h-screen flex flex-col">
+
+    <nav class="sticky top-0 z-50 bg-[#E6D8C5]/95 backdrop-blur-md border-b border-[#D6C8B5] shadow-sm py-4">
+        <div class="container mx-auto px-6 flex justify-between items-center">
+            <a href="index.html" class="text-3xl font-serif font-bold tracking-widest text-[#4A3B32]">BRAND.</a>
+            <div class="flex items-center gap-6 text-[#4A3B32]">
+                <a href="profile.html" class="text-xs font-bold uppercase hover:text-themeSub transition hidden md:block">My Profile</a>
+                <a href="index.html" class="text-xs font-bold uppercase hover:text-themeSub transition">Continue Shopping</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto px-6 py-12">
+        <div class="text-center mb-12" data-aos="fade-down">
+            <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">My Wishlist</h1>
+            <p class="text-xs text-themeSub uppercase tracking-[0.2em]">Your curated collection of favorites</p>
+        </div>
+
+        <div id="loading" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn"></i></div>
+        
+        <div id="empty-state" class="hidden text-center py-20 border border-dashed border-[#D6C8B5] rounded glass-panel max-w-2xl mx-auto">
+            <div class="w-16 h-16 bg-[#4A3B32] rounded-full flex items-center justify-center mx-auto mb-6 text-[#E6D8C5] text-2xl shadow-lg"><i class="fa-solid fa-heart-crack"></i></div>
+            <p class="text-xl font-serif font-bold mb-2">Your wishlist is empty</p>
+            <p class="text-xs text-themeSub uppercase tracking-wider mb-8">Save items you love to view them here.</p>
+            <a href="index.html" class="bg-themeBtn text-[#E6D8C5] px-8 py-3 rounded-sm text-xs font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg">Explore Collection</a>
+        </div>
+
+        <div id="wishlist-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8"></div>
+    </div>
+
+    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-16 pb-8 border-t border-[#4A3B32] mt-auto">
+        <div class="container mx-auto px-6 text-center">
+            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script type="module">
+        import { auth, db, collection, query, where, getDocs, deleteDoc, doc, onAuthStateChanged } from './firebase-config.js';
+
+        onAuthStateChanged(auth, user => {
+            if (user) {
+                loadWishlist(user.uid);
+            } else {
+                window.location.href = "login.html";
+            }
+        });
+
+        async function loadWishlist(uid) {
+            const grid = document.getElementById('wishlist-grid');
+            const loading = document.getElementById('loading');
+            const empty = document.getElementById('empty-state');
+
+            try {
+                // Query the 'wishlist' collection for items belonging to this user
+                const q = query(collection(db, "wishlist"), where("userId", "==", uid));
+                const snap = await getDocs(q);
+
+                loading.classList.add('hidden');
+
+                if (snap.empty) {
+                    empty.classList.remove('hidden');
+                    return;
+                }
+
+                grid.innerHTML = "";
+                snap.forEach(d => {
+                    const item = d.data();
+                    // We use the document ID to allow deletion
+                    const docId = d.id; 
+                    
+                    grid.innerHTML += `
+                        <div class="bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30" data-aos="fade-up">
+                            <div class="relative h-[300px] overflow-hidden">
+                                <img src="${item.image}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
+                                <button onclick="removeFromWishlist('${docId}')" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md" title="Remove">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="p-6 text-center">
+                                <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${item.category}</p>
+                                <h3 class="text-xl font-serif font-bold text-themeText mb-2">${item.name}</h3>
+                                <p class="text-themeBtn font-mono text-sm mb-6">Rs. ${item.price.toLocaleString()}</p>
+                                <a href="product-details.html?id=${item.productId}" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition">
+                                    View Product
+                                </a>
+                            </div>
+                        </div>
+                    `;
+                });
+
+            } catch (e) {
+                console.error("Wishlist error:", e);
+                loading.innerText = "Error loading wishlist.";
+            }
+        }
+
+        // Global function for the remove button
+        window.removeFromWishlist = async (docId) => {
+            if(!confirm("Remove this item from wishlist?")) return;
+            const btn = event.target.closest('button');
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+            
+            try {
+                await deleteDoc(doc(db, "wishlist", docId));
+                // Reload current user's list
+                const user = auth.currentUser;
+                if(user) loadWishlist(user.uid);
+            } catch (e) {
+                console.error(e);
+                alert("Could not remove item.");
+            }
+        }
+    </script>
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ duration: 800, once: true });</script>
+</body>
+</html>

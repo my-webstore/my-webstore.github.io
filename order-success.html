@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Order Confirmed - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    
+    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; background-image: radial-gradient(circle at center, transparent 0%, rgba(74, 59, 50, 0.03) 100%); overflow-x: hidden; }
+        h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
+        
+        .success-ring { animation: ringScale 1s ease-out forwards; }
+        @keyframes ringScale { 0% { transform: scale(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
+        
+        .check-draw { stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawCheck 0.8s 0.5s ease forwards; }
+        @keyframes drawCheck { to { stroke-dashoffset: 0; } }
+
+        /* PRINT STYLES - Hides UI and shows only receipt */
+        @media print {
+            body { background: white !important; padding: 0; }
+            .no-print { display: none !important; }
+            #receipt-print-area { display: block !important; visibility: visible; position: absolute; left: 0; top: 0; width: 100%; }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6">
+
+    <div data-aos="zoom-in" data-aos-duration="800" class="bg-white p-10 md:p-14 rounded-sm shadow-2xl max-w-md w-full border border-[#D6C8B5] relative text-center no-print">
+        <div class="absolute top-0 left-0 w-full h-1 bg-[#4A3B32]"></div>
+
+        <div class="relative mb-8 flex justify-center items-center">
+            <div class="absolute w-24 h-24 rounded-full border-2 border-green-200 success-ring"></div>
+            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center relative z-10">
+                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path class="check-draw" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
+                </svg>
+            </div>
+        </div>
+
+        <h1 class="text-3xl md:text-4xl font-serif font-bold text-[#4A3B32] mb-4">Thank You.</h1>
+        <p class="text-[#7A6B63] text-sm leading-relaxed mb-8">Your order has been received and is being prepared with care.</p>
+
+        <div class="bg-[#F5EBE0]/50 p-6 border border-dashed border-[#D6C8B5] rounded-sm mb-8 relative group">
+            <p class="text-[10px] font-bold uppercase text-[#7A6B63] tracking-widest mb-2">Order Reference</p>
+            <div class="flex items-center justify-center gap-3">
+                <p id="order-id" class="text-lg font-mono font-bold text-[#4A3B32] tracking-wider select-all">Processing...</p>
+                <button onclick="copyID(this)" class="text-[#7A6B63] hover:text-[#4A3B32] transition p-1" title="Copy ID">
+                    <i class="fa-regular fa-copy"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="space-y-4">
+            <button onclick="window.print()" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-4 font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-white transition text-xs rounded-sm">
+                <i class="fa-solid fa-print mr-2"></i> Print Receipt
+            </button>
+            
+            <button onclick="window.location.href='index.html'" class="block w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
+                Continue Shopping
+            </button>
+            
+            <a href="orders.html" class="block text-xs font-bold uppercase text-[#7A6B63] hover:text-[#4A3B32] tracking-widest transition pt-2">
+                Track My Order <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
+            </a>
+        </div>
+    </div>
+
+    <div id="receipt-print-area" class="hidden p-8 text-black bg-white">
+        <div class="text-center border-b-2 border-black pb-6 mb-6">
+            <h1 class="text-3xl font-bold tracking-[0.3em] uppercase">BRAND.</h1>
+            <p class="text-xs uppercase mt-2 tracking-widest">Order Confirmation & Receipt</p>
+        </div>
+
+        <div class="flex justify-between mb-8 text-sm">
+            <div>
+                <p class="font-bold uppercase text-xs text-gray-500">Invoice To:</p>
+                <p id="pr-name" class="font-bold text-lg mt-1">...</p>
+                <p id="pr-addr" class="text-gray-600 max-w-xs mt-1">...</p>
+            </div>
+            <div class="text-right">
+                <p><strong>Order ID:</strong> <span id="pr-id"></span></p>
+                <p><strong>Date:</strong> <span id="pr-date"></span></p>
+                <p><strong>Method:</strong> <span id="pr-method"></span></p>
+            </div>
+        </div>
+
+        <table class="w-full text-left border-collapse mb-8">
+            <thead>
+                <tr class="border-b border-black text-xs uppercase tracking-widest">
+                    <th class="py-3">Description</th>
+                    <th class="py-3 text-center">Qty</th>
+                    <th class="py-3 text-right">Amount</th>
+                </tr>
+            </thead>
+            <tbody id="pr-items" class="text-sm">
+                </tbody>
+        </table>
+
+        <div class="flex justify-end">
+            <div class="w-full max-w-[250px] space-y-2 text-sm">
+                <div class="flex justify-between"><span>Subtotal</span><span id="pr-sub"></span></div>
+                <div class="flex justify-between border-b pb-2"><span>Shipping</span><span id="pr-ship"></span></div>
+                <div class="flex justify-between font-bold text-lg pt-2"><span>Total</span><span id="pr-total"></span></div>
+            </div>
+        </div>
+
+        <div class="mt-20 pt-10 border-t border-gray-100 text-center text-[10px] text-gray-400 uppercase tracking-widest">
+            <p>Thank you for choosing BRAND. For any queries, please provide your Order ID.</p>
+            <div class="mt-4 pt-4 border-t border-gray-50 text-gray-600">
+                <p>Storage Guidelines: High-end apparel should be maintained in a cool environment (15°C - 25°C).</p>
+            </div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { db, doc, getDoc } from './firebase-config.js';
+
+        const params = new URLSearchParams(window.location.search);
+        const id = params.get('id');
+
+        window.onload = async () => {
+            if(id) {
+                document.getElementById('order-id').innerText = id.toUpperCase();
+                triggerConfetti();
+                await fetchOrderData(id);
+            } else {
+                window.location.href = "index.html";
+            }
+        };
+
+        async function fetchOrderData(orderId) {
+            try {
+                const docRef = doc(db, "orders", orderId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    
+                    // Populate Print Section
+                    document.getElementById('pr-id').innerText = orderId.toUpperCase();
+                    document.getElementById('pr-date').innerText = data.date;
+                    document.getElementById('pr-name').innerText = data.customer.name;
+                    document.getElementById('pr-addr').innerText = data.customer.address;
+                    document.getElementById('pr-method').innerText = data.paymentMethod || 'Paid';
+                    document.getElementById('pr-sub').innerText = `Rs. ${data.subtotal?.toLocaleString() || '0'}`;
+                    document.getElementById('pr-ship').innerText = data.shipping === 0 ? "FREE" : `Rs. ${data.shipping}`;
+                    document.getElementById('pr-total').innerText = `Rs. ${data.totalAmount.toLocaleString()}`;
+
+                    const itemsHtml = data.items.map(item => `
+                        <tr class="border-b border-gray-100">
+                            <td class="py-4">
+                                <span class="font-bold">${item.name}</span><br>
+                                <span class="text-xs text-gray-500">Size: ${item.selectedSize} | Color: ${item.selectedColor || 'Standard'}</span>
+                            </td>
+                            <td class="py-4 text-center">${item.qty}</td>
+                            <td class="py-4 text-right">Rs. ${item.price.toLocaleString()}</td>
+                        </tr>
+                    `).join('');
+                    document.getElementById('pr-items').innerHTML = itemsHtml;
+
+                }
+            } catch (error) {
+                console.error("Error generating receipt data:", error);
+            }
+        }
+
+        function triggerConfetti() {
+            const colors = ['#4A3B32', '#D6C8B5', '#E6D8C5', '#FFFFFF'];
+            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: colors });
+        }
+
+        window.copyID = (btn) => {
+            const text = document.getElementById('order-id').innerText;
+            navigator.clipboard.writeText(text).then(() => {
+                const icon = btn.querySelector('i');
+                icon.className = "fa-solid fa-check text-green-600";
+                setTimeout(() => icon.className = "fa-regular fa-copy", 2000);
+            });
+        }
+    </script>
+    
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>AOS.init({ duration: 1000, once: true });</script>
+</body>
+</html>
