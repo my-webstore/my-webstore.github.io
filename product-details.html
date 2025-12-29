@@ -244,8 +244,10 @@
         }
 
         window.toggleUserMenu = () => document.getElementById('user-dropdown').classList.toggle('hidden');
-        window.toggleMobileMenu = () => { const menu = document.getElementById('mobile-menu'); menu.classList.toggle('translate-x-full'); }
+        window.toggleMobileMenu = () => { const menu = document.getElementById('mobile-menu'); if(menu.classList.contains('translate-x-full')) menu.classList.remove('translate-x-full'); else menu.classList.add('translate-x-full'); }
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
+
+        window.goBack = () => { if (window.history.length > 1 && document.referrer.indexOf(window.location.host) !== -1) window.history.back(); else window.location.href = 'index.html'; }
 
         // 2. FETCH DATA & RENDER
         async function init() {
@@ -270,21 +272,26 @@
             const btn = document.getElementById('wishlist-btn');
             if(!snap.empty) {
                 wishlistDocId = snap.docs[0].id;
-                btn.classList.replace('text-gray-300', 'text-red-500');
+                btn.className = 'text-2xl text-red-500 hover:scale-110 transition p-2';
             } else {
                 wishlistDocId = null;
-                btn.classList.replace('text-red-500', 'text-gray-300');
+                btn.className = 'text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2';
             }
         }
 
         window.toggleWishlistDB = async () => {
             if(!currentUser) return window.location.href="login.html";
             const btn = document.getElementById('wishlist-btn');
+            
             if(wishlistDocId) {
-                await deleteDoc(doc(db, "wishlist", wishlistDocId));
+                // INSTANT UI CHANGE TO GREY
+                btn.className = 'text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2';
+                const oldId = wishlistDocId;
                 wishlistDocId = null;
-                btn.classList.replace('text-red-500', 'text-gray-300');
+                await deleteDoc(doc(db, "wishlist", oldId));
             } else {
+                // INSTANT UI CHANGE TO RED
+                btn.className = 'text-2xl text-red-500 hover:scale-110 transition p-2';
                 const ref = await addDoc(collection(db, "wishlist"), {
                     userId: currentUser.uid,
                     productId: currentProduct.id,
@@ -294,7 +301,6 @@
                     category: currentProduct.category
                 });
                 wishlistDocId = ref.id;
-                btn.classList.replace('text-gray-300', 'text-red-500');
             }
         }
 
@@ -368,9 +374,8 @@
             if(!selectedColor && currentProduct.colors) { document.getElementById('color-error').classList.remove('hidden'); return; }
             
             const finalPrice = currentProduct.discountPrice > 0 ? currentProduct.discountPrice : currentProduct.price;
-            
-            // Logic for unique cart entry
-            const ex = cart.find(i => i.id === currentProduct.id && i.selectedSize === selectedSize && i.selectedColor === selectedColor);
+            const uid = `${currentProduct.id}-${selectedSize}-${selectedColor}`;
+            const ex = cart.find(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
             
             if(ex) ex.qty += selectedQty; 
             else cart.push({...currentProduct, price: finalPrice, selectedSize, selectedColor, qty: selectedQty});
@@ -474,9 +479,9 @@
         window.setRating = (n) => { currentRating = n; document.querySelectorAll('#star-input i').forEach((s,i) => s.className = i < n ? "fa-solid fa-star star-active" : "fa-solid fa-star star-inactive"); }
 
         // Cart & UI Helpers
-        window.toggleCart = () => { const sb = document.getElementById('cart-sidebar'); const ov = document.getElementById('overlay'); sb.classList.toggle('translate-x-full'); ov.classList.toggle('hidden'); if(!sb.classList.contains('translate-x-full')) updateCartUI(); }
+        window.toggleCart = () => { const sb = document.getElementById('cart-sidebar'); const ov = document.getElementById('overlay'); if (sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); updateCartUI(); } else { sb.classList.add('translate-x-full'); ov.classList.add('hidden'); } }
         function updateCartCount() { document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0); }
-        function updateCartUI() { const con = document.getElementById('cart-items'); con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>'; let t = 0; cart.forEach(i => { const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price; t += finalPrice * i.qty; con.innerHTML += `<div class="flex justify-between border-b border-[#D6C8B5] pb-2"><div><p class="font-bold text-sm">${i.name}</p><p class="text-xs text-gray-500">${i.selectedColor ? i.selectedColor + ' | ' : ''}Size: ${i.selectedSize}</p><div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white"><button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button><span class="text-xs font-bold w-4 text-center">${i.qty}</span><button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button></div></div><div class="text-right"><p class="font-bold text-sm">Rs. ${(finalPrice*i.qty).toLocaleString()}</p><button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:underline">Remove</button></div></div>`; }); document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString(); updateCartCount(); }
+        function updateCartUI() { const con = document.getElementById('cart-items'); con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>'; let t = 0; cart.forEach(i => { const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price; t += finalPrice * i.qty; con.innerHTML += `<div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2"><div class="flex gap-3"><img src="${i.image}" class="w-16 h-20 object-cover rounded-sm"><div><p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p><p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p><div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm"><button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1">-</button><span class="text-xs font-bold w-4 text-center">${i.qty}</span><button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1">+</button></div></div></div><div class="text-right flex flex-col justify-between"><p class="font-bold text-sm">Rs. ${(finalPrice*i.qty).toLocaleString()}</p><button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:underline">Remove</button></div></div>`; }); document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString(); updateCartCount(); }
         window.changeCartQty = (uid, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
         window.removeItem = (uid) => { cart = cart.filter(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` !== uid); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); }
         
@@ -484,7 +489,7 @@
         window.showMedia = (i) => { currentMediaIndex = i; const d = document.getElementById('media-display'); const itm = mediaList[i]; d.style.opacity='0'; setTimeout(()=>{ d.innerHTML = itm.type==='video'?`<video src="${itm.url}" controls autoplay muted class="w-full h-full object-cover"></video>`:`<img src="${itm.url}" class="w-full h-full object-cover">`; d.style.opacity='1'; updateDots();},200); }
         window.nextMedia = () => { let n = currentMediaIndex + 1; if(n >= mediaList.length) n = 0; showMedia(n); }
         window.prevMedia = () => { let p = currentMediaIndex - 1; if(p < 0) p = mediaList.length - 1; showMedia(p); }
-        function toggleArrows() { const p = document.getElementById('prevBtn'), n = document.getElementById('nextBtn'); if(mediaList.length>1){p.classList.remove('hidden', 'md:hidden'); p.classList.add('flex'); n.classList.remove('hidden', 'md:hidden'); n.classList.add('flex');}else{p.classList.add('hidden');n.classList.add('hidden')} }
+        function toggleArrows() { const p = document.getElementById('prevBtn'), n = document.getElementById('nextBtn'); if(mediaList.length>1){p.classList.remove('hidden'); n.classList.remove('hidden');}else{p.classList.add('hidden');n.classList.add('hidden')} }
         function renderDots() { const d = document.getElementById('media-dots'); d.innerHTML=''; if(mediaList.length>1) mediaList.forEach((_,i)=>{ const dot=document.createElement('div'); dot.className=`w-2 h-2 rounded-full cursor-pointer transition-all ${i===0?'bg-[#4A3B32] w-4':'bg-gray-400'}`; dot.onclick=()=>showMedia(i); dot.id=`dot-${i}`; d.appendChild(dot); }); }
         function updateDots() { mediaList.forEach((_,i)=>{ const dot = document.getElementById(`dot-${i}`); if(dot) dot.className=`w-2 h-2 rounded-full cursor-pointer transition-all ${i===currentMediaIndex?'bg-[#4A3B32] w-4':'bg-gray-400'}`; }); }
     </script>
