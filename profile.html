@@ -7,21 +7,19 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
     
     <style>
-        /* LUXURY THEME ENGINE */
-        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; --theme-sub: #7A6B63; --theme-btn: #4A3B32; }
+        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
         body { 
             font-family: 'Plus Jakarta Sans', sans-serif; 
             background-color: var(--theme-bg); 
             background-image: radial-gradient(circle at center, transparent 0%, rgba(74, 59, 50, 0.03) 100%);
             overflow-x: hidden;
         }
-        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; letter-spacing: -0.02em; }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
@@ -43,9 +41,17 @@
         label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; margin-bottom: 4px; display: block; }
 
         .avatar-glow { box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.5), 0 0 20px rgba(0,0,0,0.1); }
-        
-        /* Loader */
         .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+
+        /* Mobile Menu Fix */
+        #mobile-menu { 
+            position: fixed;
+            inset: 0;
+            z-index: 9999 !important;
+            background-color: #E6D8C5 !important;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-themeText">
@@ -75,8 +81,25 @@
                         <i class="fa-solid fa-bag-shopping text-2xl"></i>
                         <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">0</span>
                     </div>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
                 </div>
             </div>
+        </div>
+
+        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
+                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex flex-col space-y-8">
+                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
+                <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
+                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+            </div>
+
+            <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
+                </div>
         </div>
     </nav>
 
@@ -123,15 +146,15 @@
 
                     <form id="profileForm" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label>First Name</label><input type="text" id="fname" class="w-full p-3 rounded-sm text-sm font-medium" placeholder="John"></div>
-                            <div><label>Last Name</label><input type="text" id="lname" class="w-full p-3 rounded-sm text-sm font-medium" placeholder="Doe"></div>
-                            <div><label>Email Address</label><input type="text" id="auth-email" class="w-full p-3 bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200 text-sm" disabled value="..."></div>
+                            <div><label>First Name</label><input type="text" id="fname" class="w-full p-3 rounded-sm text-base md:text-sm font-medium" placeholder="John"></div>
+                            <div><label>Last Name</label><input type="text" id="lname" class="w-full p-3 rounded-sm text-base md:text-sm font-medium" placeholder="Doe"></div>
+                            <div><label>Email Address</label><input type="text" id="auth-email" class="w-full p-3 bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200 text-base md:text-sm" disabled value="..."></div>
                             
                             <div>
                                 <label>Phone Number</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm border-r border-gray-300 pr-2 select-none">+92</span>
-                                    <input type="text" id="phone" class="w-full p-3 pl-14 rounded-sm text-sm font-medium" placeholder="300 1234567">
+                                    <input type="tel" id="phone" class="w-full p-3 pl-14 rounded-sm text-base md:text-sm font-medium" placeholder="300 1234567">
                                 </div>
                             </div>
                         </div>
@@ -140,11 +163,11 @@
                             <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-themeBtn flex items-center gap-2"><i class="fa-solid fa-map-location-dot"></i> Default Shipping Address</h4>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="md:col-span-2"><label>House / Flat No.</label><input type="text" id="addr-house" class="w-full p-3 rounded-sm text-sm" placeholder="e.g. Flat 402, Building A"></div>
-                                <div class="md:col-span-2"><label>Street / Road</label><input type="text" id="addr-street" class="w-full p-3 rounded-sm text-sm" placeholder="e.g. Main Boulevard"></div>
-                                <div><label>Area / Sector</label><input type="text" id="addr-area" class="w-full p-3 rounded-sm text-sm" placeholder="e.g. DHA Phase 6"></div>
-                                <div><label>City</label><input type="text" id="addr-city" class="w-full p-3 rounded-sm text-sm" placeholder="e.g. Lahore"></div>
-                                <div><label>Zip Code</label><input type="text" id="addr-zip" class="w-full p-3 rounded-sm text-sm" placeholder="e.g. 54000"></div>
+                                <div class="md:col-span-2"><label>House / Flat No.</label><input type="text" id="addr-house" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. Flat 402, Building A"></div>
+                                <div class="md:col-span-2"><label>Street / Road</label><input type="text" id="addr-street" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. Main Boulevard"></div>
+                                <div><label>Area / Sector</label><input type="text" id="addr-area" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. DHA Phase 6"></div>
+                                <div><label>City</label><input type="text" id="addr-city" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. Lahore"></div>
+                                <div><label>Zip Code</label><input type="tel" id="addr-zip" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. 54000"></div>
                             </div>
                         </div>
                     </form>
@@ -185,13 +208,13 @@
 
                         <div id="new-card-form" class="hidden bg-gray-50 p-6 rounded-sm border border-gray-200">
                             <form id="cardForm" class="space-y-4">
-                                <div><label>Card Network</label><select id="card-type" class="w-full p-3 rounded-sm text-sm"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
-                                <div><label>Card Number</label><div class="relative"><input type="text" id="card-number" class="w-full p-3 pl-10 rounded-sm text-sm font-mono font-bold" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
+                                <div><label>Card Network</label><select id="card-type" class="w-full p-3 rounded-sm text-base md:text-sm"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
+                                <div><label>Card Number</label><div class="relative"><input type="tel" inputmode="numeric" id="card-number" class="w-full p-3 pl-10 rounded-sm text-base md:text-sm font-mono font-bold" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div><label>Expiry Date</label><input type="text" id="card-expiry" class="w-full p-3 rounded-sm text-sm text-center" placeholder="MM/YY" maxlength="5"></div>
-                                    <div><label>CVC (Not Saved)</label><input type="text" disabled class="w-full p-3 rounded-sm text-sm text-center bg-gray-200 cursor-not-allowed" placeholder="***"></div>
+                                    <div><label>Expiry Date</label><input type="tel" id="card-expiry" class="w-full p-3 rounded-sm text-base md:text-sm text-center" placeholder="MM/YY" maxlength="5"></div>
+                                    <div><label>CVC (Not Saved)</label><input type="tel" disabled class="w-full p-3 rounded-sm text-base md:text-sm text-center bg-gray-200 cursor-not-allowed" placeholder="***"></div>
                                 </div>
-                                <div><label>Cardholder Name</label><input type="text" id="card-name" class="w-full p-3 rounded-sm text-sm uppercase" placeholder="AS ON CARD"></div>
+                                <div><label>Cardholder Name</label><input type="text" id="card-name" class="w-full p-3 rounded-sm text-base md:text-sm uppercase" placeholder="AS ON CARD"></div>
                                 <button type="submit" class="w-full bg-themeBtn text-white py-3 font-bold uppercase tracking-widest text-xs rounded-sm hover:bg-[#3A2B22]">Save Card</button>
                             </form>
                         </div>
@@ -202,7 +225,46 @@
         </div>
     </div>
 
-    <footer class="bg-[#4A3B32] text-[#E6D8C5] py-8 mt-auto text-center border-t border-[#7A6B63] text-xs"><p>&copy; 2025 Brand Inc. Secure Profile.</p></footer>
+    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] relative z-20 mt-auto">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-1">
+                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
+                <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
+                <ul class="space-y-3 text-xs text-[#A89F91]">
+                    <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
+                    <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
+                    <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
+                <ul class="space-y-3 text-xs text-[#A89F91]">
+                    <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
+                    <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-white hover:underline transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
+                <div class="flex gap-4 text-lg text-white">
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+            <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+            </div>
+            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
+        </div>
+    </footer>
 
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
         <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
@@ -214,6 +276,7 @@
     <script type="module">
         import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged, signOut } from './firebase-config.js';
 
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let currentUser = null;
 
         // 0. PRELOADER & NAVBAR SCROLL
@@ -232,12 +295,12 @@
             const cartBadge = document.getElementById('cart-count');
 
             if(window.scrollY > 50) {
-                // Scrolled: Solid Beige, Dark Text
-                nav.classList.add('bg-[#E6D8C5]/95', 'backdrop-blur-md', 'shadow-sm', 'py-4');
+                // Scrolled: Solid Beige
+                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.remove('py-6', 'border-transparent');
             } else {
-                // Top: Transparent, Dark Text (Profile Page is light)
-                nav.classList.remove('bg-[#E6D8C5]/95', 'backdrop-blur-md', 'shadow-sm', 'py-4');
+                // Top: Transparent
+                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.add('py-6', 'border-transparent');
             }
         });
@@ -248,7 +311,6 @@
                 const icon = document.getElementById('card-icon');
                 if(val.startsWith('4')) { icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600 text-lg"; document.getElementById('card-type').value = "Visa"; }
                 else if(val.startsWith('5')) { icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600 text-lg"; document.getElementById('card-type').value = "Mastercard"; }
-                else { icon.className = "fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"; }
                 e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
             });
             document.getElementById('card-expiry')?.addEventListener('input', (e) => {
@@ -261,12 +323,37 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
+                setupMobileMenu(user);
                 initInputMasks();
                 await loadProfile(user);
+                
+                // Load cart
+                const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
+                cart.length = 0;
+                cart.push(...latestCart);
+                updateCartUI();
             } else {
                 window.location.href = "login.html";
             }
         });
+
+        function setupMobileMenu(u) {
+            const mobileLinks = document.getElementById('mobile-auth-links');
+            if(u) {
+                const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
+                const isAdmin = u.email === ADMIN_EMAIL;
+                
+                mobileLinks.innerHTML = `
+                    <div class="flex flex-col gap-4 text-center">
+                        <div class="flex items-center justify-center gap-3 mb-2">
+                             <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
+                             <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
+                        </div>
+                        ${isAdmin ? `<a href="admin.html" class="text-lg font-bold text-black border-b border-black pb-2">Admin Dashboard</a>` : ''}
+                        <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
+                    </div>`;
+            }
+        }
 
         async function loadProfile(user) {
             try {
@@ -286,13 +373,11 @@
                     document.getElementById('fname').value = data.firstName || "";
                     document.getElementById('lname').value = data.lastName || "";
                     
-                    // SMART PHONE LOADING: Remove +92 prefix for display if present
                     let phone = data.contactPhone || user.phoneNumber || "";
                     if(phone.startsWith('+92')) phone = phone.slice(3).trim();
                     if(phone.startsWith('92')) phone = phone.slice(2).trim();
                     document.getElementById('phone').value = phone;
 
-                    // LOAD ADDRESS
                     if(data.addressDetails) {
                         document.getElementById('addr-house').value = data.addressDetails.house || "";
                         document.getElementById('addr-street').value = data.addressDetails.street || "";
@@ -303,7 +388,6 @@
                         document.getElementById('addr-street').value = data.address; 
                     }
 
-                    // LOAD CARD
                     if(data.savedCard) {
                         document.getElementById('saved-card-view').classList.remove('hidden');
                         document.getElementById('add-card-view').classList.add('hidden');
@@ -329,7 +413,6 @@
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...'; btn.disabled = true;
 
             try {
-                // Construct Address
                 const addrObj = {
                     house: document.getElementById('addr-house').value,
                     street: document.getElementById('addr-street').value,
@@ -339,9 +422,8 @@
                 };
                 const fullAddress = `${addrObj.house}, ${addrObj.street}, ${addrObj.area}, ${addrObj.city} - ${addrObj.zip}`;
 
-                // Construct Phone: Add +92 back
                 let rawPhone = document.getElementById('phone').value.trim();
-                if(rawPhone.startsWith('0')) rawPhone = rawPhone.slice(1); // Remove leading 0
+                if(rawPhone.startsWith('0')) rawPhone = rawPhone.slice(1); 
                 const finalPhone = "+92" + rawPhone;
 
                 const updates = {
@@ -389,6 +471,11 @@
             }
         }
 
+        window.toggleMobileMenu = () => { 
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        }
+
         window.handleLogout = async () => {
             if(window.playClick) window.playClick();
             if(confirm("Are you sure you want to sign out?")) {
@@ -411,7 +498,6 @@
         window.changeQty = (id, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}` === id); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
         window.toggleCart = () => { const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay'); if(s.classList.contains('translate-x-full')) { s.classList.remove('translate-x-full'); o.classList.remove('hidden'); updateCartUI(); } else { s.classList.add('translate-x-full'); o.classList.add('hidden'); } }
         window.removeItem = (id) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}` === id); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        updateCartUI();
     </script>
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

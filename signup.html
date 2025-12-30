@@ -18,7 +18,6 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
         h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
         
-        /* Standard Input Style */
         .input-field { 
             background: transparent; 
             border-bottom: 1px solid #D6C8B5; 
@@ -29,7 +28,6 @@
             outline: none; 
         }
 
-        /* Phone Input Container Style */
         .phone-input-container {
             display: flex;
             align-items: center;
@@ -45,11 +43,16 @@
             border: none;
             outline: none;
         }
+
+        /* Prevent auto-zoom on iOS */
+        @media screen and (max-width: 768px) {
+            input, select, textarea { font-size: 16px !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 md:p-0">
 
-    <div class="bg-white rounded-sm shadow-2xl w-full max-w-5xl h-[600px] md:h-[700px] flex overflow-hidden border border-[#D6C8B5]" data-aos="zoom-in">
+    <div class="bg-white rounded-sm shadow-2xl w-full max-w-5xl h-auto md:h-[700px] flex overflow-hidden border border-[#D6C8B5]" data-aos="zoom-in">
         
         <div class="hidden md:block w-1/2 relative">
             <img src="https://images.unsplash.com/photo-1483985988355-763728e1935b?q=80&w=2070&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Luxury Shopping">
@@ -66,12 +69,12 @@
                 <a href="index.html" class="text-xs font-bold uppercase text-[#7A6B63] hover:text-[#4A3B32] transition">Back to Store</a>
             </div>
 
-            <div class="mb-8">
+            <div class="mb-8 mt-8 md:mt-0">
                 <h2 class="text-3xl font-serif font-bold text-[#4A3B32] mb-1">Create Account</h2>
                 <p class="text-xs text-[#7A6B63] uppercase tracking-widest">Already a member? <a href="login.html" class="underline font-bold text-[#4A3B32]">Sign In</a></p>
             </div>
 
-            <button onclick="handleGoogleSignup()" class="w-full border border-[#D6C8B5] hover:border-[#4A3B32] text-[#4A3B32] py-3 flex items-center justify-center gap-3 transition mb-6 group rounded-sm">
+            <button onclick="handleGoogleSignup()" class="w-full border border-[#D6C8B5] hover:border-[#4A3B32] text-[#4A3B32] py-3 flex items-center justify-center gap-3 transition mb-6 group rounded-sm whitespace-nowrap">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:scale-110 transition-transform">
                 <span class="text-xs font-bold uppercase tracking-wide">Continue with Google</span>
             </button>
@@ -88,12 +91,12 @@
 
             <div id="step-verify">
                 <div id="input-group-email" class="mb-6">
-                    <input type="email" id="emailInput" class="w-full py-3 text-sm input-field" placeholder="Email Address">
+                    <input type="email" id="emailInput" class="w-full py-3 md:text-sm text-base input-field" placeholder="Email Address">
                 </div>
                 <div id="input-group-phone" class="mb-6 hidden">
                     <div class="phone-input-container">
-                        <span class="text-sm font-bold text-gray-500 pr-2 border-r border-[#D6C8B5] select-none">+92</span>
-                        <input type="text" id="phoneInput" class="py-3 text-sm pl-3 phone-input-field" placeholder="300 1234567">
+                        <span class="text-sm font-bold text-gray-500 pr-2 border-r border-[#D6C8B5] select-none h-full flex items-center">+92</span>
+                        <input type="tel" inputmode="numeric" id="phoneInput" class="py-3 pl-3 phone-input-field md:text-sm text-base" placeholder="300 1234567">
                     </div>
                 </div>
                 <div id="recaptcha-container"></div>
@@ -107,7 +110,7 @@
                     <span class="text-xs font-bold text-gray-500 uppercase tracking-wide">Enter Code</span>
                     <button onclick="location.reload()" class="text-[10px] text-red-500 underline font-bold uppercase">Change</button>
                 </div>
-                <input type="number" id="otpInput" class="w-full py-3 text-center text-3xl tracking-[0.5em] font-bold text-[#4A3B32] input-field" placeholder="••••••">
+                <input type="tel" inputmode="numeric" id="otpInput" class="w-full py-3 text-center text-2xl md:text-3xl tracking-[0.5em] font-bold text-[#4A3B32] input-field" placeholder="••••••">
                 <button id="btn-verify-otp" onclick="verifyOTP()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
                     Verify
                 </button>
@@ -119,15 +122,21 @@
                     <span class="text-xs font-bold uppercase tracking-wide">Verified</span>
                 </div>
                 <div>
-                    <input type="password" id="newPassword" class="w-full py-3 text-sm input-field" placeholder="Set Password (Min. 6 chars)">
+                    <input type="password" id="newPassword" class="w-full py-3 md:text-sm text-base input-field" placeholder="Set Password (Min. 6 chars)">
                 </div>
                 <button id="btn-signup" onclick="finalizeAccount()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
                     Complete Setup
                 </button>
             </div>
 
-            <p id="status" class="mt-4 text-center text-xs font-bold text-red-600 min-h-[20px]"></p>
+            <p id="status" class="mt-4 text-center text-xs font-bold text-red-600 min-h-[20px] pb-4 md:pb-0"></p>
         </div>
+    </div>
+
+    <div class="fixed bottom-2 right-2 hidden md:block opacity-50 hover:opacity-100 transition">
+        <table class="bg-white/80 p-2 text-[8px] rounded border shadow">
+            <tr><td class="font-bold pr-2">Storage:</td><td>18°C - 24°C</td></tr>
+        </table>
     </div>
 
     <script type="module">
@@ -201,7 +210,7 @@
             }
         }
 
-        // 3. SEND OTP (Updated for fixed +92)
+        // 3. SEND OTP
         window.sendOTP = async () => {
             if(window.playClick) window.playClick();
             const btn = document.getElementById('btn-send-otp');
@@ -224,9 +233,7 @@
                     showVerifyStep();
 
                 } else {
-                    // **UPDATED PHONE LOGIC**
                     let phone = document.getElementById('phoneInput').value.trim();
-                    // Remove any leading '0' the user might have typed
                     if(phone.startsWith('0')) phone = phone.substring(1);
 
                     if(phone.length < 10) throw new Error("Invalid Phone Number. Please enter the 10 digits after +92.");
@@ -235,7 +242,6 @@
                         window.recaptchaVerifier = new RecaptchaVerifier(auth, 'recaptcha-container', {'size': 'invisible'});
                     }
 
-                    // Combine +92 with the user's input, removing spaces
                     const finalPhone = '+92' + phone.replace(/\s+/g, '');
 
                     phoneConfirmationResult = await signInWithPhoneNumber(auth, finalPhone, window.recaptchaVerifier);
