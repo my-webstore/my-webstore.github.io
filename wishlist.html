@@ -15,6 +15,9 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
         .glass-panel { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); }
+        /* Smooth fade for removed items */
+        .product-card { transition: opacity 0.4s ease, transform 0.4s ease; }
+        .removing { opacity: 0; transform: scale(0.9); pointer-events: none; }
     </style>
 </head>
 <body class="bg-themeBg text-themeText min-h-screen flex flex-col">
@@ -29,7 +32,7 @@
         </div>
     </nav>
 
-    <div class="container mx-auto px-6 py-12">
+    <div class="container mx-auto px-6 py-12 flex-grow">
         <div class="text-center mb-12" data-aos="fade-down">
             <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">My Wishlist</h1>
             <p class="text-xs text-themeSub uppercase tracking-[0.2em]">Your curated collection of favorites</p>
@@ -56,6 +59,7 @@
     <script type="module">
         import { auth, db, collection, query, where, getDocs, deleteDoc, doc, onAuthStateChanged } from './firebase-config.js';
 
+        // Listen for Auth changes
         onAuthStateChanged(auth, user => {
             if (user) {
                 loadWishlist(user.uid);
@@ -70,64 +74,82 @@
             const empty = document.getElementById('empty-state');
 
             try {
-                // Query the 'wishlist' collection for items belonging to this user
                 const q = query(collection(db, "wishlist"), where("userId", "==", uid));
                 const snap = await getDocs(q);
 
                 loading.classList.add('hidden');
+                
+                // CRITICAL FIX: Clear the grid every time we load 
+                // to ensure old data (last item) is wiped out.
+                grid.innerHTML = "";
 
                 if (snap.empty) {
                     empty.classList.remove('hidden');
                     return;
                 }
 
-                grid.innerHTML = "";
+                empty.classList.add('hidden');
+
                 snap.forEach(d => {
                     const item = d.data();
-                    // We use the document ID to allow deletion
                     const docId = d.id; 
                     
-                    grid.innerHTML += `
-                        <div class="bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30" data-aos="fade-up">
-                            <div class="relative h-[300px] overflow-hidden">
-                                <img src="${item.image}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700">
-                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
-                                <button onclick="removeFromWishlist('${docId}')" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md" title="Remove">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </div>
-                            <div class="p-6 text-center">
-                                <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${item.category}</p>
-                                <h3 class="text-xl font-serif font-bold text-themeText mb-2">${item.name}</h3>
-                                <p class="text-themeBtn font-mono text-sm mb-6">Rs. ${item.price.toLocaleString()}</p>
-                                <a href="product-details.html?id=${item.productId}" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition">
-                                    View Product
-                                </a>
-                            </div>
+                    const card = document.createElement('div');
+                    card.className = "bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30 product-card";
+                    card.setAttribute('data-aos', 'fade-up');
+                    card.id = `card-${docId}`;
+
+                    card.innerHTML = `
+                        <div class="relative h-[300px] overflow-hidden">
+                            <img src="${item.image}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" alt="${item.name}">
+                            <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
+                            <button onclick="removeFromWishlist('${docId}')" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md" title="Remove">
+                                <i class="fa-solid fa-xmark"></i>
+                            </button>
+                        </div>
+                        <div class="p-6 text-center">
+                            <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${item.category}</p>
+                            <h3 class="text-xl font-serif font-bold text-themeText mb-2">${item.name}</h3>
+                            <p class="text-themeBtn font-mono text-sm mb-6">Rs. ${item.price.toLocaleString()}</p>
+                            <a href="product-details.html?id=${item.productId}" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition">
+                                View Product
+                            </a>
                         </div>
                     `;
+                    grid.appendChild(card);
                 });
 
             } catch (e) {
                 console.error("Wishlist error:", e);
-                loading.innerText = "Error loading wishlist.";
+                loading.innerHTML = `<p class="text-red-500">Error loading wishlist. Please refresh.</p>`;
             }
         }
 
-        // Global function for the remove button
+        // Optimized Remove Function
         window.removeFromWishlist = async (docId) => {
-            if(!confirm("Remove this item from wishlist?")) return;
+            const card = document.getElementById(`card-${docId}`);
             const btn = event.target.closest('button');
+            
+            if(!confirm("Remove this item from wishlist?")) return;
+            
+            // Visual feedback: Start removal animation
+            if (card) card.classList.add('removing');
             btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
             try {
                 await deleteDoc(doc(db, "wishlist", docId));
-                // Reload current user's list
+                
+                // Fetch the user again to refresh the logic
                 const user = auth.currentUser;
-                if(user) loadWishlist(user.uid);
+                if(user) {
+                    // Re-run the load logic to check if it's empty now
+                    loadWishlist(user.uid);
+                }
             } catch (e) {
                 console.error(e);
                 alert("Could not remove item.");
+                if (card) card.classList.remove('removing');
+                btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
             }
         }
     </script>

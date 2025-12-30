@@ -19,20 +19,16 @@
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
         
-        /* Modern Inputs */
-        .form-input { width: 100%; background: white; border: 1px solid #E5E7EB; padding: 12px 16px; font-size: 0.875rem; transition: all 0.3s ease; border-radius: 2px; }
+        .form-input { width: 100%; background: white; border: 1px solid #E5E7EB; padding: 12px 16px; font-size: 16px; transition: all 0.3s ease; border-radius: 2px; }
         .form-input:focus { border-color: #4A3B32; box-shadow: 0 0 0 4px rgba(74, 59, 50, 0.05); outline: none; }
         label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; margin-bottom: 4px; display: block; }
         
-        /* Step Connector Line */
         .step-connector { position: absolute; left: 11px; top: 30px; bottom: -20px; width: 1px; background-color: #E5E7EB; z-index: 0; }
         .last-step .step-connector { display: none; }
         
-        /* Payment Animation */
         .payment-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.4s ease; opacity: 0; }
-        .payment-content.active { max-height: 800px; opacity: 1; } 
+        .payment-content.active { max-height: 1000px; opacity: 1; margin-top: 1rem; } 
         
-        /* Custom Radio */
         input[type="radio"]:checked + div { border-color: #4A3B32; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         input[type="radio"]:checked + div .radio-indicator { background-color: #4A3B32; border-color: #4A3B32; }
     </style>
@@ -40,172 +36,141 @@
 <body class="min-h-screen flex flex-col">
 
     <header class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
-        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
             <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-themeText transition">
                 <i class="fa-solid fa-arrow-left text-xs"></i><span class="text-[10px] font-bold uppercase tracking-widest">Back</span>
             </a>
-            <h1 class="text-2xl font-serif font-bold tracking-widest text-themeText">BRAND.</h1>
-            <div class="flex items-center gap-2 text-green-700 bg-green-50 px-3 py-1.5 rounded-sm border border-green-100">
-                <i class="fa-solid fa-lock text-[10px]"></i><span class="text-[9px] font-bold uppercase tracking-widest">Secure Checkout</span>
+            <h1 class="text-xl md:text-2xl font-serif font-bold tracking-widest text-themeText">BRAND.</h1>
+            <div class="flex items-center gap-2 text-green-700 bg-green-50 px-2 md:px-3 py-1.5 rounded-sm border border-green-100">
+                <i class="fa-solid fa-lock text-[10px]"></i><span class="text-[8px] md:text-[9px] font-bold uppercase tracking-widest">Secure Checkout</span>
             </div>
         </div>
     </header>
 
     <div id="loading" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center">
         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn mb-4"></i>
-        <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Initializing...</p>
+        <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Verifying Session...</p>
     </div>
 
-    <div id="main-content" class="hidden flex-grow container mx-auto px-4 md:px-6 py-10">
-        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-10">
+    <div id="main-content" class="hidden flex-grow container mx-auto px-4 md:px-6 py-6 md:py-10">
+        <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
             
-            <div class="lg:col-span-7" data-aos="fade-up">
-                
-                <div class="relative pl-10 pb-10">
+            <div class="lg:col-span-7 order-2 lg:order-1" data-aos="fade-up">
+                <div class="relative pl-8 md:pl-10 pb-10">
                     <div class="step-connector"></div>
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">1</div>
-                    <h2 class="text-lg font-serif font-bold mb-6">Contact Information</h2>
+                    <h2 class="text-lg font-serif font-bold mb-6 text-themeText">Contact Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div><label>Full Name</label><input type="text" id="billing-name" class="form-input" placeholder="e.g. John Doe"></div>
-                        <div><label>Mobile Number</label><div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">+92</span><input type="text" id="billing-phone" class="form-input pl-10" placeholder="300 1234567"></div></div>
+                        <div><label>Full Name</label><input type="text" id="billing-name" class="form-input" placeholder="e.g. Awais Altaf"></div>
+                        <div><label>Mobile Number</label><div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">+92</span><input type="tel" inputmode="numeric" id="billing-phone" class="form-input pl-10" placeholder="300 1234567"></div></div>
                     </div>
                 </div>
 
-                <div class="relative pl-10 pb-10">
+                <div class="relative pl-8 md:pl-10 pb-10">
                     <div class="step-connector"></div>
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">2</div>
                     <div class="flex justify-between items-center mb-6">
-                        <h2 class="text-lg font-serif font-bold">Shipping Address</h2>
+                        <h2 class="text-lg font-serif font-bold text-themeText">Shipping Address</h2>
                         <div id="address-toggle-container" class="hidden bg-gray-100 p-1 rounded flex text-[10px] font-bold uppercase tracking-wider">
-                            <button onclick="toggleAddressMode('saved')" id="btn-mode-saved" class="px-3 py-1.5 rounded bg-white shadow-sm text-themeText transition">Saved</button>
-                            <button onclick="toggleAddressMode('new')" id="btn-mode-new" class="px-3 py-1.5 rounded text-gray-400 hover:text-themeText transition">New</button>
+                            <button onclick="toggleAddressMode('saved')" id="btn-mode-saved" class="px-3 py-1.5 rounded transition">Saved</button>
+                            <button onclick="toggleAddressMode('new')" id="btn-mode-new" class="px-3 py-1.5 rounded transition">New</button>
                         </div>
                     </div>
                     
                     <div id="view-saved-address" class="hidden p-4 border border-themeBtn bg-themeBg/10 rounded-sm mb-4">
                         <div class="flex items-start gap-3">
                             <i class="fa-solid fa-house-check text-themeBtn mt-1"></i>
-                            <div><p class="text-xs font-bold uppercase text-themeBtn mb-1">Delivering to Saved Address</p><p id="saved-address-text" class="text-sm text-gray-600 leading-relaxed">...</p></div>
+                            <div><p class="text-xs font-bold uppercase text-themeBtn mb-1">Delivering to</p><p id="saved-address-text" class="text-sm text-gray-600 leading-relaxed">...</p></div>
                         </div>
                     </div>
 
                     <div id="view-new-address" class="grid grid-cols-1 md:grid-cols-2 gap-5">
-                        <div class="md:col-span-2"><label>House / Flat / Apartment No.</label><input type="text" id="addr-house" class="form-input" placeholder="e.g. Flat 402, Building A"></div>
-                        <div class="md:col-span-2"><label>Street Address / Road</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard, Phase 6"></div>
-                        <div><label>Area / Sector / Colony</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. DHA, Bahria Town"></div>
+                        <div class="md:col-span-2"><label>House / Office No.</label><input type="text" id="addr-house" class="form-input" placeholder="e.g. Apt 402, Block B"></div>
+                        <div class="md:col-span-2"><label>Street Address</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard"></div>
+                        <div><label>Area / Sector</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. Phase 6"></div>
                         <div><label>City</label><input type="text" id="addr-city" class="form-input" placeholder="e.g. Lahore"></div>
-                        <div><label>Zip / Postal Code</label><input type="text" id="addr-zip" class="form-input" placeholder="e.g. 54000"></div>
-                        <div><label>Nearest Landmark (Optional)</label><input type="text" id="addr-landmark" class="form-input" placeholder="e.g. Near PSO Pump"></div>
+                        <div><label>Zip Code</label><input type="text" inputmode="numeric" id="addr-zip" class="form-input" placeholder="54000"></div>
+                        <div><label>Landmark (Optional)</label><input type="text" id="addr-landmark" class="form-input" placeholder="e.g. Near Civic Center"></div>
                     </div>
                 </div>
 
-                <div class="relative pl-10 last-step">
+                <div class="relative pl-8 md:pl-10 last-step">
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">3</div>
-                    <h2 class="text-lg font-serif font-bold mb-6">Payment Method</h2>
+                    <h2 class="text-lg font-serif font-bold mb-6 text-themeText">Payment Method</h2>
                     
-                    <div class="space-y-4">
+                    <div class="space-y-3">
                         <label class="cursor-pointer block group">
                             <input type="radio" name="payment" value="cod" checked onchange="togglePayment('cod')" class="peer sr-only">
-                            <div class="p-5 border border-gray-200 rounded-sm bg-gray-50 flex items-center justify-between transition-all hover:border-gray-300">
+                            <div class="p-4 border border-gray-200 rounded-sm bg-gray-50 flex items-center justify-between transition-all">
                                 <div class="flex items-center gap-4">
                                     <div class="radio-indicator w-4 h-4 rounded-full border border-gray-400"></div>
-                                    <div><p class="font-bold text-sm text-themeText">Cash on Delivery</p><p class="text-[10px] text-gray-500 uppercase tracking-wide">Pay when you receive</p></div>
+                                    <p class="font-bold text-sm text-themeText uppercase tracking-widest">Cash on Delivery</p>
                                 </div>
-                                <i class="fa-solid fa-money-bill-1-wave text-xl text-gray-400 peer-checked:text-themeText"></i>
+                                <i class="fa-solid fa-truck-fast text-xl text-gray-400"></i>
                             </div>
                         </label>
 
                         <label class="cursor-pointer block group">
                             <input type="radio" name="payment" value="card" onchange="togglePayment('card')" class="peer sr-only">
-                            <div class="p-5 border border-gray-200 rounded-sm bg-gray-50 flex items-center justify-between transition-all hover:border-gray-300">
+                            <div class="p-4 border border-gray-200 rounded-sm bg-gray-50 flex items-center justify-between transition-all">
                                 <div class="flex items-center gap-4">
                                     <div class="radio-indicator w-4 h-4 rounded-full border border-gray-400"></div>
-                                    <div><p class="font-bold text-sm text-themeText">Credit / Debit Card</p><p class="text-[10px] text-gray-500 uppercase tracking-wide">Secure Transaction</p></div>
+                                    <p class="font-bold text-sm text-themeText uppercase tracking-widest">Credit / Debit Card</p>
                                 </div>
                                 <div class="flex gap-2 text-gray-400"><i class="fa-brands fa-cc-visa text-xl"></i><i class="fa-brands fa-cc-mastercard text-xl"></i></div>
                             </div>
                         </label>
 
-                        <div id="card-area" class="payment-content pl-2 border-l-2 border-themeBtn ml-4">
-                            
+                        <div id="card-area" class="payment-content pl-2 border-l-2 border-themeBtn ml-2">
                             <div id="saved-card-container" class="hidden mb-4">
                                 <label class="cursor-pointer block mb-3">
                                     <input type="radio" name="card_choice" value="saved" checked onchange="toggleCardChoice('saved')" class="peer sr-only">
-                                    <div class="bg-gradient-to-r from-[#2C2C2C] to-[#4A4A4A] p-5 rounded-md shadow-lg text-white relative overflow-hidden border-2 border-transparent peer-checked:border-themeBtn peer-checked:ring-2 peer-checked:ring-themeBtn/20 transition-all">
-                                        <div class="absolute top-0 right-0 p-4 opacity-20"><i class="fa-brands fa-cc-visa text-6xl"></i></div>
-                                        <div class="relative z-10">
-                                            <p class="text-[10px] uppercase tracking-widest opacity-70 mb-1">Saved Card</p>
-                                            <p class="text-xl font-mono tracking-widest mb-4">•••• •••• •••• <span id="saved-last4">0000</span></p>
-                                            <div class="flex justify-between items-end">
-                                                <div><p class="text-[8px] uppercase opacity-70">Card Holder</p><p class="text-xs font-bold uppercase" id="saved-holder">...</p></div>
-                                                <div><p class="text-[8px] uppercase opacity-70">Expires</p><p class="text-xs font-bold" id="saved-expiry">../..</p></div>
-                                            </div>
+                                    <div class="bg-gradient-to-r from-[#2C2C2C] to-[#4A4A4A] p-5 rounded shadow-lg text-white border-2 border-transparent peer-checked:border-themeBtn transition-all">
+                                        <p class="text-[10px] uppercase tracking-widest opacity-70 mb-1">Encrypted Card</p>
+                                        <p class="text-lg font-mono tracking-widest mb-4">•••• •••• •••• <span id="saved-last4">0000</span></p>
+                                        <div class="flex justify-between items-end">
+                                            <div><p class="text-[8px] uppercase opacity-70">Holder</p><p class="text-xs font-bold uppercase" id="saved-holder">...</p></div>
+                                            <div><p class="text-[8px] uppercase opacity-70">Exp</p><p class="text-xs font-bold" id="saved-expiry">../..</p></div>
                                         </div>
                                     </div>
                                 </label>
-                                <button onclick="toggleCardChoice('new')" class="text-xs font-bold text-themeBtn hover:underline uppercase tracking-wide"><i class="fa-solid fa-plus-circle mr-1"></i> Pay with a different card</button>
+                                <button onclick="toggleCardChoice('new')" class="text-xs font-bold text-themeBtn uppercase tracking-widest hover:underline">Use another card</button>
                             </div>
 
-                            <div id="new-card-form" class="bg-white p-5 rounded-sm border border-gray-200 space-y-4 shadow-sm">
-                                <div id="back-to-saved" class="hidden mb-2"><button onclick="toggleCardChoice('saved')" class="text-xs font-bold text-gray-400 hover:text-themeText uppercase tracking-wide"><i class="fa-solid fa-arrow-left mr-1"></i> Back to Saved Card</button></div>
-
-                                <div>
-                                    <label>Card Network</label>
-                                    <div class="relative">
-                                        <select id="card-type" class="form-input appearance-none cursor-pointer">
-                                            <option value="" disabled selected>Select Network</option>
-                                            <option value="Visa">Visa</option>
-                                            <option value="Mastercard">Mastercard</option>
-                                            <option value="Amex">American Express</option>
-                                        </select>
-                                        <i class="fa-solid fa-chevron-down absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none"></i>
-                                    </div>
-                                </div>
-                                <div>
-                                    <label>Card Number</label>
-                                    <div class="relative">
-                                        <input type="text" id="card-number" class="form-input pl-10 font-mono text-themeText font-bold tracking-widest" placeholder="0000 0000 0000 0000" maxlength="19">
-                                        <i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-                                    </div>
-                                </div>
+                            <div id="new-card-form" class="bg-white p-5 rounded-sm border border-gray-200 space-y-4">
+                                <div id="back-to-saved" class="hidden mb-2"><button onclick="toggleCardChoice('saved')" class="text-xs font-bold text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button></div>
+                                <div><label>Network</label><select id="card-type" class="form-input"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
+                                <div><label>Card Number</label><div class="relative"><input type="tel" inputmode="numeric" id="card-number" class="form-input pl-10 font-mono tracking-widest" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div><label>Expiry Date</label><input type="text" id="card-expiry" class="form-input text-center font-mono" placeholder="MM / YY" maxlength="5"></div>
-                                    <div><label>CVC / CVV</label><div class="relative"><input type="text" id="card-cvc" class="form-input text-center font-mono" placeholder="123" maxlength="4"><i class="fa-solid fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i></div></div>
+                                    <div><label>Expiry</label><input type="tel" inputmode="numeric" id="card-expiry" class="form-input text-center" placeholder="MM/YY" maxlength="5"></div>
+                                    <div><label>CVV</label><input type="tel" inputmode="numeric" id="card-cvc" class="form-input text-center" placeholder="123" maxlength="4"></div>
                                 </div>
-                                <div><label>Cardholder Name</label><input type="text" id="card-name" class="form-input uppercase" placeholder="AS ON CARD"></div>
-                                
-                                <div id="save-card-option" class="hidden pt-2 border-t border-gray-100 mt-2">
-                                    <label class="flex items-center gap-2 cursor-pointer normal-case tracking-normal">
-                                        <input type="checkbox" id="chk-save-card" class="accent-themeBtn w-4 h-4">
-                                        <span class="text-xs font-bold text-gray-600">Save card securely for future purchases</span>
-                                    </label>
-                                </div>
+                                <div><label>Cardholder Name</label><input type="text" id="card-name" class="form-input uppercase" placeholder="NAME ON CARD"></div>
+                                <div id="save-card-option" class="hidden pt-2 border-t border-gray-100"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="chk-save-card" class="w-4 h-4 accent-themeBtn"><span class="text-xs font-bold text-gray-600">Save for future purchases</span></label></div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div class="lg:col-span-5 relative" data-aos="fade-left">
-                <div class="sticky top-24">
-                    <div class="bg-white p-8 rounded shadow-2xl border border-gray-100 relative">
-                        <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-themeText to-themeSub"></div>
-                        <h3 class="text-xl font-serif font-bold mb-6 text-center">Order Summary</h3>
-                        
+            <div class="lg:col-span-5 order-1 lg:order-2" data-aos="fade-left">
+                <div class="lg:sticky lg:top-24">
+                    <div class="bg-white p-6 md:p-8 rounded shadow-2xl border border-gray-100">
+                        <h3 class="text-xl font-serif font-bold mb-6 text-center border-b border-gray-100 pb-4">Your Summary</h3>
                         <div id="order-items-list" class="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar"></div>
                         
                         <div class="space-y-3 pt-6 border-t border-dashed border-gray-200 text-sm">
-                            <div class="flex justify-between text-gray-500"><span>Subtotal</span><span id="summary-subtotal" class="font-mono text-gray-800">Rs. 0</span></div>
-                            <div class="flex justify-between text-gray-500"><span>Shipping</span><span id="summary-shipping" class="font-mono text-gray-800">Rs. 0</span></div>
-                            <div class="flex justify-between font-bold text-xl text-themeText pt-4 border-t border-gray-200 mt-2"><span>Total</span><span id="summary-total" class="font-mono">Rs. 0</span></div>
+                            <div class="flex justify-between text-gray-500"><span>Subtotal</span><span id="summary-subtotal" class="font-bold text-gray-800">Rs. 0</span></div>
+                            <div class="flex justify-between text-gray-500"><span>Shipping</span><span id="summary-shipping" class="font-bold text-gray-800">Rs. 0</span></div>
+                            <div class="flex justify-between font-bold text-xl text-themeText pt-4 border-t border-gray-200 mt-2"><span>Total</span><span id="summary-total">Rs. 0</span></div>
                         </div>
                         
-                        <button onclick="validateAndDecide()" class="group w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg mt-8 text-xs rounded-sm relative overflow-hidden">
-                            <span class="relative z-10" id="btn-text">Place Order</span>
-                            <div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+                        <button onclick="validateAndDecide()" id="place-order-btn" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg mt-8 text-xs rounded-sm">
+                            <span id="btn-text">Confirm Order</span>
                         </button>
-                        
-                        <div class="mt-6 flex items-center justify-center gap-2 text-[10px] text-gray-400 uppercase tracking-wide"><i class="fa-solid fa-shield-halved text-green-600"></i> Encrypted Payment</div>
+                        <div class="mt-6 flex items-center justify-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest">
+                            <i class="fa-solid fa-shield-halved text-green-600"></i> Secure Checkout Guaranteed
+                        </div>
                     </div>
                 </div>
             </div>
@@ -215,20 +180,26 @@
     <div id="auth-modal" class="fixed inset-0 bg-black/70 hidden z-[80] flex items-center justify-center backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-sm shadow-2xl max-w-sm w-full overflow-hidden transform scale-95 transition-transform duration-300 border-t-4 border-themeBtn">
             <div class="p-8 text-center">
-                <div class="w-16 h-16 bg-themeBg/30 rounded-full flex items-center justify-center mx-auto mb-4 text-themeBtn text-2xl"><i class="fa-solid fa-user-shield"></i></div>
-                <h3 class="text-xl font-serif font-bold text-themeText mb-2">Checkout Options</h3>
-                <p class="text-gray-500 text-xs mb-8 leading-relaxed">Log in to save this order to your history, or continue as a guest.</p>
+                <h3 class="text-xl font-serif font-bold text-themeText mb-2">Continue Shopping</h3>
+                <p class="text-gray-500 text-xs mb-8">Sign in to earn rewards or checkout as a guest.</p>
                 <div class="space-y-3">
-                    <button onclick="window.location.href='login.html'" class="w-full bg-themeBtn text-white py-3.5 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-md text-xs rounded-sm">Log In / Sign Up</button>
-                    <div class="relative py-2"><div class="absolute inset-0 flex items-center"><span class="w-full border-t border-gray-200"></span></div><div class="relative flex justify-center text-[10px] uppercase"><span class="bg-white px-2 text-gray-400 font-bold">Or</span></div></div>
-                    <button onclick="placeOrder('guest')" class="w-full border border-gray-300 text-gray-600 py-3.5 font-bold uppercase tracking-widest hover:border-themeBtn hover:text-themeBtn transition text-xs rounded-sm bg-white">Checkout as Guest</button>
+                    <button onclick="window.location.href='login.html'" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-xs rounded-sm">Login / Register</button>
+                    <button onclick="placeOrder('guest')" class="w-full border border-gray-300 text-gray-600 py-4 font-bold uppercase tracking-widest text-xs rounded-sm bg-white">Guest Checkout</button>
                 </div>
+                <button onclick="closeAuthModal()" class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Close</button>
             </div>
-            <div class="bg-gray-50 p-3 text-center border-t border-gray-100"><button onclick="closeAuthModal()" class="text-[10px] text-gray-400 hover:text-red-500 font-bold uppercase tracking-widest transition">Cancel & Return</button></div>
         </div>
     </div>
 
-    <footer class="bg-white border-t border-gray-200 py-8 mt-auto text-center"><p class="text-xs text-gray-400 mb-2">&copy; 2025 Brand Inc. All rights reserved.</p></footer>
+    <footer class="bg-white border-t border-gray-100 py-10 mt-auto text-center">
+        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-4">&copy; 2025 Brand Luxury. Official Distributor.</p>
+        <div class="container mx-auto px-6">
+            <table class="mx-auto text-[9px] text-gray-400 uppercase tracking-widest border-t border-gray-50 pt-4 w-full max-w-xs">
+                <tr><td class="py-1">Environment: Standard</td><td class="py-1 text-right">Packaging: Silk tissue</td></tr>
+                <tr><td colspan="2" class="py-2 text-center text-themeSub border-t border-gray-50 font-bold uppercase">Maintain storage: 15°C - 25°C</td></tr>
+            </table>
+        </div>
+    </footer>
 
     <script type="module">
         import { auth, db, doc, getDoc, addDoc, updateDoc, collection, onAuthStateChanged } from './firebase-config.js';
@@ -239,14 +210,13 @@
         const SHIPPING_COST = 250;
         let useSavedCard = false; 
 
-        // --- FORMATTING LOGIC ---
-        const initInputMasks = () => {
+        // Masking logic
+        const initUI = () => {
             document.getElementById('card-number')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 16);
                 const icon = document.getElementById('card-icon');
-                if(val.startsWith('4')) { icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600 text-lg"; document.getElementById('card-type').value = "Visa"; }
-                else if(val.startsWith('5')) { icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600 text-lg"; document.getElementById('card-type').value = "Mastercard"; }
-                else { icon.className = "fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"; }
+                if(val.startsWith('4')) icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600";
+                else if(val.startsWith('5')) icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600";
                 e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
             });
             document.getElementById('card-expiry')?.addEventListener('input', (e) => {
@@ -254,17 +224,16 @@
                 if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
                 e.target.value = val;
             });
-            document.getElementById('card-cvc')?.addEventListener('input', (e) => e.target.value = e.target.value.replace(/\D/g, '').substring(0, 4));
         };
 
         window.addEventListener('DOMContentLoaded', () => { 
-            if (cart.length === 0) { alert("Your bag is empty."); window.location.href = "index.html"; return; } 
-            renderOrderSummary(); initInputMasks(); 
+            if (cart.length === 0) { window.location.href = "index.html"; return; } 
+            renderOrderSummary(); initUI(); 
         });
 
         onAuthStateChanged(auth, async (user) => {
             if (user) { currentUser = user; await loadUserData(user.uid); } 
-            else { document.getElementById('address-toggle-container').classList.add('hidden'); toggleAddressMode('new'); finishLoading(); }
+            else { toggleAddressMode('new'); finishLoading(); }
         });
 
         async function loadUserData(uid) {
@@ -272,25 +241,20 @@
                 const docSnap = await getDoc(doc(db, "users", uid));
                 if (docSnap.exists()) {
                     savedProfileData = docSnap.data();
-                    if(savedProfileData.firstName) document.getElementById('billing-name').value = `${savedProfileData.firstName} ${savedProfileData.lastName}`;
-                    if(savedProfileData.contactPhone) document.getElementById('billing-phone').value = savedProfileData.contactPhone;
-                    if (savedProfileData.address && savedProfileData.address.trim() !== "") {
+                    document.getElementById('billing-name').value = `${savedProfileData.firstName || ''} ${savedProfileData.lastName || ''}`.trim();
+                    document.getElementById('billing-phone').value = savedProfileData.contactPhone || '';
+                    if (savedProfileData.address) {
                         document.getElementById('address-toggle-container').classList.remove('hidden');
                         document.getElementById('saved-address-text').innerText = savedProfileData.address;
                         toggleAddressMode('saved');
-                    } else { toggleAddressMode('new'); }
-
-                    // LOAD SAVED CARD
+                    }
                     if(savedProfileData.savedCard) {
                         document.getElementById('save-card-option').classList.add('hidden'); 
                         renderSavedCard(savedProfileData.savedCard);
                         toggleCardChoice('saved');
-                    } else {
-                        document.getElementById('save-card-option').classList.remove('hidden');
-                        toggleCardChoice('new');
                     }
                 }
-            } catch (error) { console.error(error); } finishLoading();
+            } catch (e) {} finishLoading();
         }
 
         function renderSavedCard(card) {
@@ -301,157 +265,112 @@
 
         window.toggleCardChoice = (choice) => {
             useSavedCard = (choice === 'saved');
-            if(choice === 'saved') {
-                document.getElementById('saved-card-container').classList.remove('hidden');
-                document.getElementById('new-card-form').classList.add('hidden');
-            } else {
-                document.getElementById('saved-card-container').classList.add('hidden');
-                document.getElementById('new-card-form').classList.remove('hidden');
-                if(savedProfileData && savedProfileData.savedCard) document.getElementById('back-to-saved').classList.remove('hidden');
-            }
+            document.getElementById('saved-card-container').classList.toggle('hidden', choice !== 'saved');
+            document.getElementById('new-card-form').classList.toggle('hidden', choice === 'saved');
+            if(choice === 'new' && savedProfileData?.savedCard) document.getElementById('back-to-saved').classList.remove('hidden');
         }
 
         function finishLoading() { document.getElementById('loading').classList.add('hidden'); document.getElementById('main-content').classList.remove('hidden'); }
 
         window.toggleAddressMode = (mode) => {
             currentMode = mode;
-            const btnSaved = document.getElementById('btn-mode-saved'), btnNew = document.getElementById('btn-mode-new');
-            const viewSaved = document.getElementById('view-saved-address'), viewNew = document.getElementById('view-new-address');
-            if (mode === 'saved') {
-                btnSaved.classList.replace('text-gray-400', 'text-themeText'); btnSaved.classList.add('bg-white', 'shadow-sm');
-                btnNew.classList.replace('text-themeText', 'text-gray-400'); btnNew.classList.remove('bg-white', 'shadow-sm');
-                viewSaved.classList.remove('hidden'); viewNew.classList.add('hidden');
-            } else {
-                btnNew.classList.replace('text-gray-400', 'text-themeText'); btnNew.classList.add('bg-white', 'shadow-sm');
-                btnSaved.classList.replace('text-themeText', 'text-gray-400'); btnSaved.classList.remove('bg-white', 'shadow-sm');
-                viewNew.classList.remove('hidden'); viewSaved.classList.add('hidden');
-            }
+            const btnS = document.getElementById('btn-mode-saved'), btnN = document.getElementById('btn-mode-new');
+            const viewS = document.getElementById('view-saved-address'), viewN = document.getElementById('view-new-address');
+            btnS.className = mode === 'saved' ? 'px-3 py-1.5 rounded bg-white shadow-sm text-themeText' : 'px-3 py-1.5 rounded text-gray-400';
+            btnN.className = mode === 'new' ? 'px-3 py-1.5 rounded bg-white shadow-sm text-themeText' : 'px-3 py-1.5 rounded text-gray-400';
+            viewS.classList.toggle('hidden', mode !== 'saved');
+            viewN.classList.toggle('hidden', mode === 'saved');
         }
 
         window.togglePayment = (method) => {
             activePayment = method;
-            const cardArea = document.getElementById('card-area');
-            const btnText = document.getElementById('btn-text');
-            if (method === 'card') { cardArea.classList.add('active'); btnText.innerHTML = 'Pay Now <i class="fa-solid fa-lock ml-1"></i>'; } 
-            else { cardArea.classList.remove('active'); btnText.innerText = 'Place Order'; }
+            document.getElementById('card-area').classList.toggle('active', method === 'card');
+            document.getElementById('btn-text').innerHTML = method === 'card' ? 'Authorize Payment <i class="fa-solid fa-lock ml-1"></i>' : 'Confirm Order';
         }
 
         function renderOrderSummary() {
             const container = document.getElementById('order-items-list');
             let subtotal = 0; container.innerHTML = "";
             cart.forEach(item => {
-                const price = item.discountPrice > 0 ? item.discountPrice : item.price; subtotal += price * item.qty;
-                container.innerHTML += `<div class="flex gap-4 py-3 border-b border-dashed border-gray-100 last:border-0 items-center"><div class="relative w-12 h-12 flex-shrink-0"><img src="${item.image}" class="w-full h-full object-cover rounded border border-gray-200"><span class="absolute -top-2 -right-2 bg-themeText text-white text-[10px] w-5 h-5 flex items-center justify-center rounded-full shadow border-2 border-white">${item.qty}</span></div><div class="flex-1 min-w-0"><p class="text-xs font-bold text-themeText truncate">${item.name}</p><p class="text-[10px] text-gray-400 font-medium">Size: ${item.selectedSize}</p></div><p class="text-xs font-bold text-themeText font-mono">Rs. ${(price * item.qty).toLocaleString()}</p></div>`;
+                const price = item.discountPrice > 0 ? item.discountPrice : item.price;
+                subtotal += price * item.qty;
+                container.innerHTML += `<div class="flex gap-4 py-3 border-b border-dashed border-gray-50 last:border-0 items-center">
+                    <img src="${item.image}" class="w-12 h-14 object-cover rounded shadow-sm">
+                    <div class="flex-1 min-w-0"><p class="text-xs font-bold text-themeText truncate uppercase">${item.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">Qty: ${item.qty} | ${item.selectedSize}</p></div>
+                    <p class="text-xs font-bold text-themeText font-mono">Rs. ${(price * item.qty).toLocaleString()}</p>
+                </div>`;
             });
             const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-            const total = subtotal + shipping;
             document.getElementById('summary-subtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
             document.getElementById('summary-shipping').innerText = shipping === 0 ? "Free" : `Rs. ${shipping}`;
-            document.getElementById('summary-total').innerText = `Rs. ${total.toLocaleString()}`;
+            document.getElementById('summary-total').innerText = `Rs. ${(subtotal + shipping).toLocaleString()}`;
         }
 
         window.validateAndDecide = () => {
-            if(window.playClick) window.playClick();
             const name = document.getElementById('billing-name').value.trim();
             const phone = document.getElementById('billing-phone').value.trim();
-            if (!name || !phone) { alert("Please complete Contact Information."); return; }
-            if (currentMode === 'new') { if (!document.getElementById('addr-house').value.trim() || !document.getElementById('addr-city').value.trim()) { alert("Please complete the Address fields."); return; } }
+            if (!name || !phone) return alert("Contact Info Required");
+            if (currentMode === 'new' && !document.getElementById('addr-city').value) return alert("City & Address Required");
             if (activePayment === 'card' && !useSavedCard) {
-                const type = document.getElementById('card-type').value;
-                const cn = document.getElementById('card-number').value.trim();
-                const exp = document.getElementById('card-expiry').value.trim();
-                const cvc = document.getElementById('card-cvc').value.trim();
-                if(!type) { alert("Please select a Card Network."); return; }
-                if(cn.length < 13 || exp.length < 5 || cvc.length < 3) { alert("Please enter valid Card Details."); return; }
+                if(document.getElementById('card-number').value.length < 16) return alert("Valid Card Required");
             }
             if (currentUser) placeOrder('user'); else openAuthModal();
         }
 
-        window.openAuthModal = () => { const m = document.getElementById('auth-modal'), d = m.querySelector('div'); m.classList.remove('hidden'); setTimeout(() => { m.classList.remove('opacity-0'); d.classList.remove('scale-95'); d.classList.add('scale-100'); }, 10); }
-        window.closeAuthModal = () => { const m = document.getElementById('auth-modal'), d = m.querySelector('div'); m.classList.add('opacity-0'); d.classList.remove('scale-100'); d.classList.add('scale-95'); setTimeout(() => m.classList.add('hidden'), 300); }
+        window.openAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); setTimeout(() => { m.classList.replace('opacity-0', 'opacity-100'); m.querySelector('div').classList.replace('scale-95', 'scale-100'); }, 10); }
+        window.closeAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.replace('opacity-100', 'opacity-0'); m.querySelector('div').classList.replace('scale-100', 'scale-95'); setTimeout(() => m.classList.add('hidden'), 300); }
 
         window.placeOrder = async (type) => {
-            if(window.playClick) window.playClick();
             closeAuthModal();
-            const btn = document.querySelector('button[onclick="validateAndDecide()"]');
-            const originalText = btn.innerHTML;
+            const btn = document.getElementById('place-order-btn');
+            const originalHTML = btn.innerHTML;
             const name = document.getElementById('billing-name').value.trim();
             const phone = document.getElementById('billing-phone').value.trim();
-            
-            let finalAddress = (currentMode === 'saved') ? savedProfileData.address : `${document.getElementById('addr-house').value}, ${document.getElementById('addr-street').value}, ${document.getElementById('addr-area').value}, ${document.getElementById('addr-city').value} - ${document.getElementById('addr-zip').value}`;
+            let finalAddress = currentMode === 'saved' ? savedProfileData.address : `${document.getElementById('addr-house').value}, ${document.getElementById('addr-street').value}, ${document.getElementById('addr-city').value}`;
 
-            btn.innerHTML = activePayment === 'card' ? '<i class="fa-solid fa-circle-notch fa-spin"></i> Verifying Card...' : '<i class="fa-solid fa-circle-notch fa-spin"></i> Processing...';
-            btn.disabled = true; btn.classList.add('opacity-75', 'cursor-not-allowed');
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Securing Transaction...';
+            btn.disabled = true;
 
             try {
-                // ========================================================
-                // 1. INVENTORY SYNC BLOCK
-                // ========================================================
+                // Stock Deduction Block (Ensuring no skipping here)
                 for (const item of cart) {
-                    const productRef = doc(db, "products", item.id);
-                    const productSnap = await getDoc(productRef);
-                    
-                    if (productSnap.exists()) {
-                        const currentData = productSnap.data();
-                        const currentStock = currentData.stock || 0;
-                        const newStock = currentStock - item.qty;
-
-                        await updateDoc(productRef, {
-                            stock: newStock > 0 ? newStock : 0 
-                        });
+                    const pref = doc(db, "products", item.id);
+                    const snap = await getDoc(pref);
+                    if (snap.exists()) {
+                        const newStock = snap.data().stock - item.qty;
+                        if(newStock < 0) throw new Error(`Item ${item.name} just sold out!`);
+                        await updateDoc(pref, { stock: newStock });
                     }
                 }
 
-                // ========================================================
-                // 2. ORDER PROCESSING
-                // ========================================================
-                if(activePayment === 'card') await new Promise(r => setTimeout(r, 2000)); 
-
-                if (type === 'user' && activePayment === 'card' && !useSavedCard) {
-                    const shouldSave = document.getElementById('chk-save-card').checked;
-                    if(shouldSave) {
-                        const rawNum = document.getElementById('card-number').value;
-                        const savedData = {
-                            network: document.getElementById('card-type').value,
-                            number: "•••• •••• •••• " + rawNum.slice(-4),
-                            expiry: document.getElementById('card-expiry').value,
-                            name: document.getElementById('card-name').value
-                        };
-                        await updateDoc(doc(db, "users", currentUser.uid), { savedCard: savedData });
-                    }
+                // Card Saving
+                if (type === 'user' && activePayment === 'card' && !useSavedCard && document.getElementById('chk-save-card').checked) {
+                    const rawNum = document.getElementById('card-number').value;
+                    await updateDoc(doc(db, "users", currentUser.uid), { 
+                        savedCard: { number: "••••" + rawNum.slice(-4), name: document.getElementById('card-name').value, expiry: document.getElementById('card-expiry').value } 
+                    });
                 }
 
-                const subtotal = cart.reduce((acc, item) => acc + ((item.discountPrice||item.price) * item.qty), 0);
-                const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
-                const finalUserId = (type === 'user' && currentUser) ? currentUser.uid : 'GUEST';
-                const finalEmail = (type === 'user' && currentUser) ? currentUser.email : '';
-                
-                let payMethod = "COD";
-                if(activePayment === 'card') payMethod = useSavedCard ? `Saved Card` : `Card (${document.getElementById('card-type').value})`;
-
-                const orderPayload = {
-                    userId: finalUserId,
-                    customer: { name, phone, address: finalAddress, email: finalEmail },
-                    items: cart, subtotal, shipping, totalAmount: subtotal + shipping,
-                    status: "Processing", paymentMethod: payMethod,
+                const subtotal = cart.reduce((acc, i) => acc + ((i.discountPrice||i.price) * i.qty), 0);
+                const order = {
+                    userId: type === 'user' ? currentUser.uid : 'GUEST',
+                    customer: { name, phone, address: finalAddress, email: currentUser ? currentUser.email : '' },
+                    items: cart, totalAmount: subtotal + (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST),
+                    status: "Processing", paymentMethod: activePayment.toUpperCase(),
                     date: new Date().toLocaleDateString(), timestamp: new Date()
                 };
 
-                const docRef = await addDoc(collection(db, "orders"), orderPayload);
-                localStorage.removeItem('myCart'); 
+                const docRef = await addDoc(collection(db, "orders"), order);
+                localStorage.removeItem('myCart');
                 window.location.href = `order-success.html?id=${docRef.id}`;
-
-            } catch (error) { 
-                console.error(error); 
-                alert("Order failed."); 
-                btn.innerHTML = originalText; 
-                btn.disabled = false; 
-                btn.classList.remove('opacity-75', 'cursor-not-allowed'); 
+            } catch (e) {
+                alert("Security block: " + e.message);
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
             }
         }
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="sounds.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>

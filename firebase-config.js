@@ -6,8 +6,9 @@ import {
     onAuthStateChanged, 
     signOut,
     sendPasswordResetEmail,
-    GoogleAuthProvider,   // <--- ADDED
-    signInWithPopup       // <--- ADDED
+    updateProfile,        // <--- ADDED: Needed to save User Names
+    GoogleAuthProvider, 
+    signInWithPopup 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 import { 
     getFirestore, 
@@ -23,6 +24,7 @@ import {
     setDoc 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"; // <--- ADDED: For Image support
 
 // --- YOUR SPECIFIC KEYS ---
 const firebaseConfig = {
@@ -35,25 +37,31 @@ const firebaseConfig = {
   measurementId: "G-QP6VC9XK0J"
 };
 
+// Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+const storage = getStorage(app); // <--- INITIALIZED
 const analytics = getAnalytics(app); 
-const googleProvider = new GoogleAuthProvider(); // <--- INITIALIZE GOOGLE
+const googleProvider = new GoogleAuthProvider();
+
+// Customizing Google Provider for better Mobile Experience
+googleProvider.setCustomParameters({ prompt: 'select_account' });
 
 export { 
     app,
     auth, 
     db, 
+    storage,   // <--- EXPORTED
     analytics,
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     onAuthStateChanged, 
     signOut, 
     sendPasswordResetEmail,
-    GoogleAuthProvider, // <--- EXPORT
-    signInWithPopup,    // <--- EXPORT
-    googleProvider,     // <--- EXPORT
+    updateProfile,      // <--- EXPORTED
+    signInWithPopup,
+    googleProvider,
     collection, 
     addDoc, 
     getDocs, 

@@ -13,81 +13,76 @@
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
         .status-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-appearance: none; appearance: none; }
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+        
+        /* Mobile specific order card styles */
+        @media (max-width: 768px) {
+            .order-table-header { display: none; }
+            .order-row { display: block; padding: 1rem; margin-bottom: 1rem; background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
+            .order-cell { display: flex; justify-content: space-between; padding: 0.5rem 0; border: none; }
+            .order-cell::before { content: attr(data-label); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; color: #9ca3af; }
+        }
     </style>
 </head>
 <body class="flex flex-col min-h-screen">
 
-    <header class="bg-adminDark text-white py-4 px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
+    <header class="bg-adminDark text-white py-4 px-4 md:px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
-            <h1 class="text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-xs align-top bg-gray-800 px-2 py-0.5 rounded">ADMIN</span></h1>
+            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded">ADMIN</span></h1>
         </div>
-        <div class="flex items-center gap-6">
-            <div class="text-right hidden md:block">
-                <p class="text-xs text-gray-400 uppercase tracking-wider">Logged In As</p>
+        <div class="flex items-center gap-3 md:gap-6">
+            <div class="text-right hidden lg:block border-r border-gray-700 pr-6">
+                <p class="text-[10px] text-gray-400 uppercase tracking-wider">Logged In As</p>
                 <p id="admin-email" class="text-sm font-bold text-white">...</p>
             </div>
-            <div class="h-8 w-px bg-gray-700 mx-2"></div>
-            <a href="index.html" target="_blank" class="text-xs font-bold uppercase border border-gray-600 px-4 py-2 rounded hover:bg-white hover:text-adminDark transition">
-                <i class="fa-solid fa-store mr-2"></i> Visit Store
+            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase transition flex items-center gap-2">
+                <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Logout</span>
+            </button>
+            <a href="index.html" target="_blank" class="text-[10px] md:text-xs font-bold uppercase border border-gray-600 px-3 md:px-4 py-2 rounded hover:bg-white hover:text-adminDark transition">
+                <i class="fa-solid fa-store"></i> <span class="hidden md:inline ml-2">Store</span>
             </a>
         </div>
     </header>
 
-    <div class="flex-grow container mx-auto px-6 py-8">
+    <div class="flex-grow container mx-auto px-4 md:px-6 py-8">
         
-        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-adminSuccess">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Revenue</p>
-                        <p id="total-revenue" class="text-2xl font-bold text-gray-800 mt-1">Rs. 0</p>
-                    </div>
-                    <div class="p-2 bg-green-50 rounded-full text-green-600"><i class="fa-solid fa-sack-dollar text-xl"></i></div>
-                </div>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminSuccess">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Revenue</p>
+                <p id="total-revenue" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">Rs. 0</p>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-adminAccent">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Total Orders</p>
-                        <p id="total-orders" class="text-2xl font-bold text-gray-800 mt-1">0</p>
-                    </div>
-                    <div class="p-2 bg-indigo-50 rounded-full text-indigo-600"><i class="fa-solid fa-cart-shopping text-xl"></i></div>
-                </div>
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminAccent">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Orders</p>
+                <p id="total-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-adminWarning">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Pending</p>
-                        <p id="pending-orders" class="text-2xl font-bold text-gray-800 mt-1">0</p>
-                    </div>
-                    <div class="p-2 bg-yellow-50 rounded-full text-yellow-600"><i class="fa-solid fa-clock text-xl"></i></div>
-                </div>
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminWarning">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pending</p>
+                <p id="pending-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
             </div>
-            <div class="bg-white p-6 rounded-lg shadow-sm border-l-4 border-adminDanger">
-                <div class="flex justify-between items-start">
-                    <div>
-                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest">Cancelled</p>
-                        <p id="cancelled-orders" class="text-2xl font-bold text-gray-800 mt-1">0</p>
-                    </div>
-                    <div class="p-2 bg-red-50 rounded-full text-red-600"><i class="fa-solid fa-ban text-xl"></i></div>
-                </div>
+            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminDanger">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cancelled</p>
+                <p id="cancelled-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
             </div>
         </div>
 
         <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-            <div class="p-6 border-b border-gray-100 flex justify-between items-center bg-gray-50/50">
+            <div class="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50/50 gap-4">
                 <div>
-                    <h2 class="text-xl font-bold text-gray-800">Recent Orders</h2>
-                    <p class="text-xs text-gray-500 mt-1">Manage and track customer orders</p>
+                    <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
+                    <p class="text-xs text-gray-500 mt-1">Track and update customer fulfillment</p>
                 </div>
-                <button onclick="location.reload()" class="bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded text-xs font-bold hover:bg-gray-50 hover:text-adminAccent transition flex items-center gap-2 shadow-sm">
-                    <i class="fa-solid fa-rotate-right"></i> Refresh Data
-                </button>
+                <div class="flex gap-2 w-full md:w-auto">
+                    <a href="admin.html" class="flex-1 text-center bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-black transition shadow-sm">
+                        <i class="fa-solid fa-box mr-2"></i> Inventory
+                    </a>
+                    <button onclick="location.reload()" class="flex-1 bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded text-xs font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-rotate-right"></i> Refresh
+                    </button>
+                </div>
             </div>
             
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
-                    <thead class="bg-gray-100 text-gray-500 text-xs uppercase tracking-wider">
+                    <thead class="order-table-header bg-gray-100 text-gray-500 text-xs uppercase tracking-wider">
                         <tr>
                             <th class="p-4 font-bold border-b border-gray-200">Order ID</th>
                             <th class="p-4 font-bold border-b border-gray-200">Customer</th>
@@ -102,7 +97,7 @@
                         </tbody>
                 </table>
             </div>
-            <p id="loading-msg" class="text-center py-12 text-gray-400 animate-pulse">Loading order data...</p>
+            <p id="loading-msg" class="text-center py-12 text-gray-400 animate-pulse">Fetching orders...</p>
         </div>
     </div>
 
@@ -114,10 +109,10 @@
             </div>
             <div class="p-6 overflow-y-auto scrollbar-hide space-y-6">
                 
-                <div class="grid grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
                         <p class="text-xs uppercase font-bold text-gray-400 mb-1">Customer</p>
-                        <p id="modal-customer-name" class="font-bold text-gray-800">Name</p>
+                        <p id="modal-customer-name" class="font-bold text-gray-800 text-base">Name</p>
                         <p id="modal-customer-email" class="text-sm text-gray-500">Email</p>
                         <p id="modal-customer-phone" class="text-sm text-gray-500">Phone</p>
                     </div>
@@ -130,7 +125,7 @@
                 <hr class="border-gray-100">
 
                 <div>
-                    <p class="text-xs uppercase font-bold text-gray-400 mb-3">Items Ordered</p>
+                    <p class="text-xs uppercase font-bold text-gray-400 mb-3">Manifest</p>
                     <div id="modal-items-list" class="space-y-3"></div>
                 </div>
 
@@ -138,18 +133,31 @@
 
                 <div class="flex justify-between items-center bg-gray-50 p-4 rounded border border-gray-100">
                     <div>
-                        <p class="text-xs uppercase font-bold text-gray-400">Payment Method</p>
+                        <p class="text-xs uppercase font-bold text-gray-400">Payment</p>
                         <p id="modal-payment-method" class="font-bold text-gray-800 text-sm">Method</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs uppercase font-bold text-gray-400">Total Amount</p>
+                        <p class="text-xs uppercase font-bold text-gray-400">Grand Total</p>
                         <p id="modal-total-amount" class="font-bold text-xl text-adminAccent">Rs. 0</p>
                     </div>
                 </div>
 
+                <div class="bg-blue-50/50 p-4 rounded border border-blue-100 mt-4">
+                    <table class="w-full text-xs">
+                        <tr class="border-b border-blue-100/50">
+                            <td class="py-2 text-gray-500 uppercase font-bold">Priority</td>
+                            <td class="py-2 text-right text-gray-800">Standard Express</td>
+                        </tr>
+                        <tr>
+                            <td class="py-2 text-gray-500 uppercase font-bold tracking-widest">Storage Environment</td>
+                            <td class="py-2 text-right font-bold text-blue-700 uppercase">Maintain 15°C - 25°C</td>
+                        </tr>
+                    </table>
+                </div>
+
             </div>
             <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 text-right">
-                <button onclick="closeModal()" class="bg-gray-200 text-gray-700 px-4 py-2 rounded text-xs font-bold uppercase hover:bg-gray-300 transition">Close</button>
+                <button onclick="closeModal()" class="w-full md:w-auto bg-gray-200 text-gray-700 px-6 py-3 rounded text-xs font-bold uppercase hover:bg-gray-300 transition">Dismiss</button>
             </div>
         </div>
     </div>
@@ -157,30 +165,25 @@
     <script type="module">
         import { auth, db, collection, getDocs, doc, updateDoc, onAuthStateChanged, signOut } from './firebase-config.js';
 
-        // ==========================================
-        // REPLACE THIS WITH YOUR EXACT GMAIL ADDRESS
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
-        // ==========================================
-
         let allOrders = [];
 
-        // 1. AUTH & SECURITY CHECK
         onAuthStateChanged(auth, (user) => {
-            if (!user) {
-                // Not logged in -> Go to Login
+            if (!user || user.email !== ADMIN_EMAIL) {
                 window.location.href = "login.html";
-            } else if (user.email !== ADMIN_EMAIL) {
-                // Logged in but WRONG email -> Kick out
-                alert("Access Denied: Admins Only.");
-                window.location.href = "profile.html";
             } else {
-                // Success -> Show Admin Panel
                 document.getElementById('admin-email').innerText = user.email;
                 loadAdminOrders();
             }
         });
 
-        // 2. LOAD ORDERS
+        window.handleLogout = async () => {
+            if(confirm("Logout from Secure Admin Session?")) {
+                await signOut(auth);
+                window.location.href = "login.html";
+            }
+        }
+
         async function loadAdminOrders() {
             const tbody = document.getElementById('admin-orders-list');
             const loadingMsg = document.getElementById('loading-msg');
@@ -198,7 +201,6 @@
                     if(data.status === 'Cancelled') cancelled++;
                 });
 
-                // Update Stats
                 document.getElementById('total-revenue').innerText = `Rs. ${revenue.toLocaleString()}`;
                 document.getElementById('total-orders').innerText = allOrders.length;
                 document.getElementById('pending-orders').innerText = pending;
@@ -210,29 +212,32 @@
                 tbody.innerHTML = "";
                 
                 allOrders.forEach(order => {
-                    const itemsSummary = order.items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 25) + (order.items.length > 1 ? '...' : '');
+                    const itemsSummary = order.items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 30) + (order.items.length > 1 ? '...' : '');
 
+                    // Desktop Table Row + Mobile Card Class
                     const row = `
-                        <tr class="hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
-                            <td class="p-4 font-mono text-xs font-bold text-gray-500">#${order.id.slice(0, 6).toUpperCase()}</td>
-                            <td class="p-4">
-                                <p class="font-bold text-gray-800 text-sm">${order.customer.name}</p>
-                                <p class="text-[10px] text-gray-400">${order.customer.phone}</p>
+                        <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
+                            <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">#${order.id.slice(0, 6).toUpperCase()}</td>
+                            <td class="order-cell p-4" data-label="Customer">
+                                <div class="md:text-left text-right">
+                                    <p class="font-bold text-gray-800 text-sm">${order.customer.name}</p>
+                                    <p class="text-[10px] text-gray-400">${order.customer.phone}</p>
+                                </div>
                             </td>
-                            <td class="p-4 text-xs text-gray-500">${itemsSummary}</td>
-                            <td class="p-4 font-bold text-sm">Rs. ${order.totalAmount.toLocaleString()}</td>
-                            <td class="p-4 text-xs text-gray-400">${order.date}</td>
-                            <td class="p-4">
-                                <select onchange="updateStatus('${order.id}', this)" class="status-select border border-gray-200 text-[10px] font-bold uppercase rounded py-1 pl-2 pr-6 focus:outline-none focus:border-adminAccent transition cursor-pointer ${getStatusColor(order.status)}">
+                            <td class="order-cell p-4 text-xs text-gray-500" data-label="Summary">${itemsSummary}</td>
+                            <td class="order-cell p-4 font-bold text-sm" data-label="Total">Rs. ${order.totalAmount.toLocaleString()}</td>
+                            <td class="order-cell p-4 text-xs text-gray-400" data-label="Date">${order.date}</td>
+                            <td class="order-cell p-4" data-label="Status">
+                                <select onchange="updateStatus('${order.id}', this)" class="status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1 pl-2 pr-6 focus:outline-none focus:border-adminAccent transition cursor-pointer ${getStatusColor(order.status)}">
                                     <option value="Processing" ${order.status==='Processing'?'selected':''}>Processing</option>
                                     <option value="Shipped" ${order.status==='Shipped'?'selected':''}>Shipped</option>
                                     <option value="Delivered" ${order.status==='Delivered'?'selected':''}>Delivered</option>
                                     <option value="Cancelled" ${order.status==='Cancelled'?'selected':''}>Cancelled</option>
                                 </select>
                             </td>
-                            <td class="p-4 text-center">
-                                <button onclick="viewOrder('${order.id}')" class="text-gray-400 hover:text-adminAccent transition p-2 rounded-full hover:bg-gray-100" title="View Details">
-                                    <i class="fa-solid fa-eye"></i>
+                            <td class="order-cell p-4 text-center" data-label="Details">
+                                <button onclick="viewOrder('${order.id}')" class="w-full md:w-auto bg-gray-100 md:bg-transparent text-adminAccent font-bold md:font-normal p-3 md:p-2 rounded md:rounded-full hover:bg-gray-200" title="View Details">
+                                    <i class="fa-solid fa-eye md:mr-0 mr-2"></i> <span class="md:hidden">View Full Details</span>
                                 </button>
                             </td>
                         </tr>
@@ -244,7 +249,7 @@
 
             } catch (e) {
                 console.error(e);
-                loadingMsg.innerText = "Failed to load orders.";
+                loadingMsg.innerText = "Error loading secure data stream.";
                 loadingMsg.className = "text-center py-10 text-red-500 font-bold";
             }
         }
@@ -258,14 +263,11 @@
 
         window.updateStatus = async (orderId, selectElem) => {
             const newStatus = selectElem.value;
-            // Visual Update immediately
-            selectElem.className = `status-select border border-gray-200 text-[10px] font-bold uppercase rounded py-1 pl-2 pr-6 focus:outline-none focus:border-adminAccent transition cursor-pointer ${getStatusColor(newStatus)}`;
-            
+            selectElem.className = `status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1 pl-2 pr-6 focus:outline-none focus:border-adminAccent transition cursor-pointer ${getStatusColor(newStatus)}`;
             try {
                 await updateDoc(doc(db, "orders", orderId), { status: newStatus });
             } catch(e) {
-                alert("Failed to update status in database.");
-                console.error(e);
+                alert("Database update failed.");
             }
         }
 
@@ -273,9 +275,9 @@
             const order = allOrders.find(o => o.id === id);
             if(!order) return;
 
-            document.getElementById('modal-order-id').innerText = `#${order.id.slice(0,8).toUpperCase()}`;
+            document.getElementById('modal-order-id').innerText = `#${order.id.toUpperCase()}`;
             document.getElementById('modal-customer-name').innerText = order.customer.name;
-            document.getElementById('modal-customer-email').innerText = order.customer.email || 'N/A';
+            document.getElementById('modal-customer-email').innerText = order.customer.email || 'GUEST';
             document.getElementById('modal-customer-phone').innerText = order.customer.phone;
             document.getElementById('modal-shipping-address').innerText = order.customer.address;
             document.getElementById('modal-payment-method').innerText = order.paymentMethod;
@@ -283,26 +285,24 @@
 
             const itemsList = document.getElementById('modal-items-list');
             itemsList.innerHTML = order.items.map(item => `
-                <div class="flex items-center gap-4 bg-white p-2 rounded border border-gray-100">
-                    <img src="${item.image}" class="w-10 h-12 object-cover rounded bg-gray-200">
+                <div class="flex items-center gap-4 bg-white p-3 rounded border border-gray-100">
+                    <img src="${item.image}" class="w-12 h-16 object-cover rounded bg-gray-100">
                     <div class="flex-grow">
                         <p class="text-sm font-bold text-gray-800">${item.name}</p>
-                        <p class="text-xs text-gray-500">Size: ${item.selectedSize} | Qty: ${item.qty}</p>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold">Size: ${item.selectedSize} | Qty: ${item.qty}</p>
                     </div>
                     <p class="text-sm font-bold text-gray-700">Rs. ${(item.discountPrice||item.price).toLocaleString()}</p>
                 </div>
             `).join('');
 
             const m = document.getElementById('order-modal');
-            const d = m.querySelector('div');
             m.classList.remove('hidden');
-            setTimeout(() => { m.classList.remove('opacity-0'); d.classList.remove('scale-95'); d.classList.add('scale-100'); }, 10);
+            setTimeout(() => { m.classList.remove('opacity-0'); m.querySelector('div').classList.remove('scale-95'); m.querySelector('div').classList.add('scale-100'); }, 10);
         }
 
         window.closeModal = () => {
             const m = document.getElementById('order-modal');
-            const d = m.querySelector('div');
-            m.classList.add('opacity-0'); d.classList.remove('scale-100'); d.classList.add('scale-95');
+            m.classList.add('opacity-0'); m.querySelector('div').classList.remove('scale-100'); m.querySelector('div').classList.add('scale-95');
             setTimeout(() => m.classList.add('hidden'), 300);
         }
     </script>
