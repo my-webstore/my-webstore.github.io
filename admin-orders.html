@@ -7,19 +7,33 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <script>tailwind.config = { theme: { extend: { colors: { adminDark: '#111827', adminAccent: '#4F46E5', adminSuccess: '#10B981', adminWarning: '#F59E0B', adminDanger: '#EF4444' } } } }</script>
+    
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .status-select { background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); background-position: right 0.5rem center; background-repeat: no-repeat; background-size: 1.5em 1.5em; padding-right: 2.5rem; -webkit-appearance: none; appearance: none; }
+        
+        .status-select { 
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e"); 
+            background-position: right 0.5rem center; 
+            background-repeat: no-repeat; 
+            background-size: 1.2em 1.2em; 
+            padding-right: 2rem; 
+            -webkit-appearance: none; 
+            appearance: none; 
+        }
+        
         .scrollbar-hide::-webkit-scrollbar { display: none; }
         
-        /* Mobile specific order card styles */
+        /* Mobile Order Cards */
         @media (max-width: 768px) {
             .order-table-header { display: none; }
-            .order-row { display: block; padding: 1rem; margin-bottom: 1rem; background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb; }
-            .order-cell { display: flex; justify-content: space-between; padding: 0.5rem 0; border: none; }
-            .order-cell::before { content: attr(data-label); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; color: #9ca3af; }
+            .order-row { display: flex; flex-direction: column; padding: 1rem; margin-bottom: 0.75rem; background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
+            .order-cell { display: flex; justify-content: space-between; align-items: center; padding: 0.25rem 0; border: none; width: 100%; }
+            .order-cell::before { content: attr(data-label); font-weight: 700; text-transform: uppercase; font-size: 0.6rem; color: #9ca3af; letter-spacing: 0.05em; }
+            .order-cell:last-child { margin-top: 0.75rem; padding-top: 0.75rem; border-top: 1px solid #f3f4f6; justify-content: center; }
+            .status-select { padding-top: 0.4rem; padding-bottom: 0.4rem; font-size: 0.7rem; width: auto; min-width: 110px; }
         }
     </style>
 </head>
@@ -27,38 +41,39 @@
 
     <header class="bg-adminDark text-white py-4 px-4 md:px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
-            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded">ADMIN</span></h1>
+            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded ml-1">ADMIN</span></h1>
         </div>
-        <div class="flex items-center gap-3 md:gap-6">
-            <div class="text-right hidden lg:block border-r border-gray-700 pr-6">
-                <p class="text-[10px] text-gray-400 uppercase tracking-wider">Logged In As</p>
-                <p id="admin-email" class="text-sm font-bold text-white">...</p>
-            </div>
-            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase transition flex items-center gap-2">
-                <i class="fa-solid fa-right-from-bracket"></i> <span class="hidden md:inline">Logout</span>
-            </button>
-            <a href="index.html" target="_blank" class="text-[10px] md:text-xs font-bold uppercase border border-gray-600 px-3 md:px-4 py-2 rounded hover:bg-white hover:text-adminDark transition">
-                <i class="fa-solid fa-store"></i> <span class="hidden md:inline ml-2">Store</span>
+        <div class="flex items-center gap-2 md:gap-4">
+            <a href="admin.html" class="text-[10px] md:text-xs font-bold uppercase bg-gray-800 border border-gray-700 px-3 py-2 rounded hover:bg-gray-700 text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-gauge-high"></i> <span class="hidden md:inline">Dashboard</span>
             </a>
+
+            <a href="index.html" target="_blank" class="text-[10px] md:text-xs font-bold uppercase border border-gray-600 px-3 py-2 rounded hover:bg-white hover:text-adminDark transition flex items-center gap-2">
+                <i class="fa-solid fa-store"></i> <span class="hidden md:inline">Store</span>
+            </a>
+            
+            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase transition flex items-center gap-2 ml-2">
+                <i class="fa-solid fa-right-from-bracket text-lg"></i>
+            </button>
         </div>
     </header>
 
     <div class="flex-grow container mx-auto px-4 md:px-6 py-8">
         
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 mb-8">
-            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminSuccess">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Revenue</p>
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
+            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminSuccess">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Revenue</p>
                 <p id="total-revenue" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">Rs. 0</p>
             </div>
-            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminAccent">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Orders</p>
+            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminAccent">
+                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Orders</p>
                 <p id="total-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
             </div>
-            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminWarning">
+            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminWarning">
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pending</p>
                 <p id="pending-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
             </div>
-            <div class="bg-white p-4 md:p-6 rounded-lg shadow-sm border-l-4 border-adminDanger">
+            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminDanger">
                 <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cancelled</p>
                 <p id="cancelled-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
             </div>
@@ -68,11 +83,11 @@
             <div class="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50/50 gap-4">
                 <div>
                     <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
-                    <p class="text-xs text-gray-500 mt-1">Track and update customer fulfillment</p>
+                    <p class="text-xs text-gray-500 mt-1">Real-time tracking and fulfillment updates</p>
                 </div>
                 <div class="flex gap-2 w-full md:w-auto">
-                    <a href="admin.html" class="flex-1 text-center bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-black transition shadow-sm">
-                        <i class="fa-solid fa-box mr-2"></i> Inventory
+                    <a href="setup_products.html" class="flex-1 text-center bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-black transition shadow-sm flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-box"></i> Products
                     </a>
                     <button onclick="location.reload()" class="flex-1 bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded text-xs font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
                         <i class="fa-solid fa-rotate-right"></i> Refresh
@@ -86,7 +101,7 @@
                         <tr>
                             <th class="p-4 font-bold border-b border-gray-200">Order ID</th>
                             <th class="p-4 font-bold border-b border-gray-200">Customer</th>
-                            <th class="p-4 font-bold border-b border-gray-200">Summary</th>
+                            <th class="p-4 font-bold border-b border-gray-200">Items</th>
                             <th class="p-4 font-bold border-b border-gray-200">Total</th>
                             <th class="p-4 font-bold border-b border-gray-200">Date</th>
                             <th class="p-4 font-bold border-b border-gray-200">Status</th>
@@ -97,67 +112,49 @@
                         </tbody>
                 </table>
             </div>
-            <p id="loading-msg" class="text-center py-12 text-gray-400 animate-pulse">Fetching orders...</p>
+            <p id="loading-msg" class="text-center py-12 text-gray-400 animate-pulse font-mono text-xs">Connecting to database...</p>
         </div>
     </div>
 
-    <div id="order-modal" class="fixed inset-0 bg-black/50 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
+    <div id="order-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
             <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-gray-800">Order Details <span id="modal-order-id" class="text-gray-400 font-mono text-sm ml-2">#ID</span></h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+                <h3 class="font-bold text-lg text-gray-800">Order <span id="modal-order-id" class="text-adminAccent font-mono text-sm ml-1">#ID</span></h3>
+                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
             </div>
             <div class="p-6 overflow-y-auto scrollbar-hide space-y-6">
                 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-4 rounded border border-gray-100">
                     <div>
-                        <p class="text-xs uppercase font-bold text-gray-400 mb-1">Customer</p>
+                        <p class="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-wider">Customer Info</p>
                         <p id="modal-customer-name" class="font-bold text-gray-800 text-base">Name</p>
-                        <p id="modal-customer-email" class="text-sm text-gray-500">Email</p>
-                        <p id="modal-customer-phone" class="text-sm text-gray-500">Phone</p>
+                        <p id="modal-customer-email" class="text-xs text-gray-500 mt-1">Email</p>
+                        <p id="modal-customer-phone" class="text-xs text-gray-500 mt-1">Phone</p>
                     </div>
                     <div>
-                        <p class="text-xs uppercase font-bold text-gray-400 mb-1">Shipping Address</p>
+                        <p class="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-wider">Shipping Address</p>
                         <p id="modal-shipping-address" class="text-sm text-gray-600 leading-relaxed">Address...</p>
                     </div>
                 </div>
 
-                <hr class="border-gray-100">
-
                 <div>
-                    <p class="text-xs uppercase font-bold text-gray-400 mb-3">Manifest</p>
+                    <p class="text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-wider">Order Manifest</p>
                     <div id="modal-items-list" class="space-y-3"></div>
                 </div>
 
-                <hr class="border-gray-100">
-
-                <div class="flex justify-between items-center bg-gray-50 p-4 rounded border border-gray-100">
+                <div class="flex justify-between items-center bg-gray-50 p-4 rounded border border-gray-100 mt-4">
                     <div>
-                        <p class="text-xs uppercase font-bold text-gray-400">Payment</p>
-                        <p id="modal-payment-method" class="font-bold text-gray-800 text-sm">Method</p>
+                        <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Payment Method</p>
+                        <p id="modal-payment-method" class="font-bold text-gray-800 text-sm mt-1">Method</p>
                     </div>
                     <div class="text-right">
-                        <p class="text-xs uppercase font-bold text-gray-400">Grand Total</p>
-                        <p id="modal-total-amount" class="font-bold text-xl text-adminAccent">Rs. 0</p>
+                        <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Grand Total</p>
+                        <p id="modal-total-amount" class="font-bold text-xl text-adminAccent mt-1">Rs. 0</p>
                     </div>
                 </div>
-
-                <div class="bg-blue-50/50 p-4 rounded border border-blue-100 mt-4">
-                    <table class="w-full text-xs">
-                        <tr class="border-b border-blue-100/50">
-                            <td class="py-2 text-gray-500 uppercase font-bold">Priority</td>
-                            <td class="py-2 text-right text-gray-800">Standard Express</td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 text-gray-500 uppercase font-bold tracking-widest">Storage Environment</td>
-                            <td class="py-2 text-right font-bold text-blue-700 uppercase">Maintain 15°C - 25°C</td>
-                        </tr>
-                    </table>
-                </div>
-
             </div>
             <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 text-right">
-                <button onclick="closeModal()" class="w-full md:w-auto bg-gray-200 text-gray-700 px-6 py-3 rounded text-xs font-bold uppercase hover:bg-gray-300 transition">Dismiss</button>
+                <button onclick="closeModal()" class="w-full md:w-auto bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded text-xs font-bold uppercase hover:bg-gray-50 transition shadow-sm">Close View</button>
             </div>
         </div>
     </div>
@@ -168,17 +165,18 @@
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
         let allOrders = [];
 
+        // 1. STRICT ADMIN CHECK
         onAuthStateChanged(auth, (user) => {
             if (!user || user.email !== ADMIN_EMAIL) {
+                if(user) alert("Access Denied: Admin privileges required.");
                 window.location.href = "login.html";
             } else {
-                document.getElementById('admin-email').innerText = user.email;
                 loadAdminOrders();
             }
         });
 
         window.handleLogout = async () => {
-            if(confirm("Logout from Secure Admin Session?")) {
+            if(confirm("Secure Logout: Are you sure?")) {
                 await signOut(auth);
                 window.location.href = "login.html";
             }
@@ -206,38 +204,51 @@
                 document.getElementById('pending-orders').innerText = pending;
                 document.getElementById('cancelled-orders').innerText = cancelled;
 
-                // Sort Newest First
-                allOrders.sort((a, b) => b.timestamp - a.timestamp);
+                // Sort: Newest First
+                allOrders.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
                 tbody.innerHTML = "";
                 
-                allOrders.forEach(order => {
-                    const itemsSummary = order.items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 30) + (order.items.length > 1 ? '...' : '');
+                if (allOrders.length === 0) {
+                    loadingMsg.innerText = "No orders found in database.";
+                    return;
+                }
 
-                    // Desktop Table Row + Mobile Card Class
+                allOrders.forEach(order => {
+                    const itemsSummary = order.items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 40) + (order.items.length > 1 ? '...' : '');
+
+                    // Responsive Row
                     const row = `
-                        <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0">
-                            <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">#${order.id.slice(0, 6).toUpperCase()}</td>
+                        <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0 group">
+                            <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">
+                                #${order.id.slice(0, 6).toUpperCase()}
+                            </td>
                             <td class="order-cell p-4" data-label="Customer">
                                 <div class="md:text-left text-right">
                                     <p class="font-bold text-gray-800 text-sm">${order.customer.name}</p>
-                                    <p class="text-[10px] text-gray-400">${order.customer.phone}</p>
+                                    <p class="text-[10px] text-gray-400 font-mono">${order.customer.phone}</p>
                                 </div>
                             </td>
-                            <td class="order-cell p-4 text-xs text-gray-500" data-label="Summary">${itemsSummary}</td>
-                            <td class="order-cell p-4 font-bold text-sm" data-label="Total">Rs. ${order.totalAmount.toLocaleString()}</td>
-                            <td class="order-cell p-4 text-xs text-gray-400" data-label="Date">${order.date}</td>
+                            <td class="order-cell p-4 text-xs text-gray-600" data-label="Items">
+                                ${itemsSummary}
+                            </td>
+                            <td class="order-cell p-4 font-bold text-sm text-adminDark" data-label="Total">
+                                Rs. ${order.totalAmount.toLocaleString()}
+                            </td>
+                            <td class="order-cell p-4 text-xs text-gray-400 font-mono" data-label="Date">
+                                ${order.date}
+                            </td>
                             <td class="order-cell p-4" data-label="Status">
-                                <select onchange="updateStatus('${order.id}', this)" class="status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1 pl-2 pr-6 focus:outline-none focus:border-adminAccent transition cursor-pointer ${getStatusColor(order.status)}">
+                                <select onchange="updateStatus('${order.id}', this)" class="status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(order.status)}">
                                     <option value="Processing" ${order.status==='Processing'?'selected':''}>Processing</option>
                                     <option value="Shipped" ${order.status==='Shipped'?'selected':''}>Shipped</option>
                                     <option value="Delivered" ${order.status==='Delivered'?'selected':''}>Delivered</option>
                                     <option value="Cancelled" ${order.status==='Cancelled'?'selected':''}>Cancelled</option>
                                 </select>
                             </td>
-                            <td class="order-cell p-4 text-center" data-label="Details">
-                                <button onclick="viewOrder('${order.id}')" class="w-full md:w-auto bg-gray-100 md:bg-transparent text-adminAccent font-bold md:font-normal p-3 md:p-2 rounded md:rounded-full hover:bg-gray-200" title="View Details">
-                                    <i class="fa-solid fa-eye md:mr-0 mr-2"></i> <span class="md:hidden">View Full Details</span>
+                            <td class="order-cell p-4 text-center" data-label="Actions">
+                                <button onclick="viewOrder('${order.id}')" class="w-full md:w-auto bg-white border border-gray-200 text-gray-600 hover:text-adminAccent hover:border-adminAccent px-3 py-1.5 rounded-md transition shadow-sm flex items-center justify-center gap-2 text-[10px] uppercase font-bold" title="View Details">
+                                    <i class="fa-solid fa-eye"></i> <span class="md:hidden">Details</span>
                                 </button>
                             </td>
                         </tr>
@@ -249,8 +260,8 @@
 
             } catch (e) {
                 console.error(e);
-                loadingMsg.innerText = "Error loading secure data stream.";
-                loadingMsg.className = "text-center py-10 text-red-500 font-bold";
+                loadingMsg.innerText = "Error: Unable to fetch secure data.";
+                loadingMsg.className = "text-center py-10 text-red-500 font-bold text-xs uppercase tracking-widest";
             }
         }
 
@@ -263,11 +274,21 @@
 
         window.updateStatus = async (orderId, selectElem) => {
             const newStatus = selectElem.value;
-            selectElem.className = `status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1 pl-2 pr-6 focus:outline-none focus:border-adminAccent transition cursor-pointer ${getStatusColor(newStatus)}`;
+            selectElem.classList.add('opacity-50');
+            
             try {
+                // Update Database
                 await updateDoc(doc(db, "orders", orderId), { status: newStatus });
+                
+                // INSTANT UI UPDATE
+                // Update select coloring immediately
+                selectElem.className = `status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(newStatus)}`;
+                
             } catch(e) {
-                alert("Database update failed.");
+                alert("Failed to update status. Check internet.");
+                location.reload(); 
+            } finally {
+                selectElem.classList.remove('opacity-50');
             }
         }
 
@@ -275,9 +296,9 @@
             const order = allOrders.find(o => o.id === id);
             if(!order) return;
 
-            document.getElementById('modal-order-id').innerText = `#${order.id.toUpperCase()}`;
+            document.getElementById('modal-order-id').innerText = `#${order.id.slice(0,8).toUpperCase()}`;
             document.getElementById('modal-customer-name').innerText = order.customer.name;
-            document.getElementById('modal-customer-email').innerText = order.customer.email || 'GUEST';
+            document.getElementById('modal-customer-email').innerText = order.customer.email || 'N/A';
             document.getElementById('modal-customer-phone').innerText = order.customer.phone;
             document.getElementById('modal-shipping-address').innerText = order.customer.address;
             document.getElementById('modal-payment-method').innerText = order.paymentMethod;
@@ -286,12 +307,12 @@
             const itemsList = document.getElementById('modal-items-list');
             itemsList.innerHTML = order.items.map(item => `
                 <div class="flex items-center gap-4 bg-white p-3 rounded border border-gray-100">
-                    <img src="${item.image}" class="w-12 h-16 object-cover rounded bg-gray-100">
+                    <img src="${item.image}" class="w-12 h-16 object-cover rounded bg-gray-50 border border-gray-100">
                     <div class="flex-grow">
-                        <p class="text-sm font-bold text-gray-800">${item.name}</p>
-                        <p class="text-[10px] text-gray-500 uppercase font-bold">Size: ${item.selectedSize} | Qty: ${item.qty}</p>
+                        <p class="text-sm font-bold text-gray-800 line-clamp-1">${item.name}</p>
+                        <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Size: ${item.selectedSize} | Qty: ${item.qty}</p>
                     </div>
-                    <p class="text-sm font-bold text-gray-700">Rs. ${(item.discountPrice||item.price).toLocaleString()}</p>
+                    <p class="text-sm font-bold text-gray-700 font-mono">Rs. ${(item.discountPrice||item.price).toLocaleString()}</p>
                 </div>
             `).join('');
 
