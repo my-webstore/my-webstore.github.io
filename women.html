@@ -15,11 +15,27 @@
         :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
         h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+        
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #E6D8C5; }
         ::-webkit-scrollbar-thumb { background: #4A3B32; }
+
         .active-filter { background-color: #4A3B32; color: #E6D8C5; border-color: #4A3B32; }
         .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        
+        /* Mobile Menu Fix */
+        #mobile-menu { 
+            position: fixed;
+            inset: 0;
+            z-index: 9999 !important; 
+            background-color: #E6D8C5 !important;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
+        
+        /* Smooth Filter Scroll */
+        .filter-scroll { -ms-overflow-style: none; scrollbar-width: none; }
+        .filter-scroll::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body class="bg-themeBg text-themeText flex flex-col min-h-screen">
@@ -42,30 +58,42 @@
                 </div>
 
                 <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
-                    <div id="auth-container"></div>
+                    <div id="auth-container">
+                        <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
+                            <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
+                        </a>
+                    </div>
 
                     <div onclick="toggleCart()" class="relative cursor-pointer group">
                         <i class="fa-solid fa-bag-shopping text-xl group-hover:scale-110 transition"></i>
                         <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#E6D8C5]">0</span>
                     </div>
                     
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl"><i class="fa-solid fa-bars-staggered"></i></button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
                 </div>
             </div>
         </div>
 
-        <div id="mobile-menu" class="fixed inset-0 bg-[#E6D8C5] text-themeText z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8">
-            <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub">Men</a>
-            <a href="women.html" class="text-3xl font-serif font-bold text-themeSub border-b-2 border-themeSub">Women</a>
-            <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub">Kids</a>
-            <div id="mobile-auth-links" class="mt-8"></div>
-            <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-2xl"><i class="fa-solid fa-xmark"></i></button>
+        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
+                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex flex-col space-y-8">
+                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
+                <a href="women.html" class="text-3xl font-serif font-bold text-themeSub border-b-2 border-themeSub pb-4">Women</a>
+                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+            </div>
+
+            <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
+                </div>
         </div>
     </nav>
 
     <header class="relative h-[60vh] w-full overflow-hidden flex items-center justify-center">
         <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-black/30 z-10"></div>
+            <div class="absolute inset-0 bg-black/40 z-10"></div>
             <div class="absolute inset-0 bg-gradient-to-t from-[#E6D8C5] via-transparent to-black/50 z-10"></div>
             <img src="https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?q=80&w=2070&auto=format&fit=crop" class="w-full h-full object-cover fixed top-0 left-0 -z-10" alt="Women Fashion">
         </div>
@@ -80,11 +108,11 @@
     </header>
 
     <section class="container mx-auto px-6 py-12 sticky top-20 z-30 bg-[#E6D8C5]/95 backdrop-blur-sm transition-all" data-aos="fade-up">
-        <div class="flex flex-wrap justify-center gap-4 border-b border-[#D6C8B5] pb-4 uppercase text-[10px] font-bold tracking-widest">
-            <button onclick="filterItems('All')" class="filter-btn active-filter px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn">All</button>
-            <button onclick="filterItems('Cloths')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn">Clothing</button>
-            <button onclick="filterItems('Shoes')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn">Shoes</button>
-            <button onclick="filterItems('Accessories')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn">Accessories</button>
+        <div class="flex overflow-x-auto filter-scroll pb-4 gap-4 justify-start md:justify-center border-b border-[#D6C8B5] uppercase text-[10px] font-bold tracking-widest min-w-full">
+            <button onclick="filterItems('All')" class="filter-btn active-filter px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn whitespace-nowrap">All</button>
+            <button onclick="filterItems('Cloths')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn whitespace-nowrap">Clothing</button>
+            <button onclick="filterItems('Shoes')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn whitespace-nowrap">Shoes</button>
+            <button onclick="filterItems('Accessories')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn whitespace-nowrap">Accessories</button>
         </div>
         
         <div class="flex justify-end mt-4">
@@ -177,12 +205,14 @@
     <script type="module">
         import { db, collection, getDocs, auth, onAuthStateChanged, signOut, query, where, addDoc, deleteDoc, doc } from './firebase-config.js';
         
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let allProds = [];
         let filter = 'All';
         let cart = JSON.parse(localStorage.getItem('myCart')) || [];
         let currentUser = null;
         let wishlistMap = new Map();
 
+        // 0. PRELOADER & NAVBAR SCROLL
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
             preloader.style.opacity = '0';
@@ -218,6 +248,7 @@
             else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
         });
 
+        // 1. SMART AUTH & SYNC (Standardized)
         onAuthStateChanged(auth, async (user) => {
             currentUser = user; 
             setupNavbar(user);
@@ -237,28 +268,34 @@
 
             if (u) {
                 const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
+                const isAdmin = u.email === ADMIN_EMAIL;
+                
+                // Desktop Dropdown
                 container.innerHTML = `
                     <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
                         Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
                     </button>
                     <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
+                        ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
                         <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
                         <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
                         <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
                         <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
                     </div>`;
                 
+                // Mobile Menu (Clean)
                 mobileLinks.innerHTML = `
-                    <div class="flex flex-col gap-4 w-64 text-center">
-                        <p class="text-xs uppercase tracking-widest text-[#7A6B63]">Welcome, ${name}</p>
-                        <a href="profile.html" class="text-xl font-serif font-bold hover:text-themeSub">My Profile</a>
-                        <a href="wishlist.html" class="text-xl font-serif font-bold hover:text-themeSub text-[#D97706]">My Wishlist</a>
-                        <a href="orders.html" class="text-xl font-serif font-bold hover:text-themeSub">My Orders</a>
-                        <button onclick="handleLogout()" class="text-xl font-serif font-bold text-red-500">Sign Out</button>
+                    <div class="flex flex-col gap-4 text-center">
+                        <div class="flex items-center justify-center gap-3 mb-2">
+                             <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
+                             <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
+                        </div>
+                        ${isAdmin ? `<a href="admin.html" class="text-lg font-bold text-black border-b border-black pb-2">Admin Dashboard</a>` : ''}
+                        <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
                     </div>`;
             } else {
                 container.innerHTML = `<a href="login.html" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2"><span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i></a>`;
-                mobileLinks.innerHTML = `<a href="login.html" class="text-3xl font-serif font-bold underline decoration-themeSub decoration-2 underline-offset-8">Sign In</a>`;
+                mobileLinks.innerHTML = `<a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
             }
         }
 
@@ -269,6 +306,7 @@
         }
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
+        // 2. LOAD WISHLIST DATA
         async function loadWishlist() {
             if (!currentUser) return;
             try {
@@ -279,6 +317,7 @@
             } catch (e) { console.error("Wishlist error", e); }
         }
 
+        // 3. FETCH PRODUCTS (Filtered for WOMEN)
         async function init() {
             try {
                 const snap = await getDocs(collection(db, "products"));
@@ -319,15 +358,18 @@
             const grid = document.getElementById('product-grid');
             grid.innerHTML = '';
             const list = filter === 'All' ? allProds : allProds.filter(p => p.subcategory === filter);
+            
             if(!list.length) {
                 grid.innerHTML = '<p class="col-span-full text-center text-themeSub py-20 font-serif italic text-lg">No items found.</p>';
                 return;
             }
+            
             list.forEach((p, index) => {
                 const priceDisplay = p.discountPrice > 0 
                     ? `<span class="text-red-600 font-bold mr-2">Rs. ${p.discountPrice.toLocaleString()}</span> <span class="line-through text-xs text-gray-400">Rs. ${p.price.toLocaleString()}</span>`
                     : `Rs. ${p.price.toLocaleString()}`;
 
+                // --- STOCK WARNING ---
                 let stockBadge = '';
                 const currentStock = p.stock !== undefined ? p.stock : 10;
                 if (currentStock <= 0) {
@@ -370,11 +412,13 @@
             });
         }
 
+        // 4. WISHLIST TOGGLE (Instant Feedback)
         window.toggleWishlist = async (btn, id, name, price, img, cat) => {
             if(!currentUser) { alert("Please Sign In."); window.location.href = "login.html"; return; }
             const icon = btn.querySelector('i');
             const isFav = icon.classList.contains('fa-solid');
 
+            // INSTANT UI CHANGE
             if(isFav) {
                 icon.className = 'fa-regular fa-heart text-gray-400 text-lg';
             } else {
@@ -391,11 +435,13 @@
                 }
             } catch (e) { 
                 console.error(e);
+                // Revert UI if DB call fails
                 icon.classList.toggle('fa-solid'); icon.classList.toggle('text-red-500');
                 icon.classList.toggle('fa-regular'); icon.classList.toggle('text-gray-400');
             }
         }
 
+        // 5. QUICK VIEW
         window.openQuickView = (id, name, price, discount, image) => {
             if(window.playClick) window.playClick();
             const modal = document.getElementById('quick-view-modal');
@@ -417,6 +463,7 @@
             setTimeout(() => modal.classList.add('hidden'), 300);
         }
 
+        // 6. CART SYSTEM
         window.updateCartUI = () => {
             document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0);
             const con = document.getElementById('cart-items');
@@ -433,9 +480,9 @@
                                 <p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p>
                                 <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
                                 <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
-                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1">-</button>
+                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button>
                                     <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
-                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1">+</button>
+                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button>
                                 </div>
                             </div>
                         </div>

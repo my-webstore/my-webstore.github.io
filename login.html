@@ -14,16 +14,23 @@
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
         h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
+        
         .input-field { background: transparent; border-bottom: 1px solid #D6C8B5; transition: all 0.3s ease; }
         .input-field:focus { border-color: #4A3B32; outline: none; }
+        
         .phone-input-container { display: flex; align-items: center; border-bottom: 1px solid #D6C8B5; transition: all 0.3s ease; }
         .phone-input-container:focus-within { border-color: #4A3B32; }
         .phone-input-field { flex-grow: 1; background: transparent; border: none; outline: none; }
+
+        /* Prevent auto-zoom on iOS inputs */
+        @media screen and (max-width: 768px) {
+            input, select, textarea { font-size: 16px !important; }
+        }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4 md:p-0">
 
-    <div class="bg-white rounded-sm shadow-2xl w-full max-w-5xl h-[650px] md:h-[700px] flex overflow-hidden border border-[#D6C8B5]" data-aos="zoom-in">
+    <div class="bg-white rounded-sm shadow-2xl w-full max-w-5xl h-auto md:h-[700px] flex overflow-hidden border border-[#D6C8B5]" data-aos="zoom-in">
         
         <div class="hidden md:block w-1/2 relative">
             <img src="https://images.unsplash.com/photo-1539109136881-3be0616acf4b?q=80&w=1887&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover" alt="Fashion Model">
@@ -37,12 +44,12 @@
         <div class="w-full md:w-1/2 p-8 md:p-12 flex flex-col justify-center relative">
             <div class="absolute top-6 right-6"><a href="index.html" class="text-xs font-bold uppercase text-[#7A6B63] hover:text-[#4A3B32] transition">Back to Store</a></div>
             
-            <div class="mb-6">
+            <div class="mb-6 mt-8 md:mt-0">
                 <h2 class="text-3xl font-serif font-bold text-[#4A3B32] mb-1">Sign In</h2>
                 <p class="text-xs text-[#7A6B63] uppercase tracking-widest">New here? <a href="signup.html" class="underline font-bold text-[#4A3B32]">Create Account</a></p>
             </div>
 
-            <button onclick="handleGoogleLogin()" class="w-full border border-[#D6C8B5] hover:border-[#4A3B32] text-[#4A3B32] py-3 flex items-center justify-center gap-3 transition mb-6 group rounded-sm">
+            <button onclick="handleGoogleLogin()" class="w-full border border-[#D6C8B5] hover:border-[#4A3B32] text-[#4A3B32] py-3 flex items-center justify-center gap-3 transition mb-6 group rounded-sm whitespace-nowrap">
                 <img src="https://www.svgrepo.com/show/475656/google-color.svg" class="w-5 h-5 group-hover:scale-110 transition-transform">
                 <span class="text-xs font-bold uppercase tracking-wide">Continue with Google</span>
             </button>
@@ -60,11 +67,11 @@
             <form id="email-form" class="space-y-6">
                 <div>
                     <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Email Address</label>
-                    <input type="email" id="email" class="w-full py-3 text-sm input-field" placeholder="name@example.com" required>
+                    <input type="email" id="email" class="w-full py-3 md:text-sm text-base input-field" placeholder="name@example.com" required>
                 </div>
                 <div class="relative">
                     <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Password</label>
-                    <input type="password" id="email-password" class="w-full py-3 text-sm input-field" placeholder="••••••" required>
+                    <input type="password" id="email-password" class="w-full py-3 md:text-sm text-base input-field" placeholder="••••••" required>
                     <button type="button" onclick="forgotPassword()" class="absolute right-0 top-8 text-[10px] font-bold text-[#7A6B63] hover:text-[#4A3B32] uppercase tracking-wider">Forgot?</button>
                 </div>
                 <button type="submit" id="btn-email-login" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm mt-4">
@@ -76,59 +83,50 @@
                 <div>
                     <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Mobile Number</label>
                     <div class="phone-input-container">
-                        <span class="text-sm font-bold text-gray-500 pr-2 border-r border-[#D6C8B5] select-none">+92</span>
-                        <input type="text" id="phoneInput" class="py-3 text-sm pl-3 phone-input-field" placeholder="300 1234567" required>
+                        <span class="text-sm font-bold text-gray-500 pr-2 border-r border-[#D6C8B5] select-none h-full flex items-center">+92</span>
+                        <input type="tel" inputmode="numeric" id="phoneInput" class="py-3 pl-3 phone-input-field md:text-sm text-base" placeholder="300 1234567" required>
                     </div>
                 </div>
                 <div class="relative">
                     <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-400">Password</label>
-                    <input type="password" id="phone-password" class="w-full py-3 text-sm input-field" placeholder="••••••" required>
+                    <input type="password" id="phone-password" class="w-full py-3 md:text-sm text-base input-field" placeholder="••••••" required>
                 </div>
                 <button type="submit" id="btn-phone-login" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm mt-4">
                     Sign In
                 </button>
             </form>
 
-            <p id="status" class="mt-6 text-center text-xs font-bold text-red-600 min-h-[20px]"></p>
+            <p id="status" class="mt-6 text-center text-xs font-bold text-red-600 min-h-[20px] pb-4 md:pb-0"></p>
         </div>
+    </div>
+
+    <div class="fixed bottom-2 right-2 hidden md:block opacity-50 hover:opacity-100 transition">
+        <table class="bg-white/80 p-2 text-[8px] rounded border shadow">
+            <tr><td class="font-bold pr-2">Storage:</td><td>18°C - 24°C</td></tr>
+        </table>
     </div>
 
     <script type="module">
         import { auth, db, doc, getDoc, setDoc, signInWithEmailAndPassword, sendPasswordResetEmail } from './firebase-config.js';
         import { GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // ==========================================
-        // ADMIN EMAIL SETTING (Robust)
-        // Using lowercase helps prevent mismatches
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
-        // ==========================================
-
         let activeTab = 'email';
 
         // --- UPDATED REDIRECT LOGIC ---
         const handleSuccessRedirect = (userEmail) => {
-            console.log("Logged in user email:", userEmail); // DEBUG: Check console (F12) to see exact email
-
-            // 1. ROBUST ADMIN CHECK
-            // We use .toLowerCase() and .trim() to ensure "Gmail" matches "gmail" and no hidden spaces exist
             if (userEmail && userEmail.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim()) {
-                console.log("Admin identified. Redirecting to Admin Panel...");
                 window.location.href = "admin.html";
                 return;
             }
-
-            // 2. NORMAL USER REDIRECT
-            // If they have items in cart -> Checkout
-            // If empty cart -> Index (Home)
             const cart = JSON.parse(localStorage.getItem('myCart')) || [];
             if (cart.length > 0) {
                 window.location.href = "checkout.html";
             } else {
-                window.location.href = "index.html"; // Changed from profile.html as requested
+                window.location.href = "index.html"; 
             }
         };
 
-        // TAB SWITCHING
         window.switchTab = (tab) => {
             if(window.playClick) window.playClick();
             activeTab = tab;
@@ -151,13 +149,11 @@
             }
         }
 
-        // 1. GOOGLE LOGIN
         window.handleGoogleLogin = async () => {
             if(window.playClick) window.playClick();
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
-                // Create user doc if new
                 const docRef = doc(db, "users", result.user.uid);
                 const docSnap = await getDoc(docRef);
                 if (!docSnap.exists()) {
@@ -175,7 +171,6 @@
             }
         };
 
-        // 2. EMAIL LOGIN
         document.getElementById('email-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             if(window.playClick) window.playClick();
@@ -196,7 +191,6 @@
             }
         });
 
-        // 3. PHONE LOGIN
         document.getElementById('phone-form').addEventListener('submit', async (e) => {
             e.preventDefault();
             if(window.playClick) window.playClick();
@@ -216,7 +210,6 @@
 
             try {
                 await signInWithEmailAndPassword(auth, internalEmail, password);
-                // Phone login users likely aren't admins, but we pass email anyway
                 handleSuccessRedirect(internalEmail); 
             } catch (error) {
                 handleAuthError(error, btn);
@@ -238,7 +231,6 @@
             }
         }
 
-        // 4. FORGOT PASSWORD
         window.forgotPassword = async () => {
             if(window.playClick) window.playClick();
             if(activeTab !== 'email') { switchTab('email'); document.getElementById('status').innerText = "Please enter email to reset password."; return; }

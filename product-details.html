@@ -27,6 +27,16 @@
         
         /* Loader */
         .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+        
+        /* Mobile Menu Fix - Fixed Solid Background */
+        #mobile-menu { 
+            position: fixed;
+            inset: 0;
+            z-index: 9999 !important;
+            background-color: #E6D8C5 !important;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body class="bg-themeBg text-themeText flex flex-col min-h-screen">
@@ -35,20 +45,20 @@
         <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
     </div>
 
-    <nav class="sticky top-0 z-50 bg-[#E6D8C5]/95 backdrop-blur-md border-b border-[#D6C8B5] shadow-sm py-4">
+    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6 border-b border-transparent">
         <div class="container mx-auto px-6">
             <div class="flex justify-between items-center">
                 <a href="index.html" class="relative z-50">
-                    <h1 class="text-3xl font-serif font-bold tracking-widest text-[#4A3B32]">BRAND.</h1>
+                    <h1 id="nav-logo" class="text-3xl font-serif font-bold tracking-widest text-white transition-colors duration-300 uppercase">BRAND.</h1>
                 </a>
                 
-                <div class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-[#4A3B32]">
+                <div id="nav-links" class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-white/90 transition-colors duration-300">
                     <a href="men.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Men</a>
                     <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
                     <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
                 </div>
 
-                <div class="flex items-center gap-6 relative z-50 text-[#4A3B32]">
+                <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
                     <div id="auth-container">
                         <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
                             <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
@@ -57,20 +67,28 @@
 
                     <div onclick="toggleCart()" class="relative cursor-pointer group">
                         <i class="fa-solid fa-bag-shopping text-xl group-hover:scale-110 transition"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#4A3B32]">0</span>
+                        <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#E6D8C5]">0</span>
                     </div>
                     
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl"><i class="fa-solid fa-bars-staggered"></i></button>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
                 </div>
             </div>
         </div>
 
-        <div id="mobile-menu" class="fixed inset-0 bg-[#E6D8C5] text-themeText z-40 transform translate-x-full transition-transform duration-500 flex flex-col justify-center items-center space-y-8">
-            <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub">Men</a>
-            <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub">Women</a>
-            <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub">Kids</a>
-            <div id="mobile-auth-links" class="mt-8"></div>
-            <button onclick="toggleMobileMenu()" class="absolute top-6 right-6 text-2xl"><i class="fa-solid fa-xmark"></i></button>
+        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
+                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex flex-col space-y-8">
+                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
+                <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
+                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+            </div>
+
+            <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
+                </div>
         </div>
     </nav>
 
@@ -79,7 +97,7 @@
         <p class="text-sm font-bold uppercase tracking-widest text-themeSub">Loading Product...</p>
     </div>
 
-    <div id="product-content" class="flex-grow container mx-auto px-6 py-12 max-w-7xl">
+    <div id="product-content" class="flex-grow container mx-auto px-6 py-24 max-w-7xl">
         
         <div class="flex justify-between items-center mb-10 border-b border-[#D6C8B5] pb-4">
             <button onclick="goBack()" class="flex items-center gap-2 text-xs font-bold uppercase hover:text-themeSub transition">
@@ -94,8 +112,8 @@
             
             <div data-aos="fade-right" class="relative w-full h-[500px] md:h-[700px] bg-white rounded-sm overflow-hidden group shadow-2xl">
                 <div id="media-display" class="w-full h-full flex items-center justify-center bg-gray-50 transition-opacity duration-500"></div>
-                <button id="prevBtn" onclick="prevMedia()" class="hidden absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-10 h-10 rounded-full shadow-md items-center justify-center transition-all z-10"><i class="fa-solid fa-chevron-left"></i></button>
-                <button id="nextBtn" onclick="nextMedia()" class="hidden absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-10 h-10 rounded-full shadow-md items-center justify-center transition-all z-10"><i class="fa-solid fa-chevron-right"></i></button>
+                <button id="prevBtn" onclick="prevMedia()" class="hidden absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all z-10 text-lg"><i class="fa-solid fa-chevron-left"></i></button>
+                <button id="nextBtn" onclick="nextMedia()" class="hidden absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all z-10 text-lg"><i class="fa-solid fa-chevron-right"></i></button>
                 <div id="media-dots" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-10"></div>
                 <div id="sale-badge" class="hidden absolute top-6 left-6 bg-[#4A3B32] text-[#E6D8C5] text-xs font-bold px-4 py-2 uppercase tracking-widest shadow-md z-10">Sale</div>
             </div>
@@ -130,9 +148,9 @@
                 <div class="mb-10">
                     <p class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Quantity</p>
                     <div class="flex items-center border border-[#D6C8B5] w-fit rounded-sm bg-white">
-                        <button onclick="updatePageQty(-1)" class="px-5 py-3 hover:bg-gray-100 transition font-bold text-gray-600">-</button>
-                        <span id="page-qty" class="px-5 py-3 font-bold text-sm w-12 text-center">1</span>
-                        <button onclick="updatePageQty(1)" class="px-5 py-3 hover:bg-gray-100 transition font-bold text-gray-600">+</button>
+                        <button onclick="updatePageQty(-1)" class="px-6 py-3 hover:bg-gray-100 transition font-bold text-gray-600 text-lg">-</button>
+                        <span id="page-qty" class="px-6 py-3 font-bold text-sm w-12 text-center">1</span>
+                        <button onclick="updatePageQty(1)" class="px-6 py-3 hover:bg-gray-100 transition font-bold text-gray-600 text-lg">+</button>
                     </div>
                 </div>
 
@@ -185,6 +203,7 @@
     <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto">
         <div class="container mx-auto px-6 text-center text-xs">
             <p>&copy; 2025 Brand Inc. All rights reserved.</p>
+            <p class="mt-2 text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
         </div>
     </footer>
 
@@ -198,6 +217,7 @@
     <script type="module">
         import { db, auth, doc, getDoc, collection, addDoc, getDocs, query, where, onAuthStateChanged, signOut, deleteDoc } from './firebase-config.js';
 
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         const urlParams = new URLSearchParams(window.location.search);
         const productId = urlParams.get('id');
         let currentProduct = null, selectedSize = null, selectedColor = null, currentRating = 0, currentUser = null;
@@ -206,10 +226,38 @@
         let mediaList = [], currentMediaIndex = 0;
         let wishlistDocId = null;
 
-        // 0. PRELOADER
+        // 0. PRELOADER & NAVBAR SCROLL
         window.addEventListener('load', () => {
-            document.getElementById('preloader').style.opacity = '0';
-            setTimeout(() => document.getElementById('preloader').style.display = 'none', 500);
+            const preloader = document.getElementById('preloader');
+            preloader.style.opacity = '0';
+            setTimeout(() => preloader.style.display = 'none', 500);
+        });
+
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            const logo = document.getElementById('nav-logo');
+            const links = document.getElementById('nav-links');
+            const icons = document.getElementById('nav-icons');
+            const cartBadge = document.getElementById('cart-count');
+
+            if(window.scrollY > 50) {
+                // SOLID BG ON SCROLL
+                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+                nav.classList.remove('py-6', 'border-transparent');
+                logo.classList.replace('text-white', 'text-[#4A3B32]');
+                links.classList.replace('text-white/90', 'text-[#4A3B32]');
+                icons.classList.replace('text-white', 'text-[#4A3B32]');
+                cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+                cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+            } else {
+                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+                nav.classList.add('py-6', 'border-transparent');
+                logo.classList.replace('text-[#4A3B32]', 'text-white');
+                links.classList.replace('text-[#4A3B32]', 'text-white/90');
+                icons.classList.replace('text-[#4A3B32]', 'text-white');
+                cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
+                cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
+            }
         });
 
         // 1. AUTH STATE & SYNC
@@ -233,13 +281,37 @@
         function setupNavbar(u) {
             const container = document.getElementById('auth-container');
             const mobileLinks = document.getElementById('mobile-auth-links');
+
             if (u) {
                 const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
-                container.innerHTML = `<button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2 focus:outline-none">Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i></button><div id="user-dropdown" class="absolute right-0 top-full mt-3 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60]"><a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-themeText">My Profile</a><a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-themeText">My Orders</a><button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button></div>`;
-                mobileLinks.innerHTML = `<div class="flex flex-col gap-4 w-64 text-center"><p class="text-xs uppercase tracking-widest text-[#7A6B63]">Welcome, ${name}</p><a href="profile.html" class="text-xl font-serif font-bold hover:text-themeSub">My Profile</a><a href="orders.html" class="text-xl font-serif font-bold hover:text-themeSub">My Orders</a><button onclick="handleLogout()" class="text-xl font-serif font-bold text-red-500">Sign Out</button></div>`;
+                const isAdmin = u.email === ADMIN_EMAIL;
+                
+                // Desktop
+                container.innerHTML = `
+                    <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
+                        Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                    </button>
+                    <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
+                        ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
+                        <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
+                        <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
+                        <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
+                        <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
+                    </div>`;
+                
+                // Mobile Menu (Clean)
+                mobileLinks.innerHTML = `
+                    <div class="flex flex-col gap-4 text-center">
+                        <div class="flex items-center justify-center gap-3 mb-2">
+                             <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
+                             <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
+                        </div>
+                        ${isAdmin ? `<a href="admin.html" class="text-lg font-bold text-black border-b border-black pb-2">Admin Dashboard</a>` : ''}
+                        <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
+                    </div>`;
             } else {
                 container.innerHTML = `<a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2"><span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i></a>`;
-                mobileLinks.innerHTML = `<a href="login.html" class="text-3xl font-serif font-bold underline decoration-themeSub decoration-2 underline-offset-8">Sign In</a>`;
+                mobileLinks.innerHTML = `<a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
             }
         }
 

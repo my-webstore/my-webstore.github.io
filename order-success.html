@@ -22,11 +22,12 @@
         .check-draw { stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawCheck 0.8s 0.5s ease forwards; }
         @keyframes drawCheck { to { stroke-dashoffset: 0; } }
 
-        /* PRINT STYLES - Hides UI and shows only receipt */
+        /* PRINT STYLES */
         @media print {
-            body { background: white !important; padding: 0; }
+            body { background: white !important; padding: 0; margin: 0; }
             .no-print { display: none !important; }
-            #receipt-print-area { display: block !important; visibility: visible; position: absolute; left: 0; top: 0; width: 100%; }
+            #receipt-print-area { display: block !important; visibility: visible; position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+            @page { margin: 0; size: auto; }
         }
     </style>
 </head>
@@ -50,7 +51,7 @@
         <div class="bg-[#F5EBE0]/50 p-6 border border-dashed border-[#D6C8B5] rounded-sm mb-8 relative group">
             <p class="text-[10px] font-bold uppercase text-[#7A6B63] tracking-widest mb-2">Order Reference</p>
             <div class="flex items-center justify-center gap-3">
-                <p id="order-id" class="text-lg font-mono font-bold text-[#4A3B32] tracking-wider select-all">Processing...</p>
+                <p id="order-id" class="text-lg font-mono font-bold text-[#4A3B32] tracking-wider select-all break-all">Processing...</p>
                 <button onclick="copyID(this)" class="text-[#7A6B63] hover:text-[#4A3B32] transition p-1" title="Copy ID">
                     <i class="fa-regular fa-copy"></i>
                 </button>
@@ -72,9 +73,9 @@
         </div>
     </div>
 
-    <div id="receipt-print-area" class="hidden p-8 text-black bg-white">
+    <div id="receipt-print-area" class="hidden p-8 text-black bg-white font-sans">
         <div class="text-center border-b-2 border-black pb-6 mb-6">
-            <h1 class="text-3xl font-bold tracking-[0.3em] uppercase">BRAND.</h1>
+            <h1 class="text-3xl font-bold tracking-[0.3em] uppercase font-serif">BRAND.</h1>
             <p class="text-xs uppercase mt-2 tracking-widest">Order Confirmation & Receipt</p>
         </div>
 
@@ -85,7 +86,7 @@
                 <p id="pr-addr" class="text-gray-600 max-w-xs mt-1">...</p>
             </div>
             <div class="text-right">
-                <p><strong>Order ID:</strong> <span id="pr-id"></span></p>
+                <p><strong>Order ID:</strong> <span id="pr-id" class="font-mono"></span></p>
                 <p><strong>Date:</strong> <span id="pr-date"></span></p>
                 <p><strong>Method:</strong> <span id="pr-method"></span></p>
             </div>
@@ -99,8 +100,7 @@
                     <th class="py-3 text-right">Amount</th>
                 </tr>
             </thead>
-            <tbody id="pr-items" class="text-sm">
-                </tbody>
+            <tbody id="pr-items" class="text-sm"></tbody>
         </table>
 
         <div class="flex justify-end">
@@ -114,7 +114,12 @@
         <div class="mt-20 pt-10 border-t border-gray-100 text-center text-[10px] text-gray-400 uppercase tracking-widest">
             <p>Thank you for choosing BRAND. For any queries, please provide your Order ID.</p>
             <div class="mt-4 pt-4 border-t border-gray-50 text-gray-600">
-                <p>Storage Guidelines: High-end apparel should be maintained in a cool environment (15°C - 25°C).</p>
+                <table class="w-full text-center">
+                    <tr>
+                        <td class="font-bold">Storage Guidelines:</td>
+                        <td>Maintain environment 15°C - 25°C</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -173,7 +178,8 @@
 
         function triggerConfetti() {
             const colors = ['#4A3B32', '#D6C8B5', '#E6D8C5', '#FFFFFF'];
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 }, colors: colors });
+            // Mobile Optimization: Reduced particle count for performance
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors: colors });
         }
 
         window.copyID = (btn) => {
