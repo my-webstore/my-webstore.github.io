@@ -26,7 +26,7 @@
         @media print {
             body { background: white !important; padding: 0; margin: 0; }
             .no-print { display: none !important; }
-            #receipt-print-area { display: block !important; visibility: visible; position: absolute; left: 0; top: 0; width: 100%; padding: 20px; }
+            #receipt-print-area { display: block !important; visibility: visible; position: absolute; left: 0; top: 0; width: 100%; padding: 20px; color: black !important; }
             @page { margin: 0; size: auto; }
         }
     </style>
@@ -154,8 +154,19 @@
                     document.getElementById('pr-name').innerText = data.customer.name;
                     document.getElementById('pr-addr').innerText = data.customer.address;
                     document.getElementById('pr-method').innerText = data.paymentMethod || 'Paid';
-                    document.getElementById('pr-sub').innerText = `Rs. ${data.subtotal?.toLocaleString() || '0'}`;
-                    document.getElementById('pr-ship').innerText = data.shipping === 0 ? "FREE" : `Rs. ${data.shipping}`;
+                    
+                    // Calc Subtotal on the fly if missing
+                    let subtotal = data.subtotal;
+                    if(!subtotal) {
+                        subtotal = data.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
+                    }
+
+                    document.getElementById('pr-sub').innerText = `Rs. ${subtotal.toLocaleString()}`;
+                    
+                    // Shipping Logic Re-calc
+                    const shipping = data.totalAmount - subtotal;
+                    document.getElementById('pr-ship').innerText = shipping <= 0 ? "FREE" : `Rs. ${shipping}`;
+                    
                     document.getElementById('pr-total').innerText = `Rs. ${data.totalAmount.toLocaleString()}`;
 
                     const itemsHtml = data.items.map(item => `
@@ -178,7 +189,6 @@
 
         function triggerConfetti() {
             const colors = ['#4A3B32', '#D6C8B5', '#E6D8C5', '#FFFFFF'];
-            // Mobile Optimization: Reduced particle count for performance
             confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors: colors });
         }
 
@@ -193,6 +203,6 @@
     </script>
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 1000, once: true });</script>
+    <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>

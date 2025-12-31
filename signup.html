@@ -163,7 +163,6 @@
 
         // 1. GOOGLE SIGNUP
         window.handleGoogleSignup = async () => {
-            if(window.playClick) window.playClick();
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
@@ -188,7 +187,6 @@
 
         // 2. SWITCH TABS
         window.switchTab = (tab) => {
-            if(window.playClick) window.playClick();
             activeTab = tab;
             document.getElementById('status').innerText = "";
             
@@ -212,7 +210,6 @@
 
         // 3. SEND OTP
         window.sendOTP = async () => {
-            if(window.playClick) window.playClick();
             const btn = document.getElementById('btn-send-otp');
             const status = document.getElementById('status');
             status.innerText = "";
@@ -264,7 +261,6 @@
 
         // 4. VERIFY OTP
         window.verifyOTP = async () => {
-            if(window.playClick) window.playClick();
             const code = document.getElementById('otpInput').value;
             const btn = document.getElementById('btn-verify-otp');
             const status = document.getElementById('status');
@@ -293,7 +289,6 @@
 
         // 5. FINALIZE ACCOUNT
         window.finalizeAccount = async () => {
-            if(window.playClick) window.playClick();
             const password = document.getElementById('newPassword').value;
             const btn = document.getElementById('btn-signup');
             const status = document.getElementById('status');
@@ -331,7 +326,6 @@
     </script>
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="sounds.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>

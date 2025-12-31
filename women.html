@@ -16,6 +16,7 @@
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
         h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
         
+        /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #E6D8C5; }
         ::-webkit-scrollbar-thumb { background: #4A3B32; }
@@ -166,7 +167,7 @@
                 <ul class="space-y-3 text-xs text-[#A89F91]">
                     <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
                     <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
-                    <li><a href="#" class="hover:text-white hover:underline transition">FAQ</a></li>
+                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
                 </ul>
             </div>
             <div>
@@ -184,28 +185,22 @@
                 <a href="#" class="hover:text-white transition">Privacy Policy</a>
                 <a href="#" class="hover:text-white transition">Terms of Service</a>
             </div>
+            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
         </div>
     </footer>
 
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
-        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
-            <h2 class="text-2xl font-serif font-bold">Shopping Bag</h2>
-            <button onclick="toggleCart()" class="text-2xl hover:text-red-500 transition transform hover:rotate-90">&times;</button>
-        </div>
+        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]">
-            <div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div>
-            <button onclick="checkout()" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg">Checkout</button>
-        </div>
+        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]"><div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div><button onclick="window.location.href='checkout.html'" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22]">Checkout</button></div>
     </div>
     <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
-
-    <button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-8 right-8 bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 transform translate-y-20 opacity-0 invisible z-50 flex items-center justify-center border border-[#E6D8C5]"><i class="fa-solid fa-arrow-up text-xl"></i></button>
 
     <script type="module">
         import { db, collection, getDocs, auth, onAuthStateChanged, signOut, query, where, addDoc, deleteDoc, doc } from './firebase-config.js';
         
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
+
         let allProds = [];
         let filter = 'All';
         let cart = JSON.parse(localStorage.getItem('myCart')) || [];
@@ -227,7 +222,8 @@
             const cartBadge = document.getElementById('cart-count');
 
             if(window.scrollY > 50) {
-                nav.classList.add('bg-[#E6D8C5]/95', 'backdrop-blur-md', 'shadow-sm', 'py-4');
+                // FORCE SOLID BG ON SCROLL
+                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4'); 
                 nav.classList.remove('py-6', 'border-transparent');
                 logo.classList.replace('text-white', 'text-[#4A3B32]');
                 links.classList.replace('text-white/90', 'text-[#4A3B32]');
@@ -235,7 +231,7 @@
                 cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
                 cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
             } else {
-                nav.classList.remove('bg-[#E6D8C5]/95', 'backdrop-blur-md', 'shadow-sm', 'py-4');
+                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.add('py-6', 'border-transparent');
                 logo.classList.replace('text-[#4A3B32]', 'text-white');
                 links.classList.replace('text-[#4A3B32]', 'text-white/90');
@@ -248,7 +244,7 @@
             else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
         });
 
-        // 1. SMART AUTH & SYNC (Standardized)
+        // 1. SMART AUTH & SYNC
         onAuthStateChanged(auth, async (user) => {
             currentUser = user; 
             setupNavbar(user);
@@ -270,7 +266,7 @@
                 const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
                 const isAdmin = u.email === ADMIN_EMAIL;
                 
-                // Desktop Dropdown
+                // Desktop
                 container.innerHTML = `
                     <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
                         Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
@@ -302,7 +298,8 @@
         window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
         window.toggleMobileMenu = () => { 
             const menu = document.getElementById('mobile-menu');
-            menu.classList.toggle('translate-x-full');
+            if(menu.classList.contains('translate-x-full')) menu.classList.remove('translate-x-full');
+            else menu.classList.add('translate-x-full');
         }
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
@@ -337,7 +334,6 @@
         }
         
         window.filterItems = (cat) => {
-            if(window.playClick) window.playClick();
             filter = cat;
             document.querySelectorAll('.filter-btn').forEach(b => {
                 b.classList.remove('active-filter', 'bg-themeBtn', 'text-[#E6D8C5]');
@@ -379,7 +375,8 @@
                 }
 
                 const isFav = wishlistMap.has(p.id);
-                const heartIconClass = isFav ? 'fa-solid text-red-500' : 'fa-regular text-gray-400';
+                // FIXED: Explicitly added 'fa-heart' to the empty state class
+                const heartIconClass = isFav ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart text-[#4A3B32]';
                 const delay = index * 50; 
 
                 grid.innerHTML += `
@@ -420,7 +417,7 @@
 
             // INSTANT UI CHANGE
             if(isFav) {
-                icon.className = 'fa-regular fa-heart text-gray-400 text-lg';
+                icon.className = 'fa-regular fa-heart text-[#4A3B32] text-lg';
             } else {
                 icon.className = 'fa-solid fa-heart text-red-500 text-lg';
             }
@@ -435,15 +432,14 @@
                 }
             } catch (e) { 
                 console.error(e);
-                // Revert UI if DB call fails
+                // Revert if DB fails
                 icon.classList.toggle('fa-solid'); icon.classList.toggle('text-red-500');
-                icon.classList.toggle('fa-regular'); icon.classList.toggle('text-gray-400');
+                icon.classList.toggle('fa-regular'); icon.classList.toggle('text-[#4A3B32]');
             }
         }
 
         // 5. QUICK VIEW
         window.openQuickView = (id, name, price, discount, image) => {
-            if(window.playClick) window.playClick();
             const modal = document.getElementById('quick-view-modal');
             document.getElementById('qv-image').src = image;
             document.getElementById('qv-name').innerText = name;
@@ -517,7 +513,6 @@
         window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="sounds.js"></script>
     <script>AOS.init({ duration: 1000, once: true, offset: 50 });</script>
 </body>
 </html>

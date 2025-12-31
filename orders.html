@@ -32,6 +32,16 @@
         .step-completed .step-line { background-color: #4A3B32; }
         
         .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+
+        /* Mobile Menu Fix */
+        #mobile-menu { 
+            position: fixed;
+            inset: 0;
+            z-index: 9999 !important;
+            background-color: #E6D8C5 !important;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+            pointer-events: auto;
+        }
     </style>
 </head>
 <body class="bg-themeBg text-themeText flex flex-col min-h-screen">
@@ -61,7 +71,21 @@
                         <i class="fa-solid fa-bag-shopping text-2xl"></i>
                         <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#4A3B32]">0</span>
                     </div>
+                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
                 </div>
+            </div>
+        </div>
+
+        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
+            <div class="flex justify-between items-center mb-12">
+                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
+                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            
+            <div class="flex flex-col space-y-8">
+                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
+                <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
+                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
             </div>
         </div>
     </nav>
@@ -84,7 +108,7 @@
         </div>
     </div>
 
-    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] relative z-20">
+    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto">
         <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div class="col-span-1 md:col-span-1">
                 <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
@@ -142,6 +166,12 @@
             setTimeout(() => preloader.style.display = 'none', 500);
         });
 
+        // Toggle Mobile Menu
+        window.toggleMobileMenu = () => { 
+            const menu = document.getElementById('mobile-menu');
+            menu.classList.toggle('translate-x-full');
+        }
+
         // 1. AUTH CHECK
         onAuthStateChanged(auth, async (user) => {
             if (user) {
@@ -165,7 +195,7 @@
                 querySnapshot.forEach((doc) => { orders.push({ id: doc.id, ...doc.data() }); });
 
                 // Sort Newest First
-                orders.sort((a, b) => b.timestamp - a.timestamp);
+                orders.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
                 if (orders.length === 0) {
                     loading.classList.add('hidden');
@@ -301,7 +331,6 @@
     </script>
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="sounds.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>

@@ -200,10 +200,44 @@
         </div>
     </div>
 
-    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto">
-        <div class="container mx-auto px-6 text-center text-xs">
-            <p>&copy; 2025 Brand Inc. All rights reserved.</p>
-            <p class="mt-2 text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
+    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto relative z-20">
+        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+            <div class="col-span-1 md:col-span-1">
+                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
+                <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
+                <ul class="space-y-3 text-xs text-[#A89F91]">
+                    <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
+                    <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
+                    <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
+                <ul class="space-y-3 text-xs text-[#A89F91]">
+                    <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
+                    <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+                </ul>
+            </div>
+            <div>
+                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
+                <div class="flex gap-4 text-lg text-white">
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
+                </div>
+            </div>
+        </div>
+        <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+            <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
+                <a href="#" class="hover:text-white transition">Privacy Policy</a>
+                <a href="#" class="hover:text-white transition">Terms of Service</a>
+            </div>
+            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
         </div>
     </footer>
 
@@ -567,7 +601,6 @@
     </script>
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="sounds.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>

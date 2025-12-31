@@ -128,7 +128,6 @@
         };
 
         window.switchTab = (tab) => {
-            if(window.playClick) window.playClick();
             activeTab = tab;
             document.getElementById('status').innerText = "";
             const formEmail = document.getElementById('email-form');
@@ -150,7 +149,6 @@
         }
 
         window.handleGoogleLogin = async () => {
-            if(window.playClick) window.playClick();
             const provider = new GoogleAuthProvider();
             try {
                 const result = await signInWithPopup(auth, provider);
@@ -173,7 +171,6 @@
 
         document.getElementById('email-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(window.playClick) window.playClick();
 
             const email = document.getElementById('email').value;
             const password = document.getElementById('email-password').value;
@@ -193,7 +190,6 @@
 
         document.getElementById('phone-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            if(window.playClick) window.playClick();
 
             const phoneInput = document.getElementById('phoneInput').value.trim();
             const password = document.getElementById('phone-password').value;
@@ -232,7 +228,6 @@
         }
 
         window.forgotPassword = async () => {
-            if(window.playClick) window.playClick();
             if(activeTab !== 'email') { switchTab('email'); document.getElementById('status').innerText = "Please enter email to reset password."; return; }
             
             const email = document.getElementById('email').value;
@@ -251,7 +246,6 @@
     </script>
     
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script src="sounds.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>
 </html>
