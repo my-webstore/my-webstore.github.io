@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     
-    <script>tailwind.config = { theme: { extend: { colors: { adminDark: '#111827', adminAccent: '#4F46E5', adminSuccess: '#10B981', adminWarning: '#F59E0B', adminDanger: '#EF4444' } } } }</script>
+    <script>tailwind.config = { theme: { extend: { colors: { adminDark: '#111827', adminAccent: '#4F46E5', adminSuccess: '#10B981', adminWarning: '#F59E0B', adminDanger: '#EF4444', themeBtn: '#4A3B32', themeText: '#4A3B32' } } } }</script>
     
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
@@ -25,6 +25,16 @@
         }
         
         .scrollbar-hide::-webkit-scrollbar { display: none; }
+
+        /* Toast Notification Animation */
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
+
+        /* Security Overlay */
+        .loader-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
         
         /* Mobile Order Cards */
         @media (max-width: 768px) {
@@ -39,20 +49,52 @@
 </head>
 <body class="flex flex-col min-h-screen">
 
+    <div id="security-overlay" class="loader-overlay">
+        
+        <div id="state-loading" class="text-center">
+            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
+            <p id="sec-loading-msg" class="text-xs font-bold uppercase tracking-widest text-gray-600">Verifying Admin Privileges...</p>
+        </div>
+
+        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
+            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
+            <p class="text-xs text-gray-500 mb-6">Please authenticate to access orders.</p>
+            <form id="quick-login-form" class="space-y-4">
+                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
+                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
+                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Access</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
+        </div>
+
+        <div id="state-denied" class="hidden text-center">
+            <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
+            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
+            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
+            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
+        </div>
+    </div>
+
     <header class="bg-adminDark text-white py-4 px-4 md:px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
             <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded ml-1">ADMIN</span></h1>
         </div>
         <div class="flex items-center gap-2 md:gap-4">
+            
             <a href="admin.html" class="text-[10px] md:text-xs font-bold uppercase bg-gray-800 border border-gray-700 px-3 py-2 rounded hover:bg-gray-700 text-white transition flex items-center gap-2">
                 <i class="fa-solid fa-gauge-high"></i> <span class="hidden md:inline">Dashboard</span>
+            </a>
+
+            <a href="admin-chat.html" class="relative text-[10px] md:text-xs font-bold uppercase bg-gray-800 border border-gray-700 px-3 py-2 rounded hover:bg-gray-700 text-white transition flex items-center gap-2">
+                <i class="fa-solid fa-comments"></i> <span class="hidden md:inline">Inbox</span>
+                <span id="inbox-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-adminDark animate-pulse"></span>
             </a>
 
             <a href="index.html" target="_blank" class="text-[10px] md:text-xs font-bold uppercase border border-gray-600 px-3 py-2 rounded hover:bg-white hover:text-adminDark transition flex items-center gap-2">
                 <i class="fa-solid fa-store"></i> <span class="hidden md:inline">Store</span>
             </a>
             
-            <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase transition flex items-center gap-2 ml-2">
+            <button onclick="openLogoutModal()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase transition flex items-center gap-2 ml-2">
                 <i class="fa-solid fa-right-from-bracket text-lg"></i>
             </button>
         </div>
@@ -159,27 +201,122 @@
         </div>
     </div>
 
+    <div id="logout-modal" class="fixed inset-0 bg-black/60 z-[70] hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
+        <div class="bg-white rounded-lg shadow-2xl p-6 w-80 text-center transform scale-95 transition-transform duration-300">
+            <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 text-red-500 text-xl">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+            </div>
+            <h3 class="font-serif font-bold text-lg text-gray-800 mb-2">Sign Out?</h3>
+            <p class="text-xs text-gray-500 mb-6 leading-relaxed">You will be returned to the login screen.</p>
+            <div class="flex gap-3">
+                <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded text-xs font-bold uppercase text-gray-600 hover:bg-gray-50 transition">Cancel</button>
+                <button onclick="confirmLogout()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded text-xs font-bold uppercase hover:bg-red-700 transition shadow-md">Sign Out</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 right-5 z-[80] flex flex-col gap-2"></div>
+
     <script type="module">
-        import { auth, db, collection, getDocs, doc, updateDoc, onAuthStateChanged, signOut } from './firebase-config.js';
+        import { auth, db, collection, getDocs, doc, updateDoc, onAuthStateChanged, signOut, query, where, onSnapshot, signInWithEmailAndPassword } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
         let allOrders = [];
 
-        // 1. STRICT ADMIN CHECK
+        // UI References
+        const overlay = document.getElementById('security-overlay');
+        const stateLoading = document.getElementById('state-loading');
+        const stateLogin = document.getElementById('state-login');
+        const stateDenied = document.getElementById('state-denied');
+
+        // 1. STRICT ADMIN CHECK (WITH OVERLAY)
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== ADMIN_EMAIL) {
-                if(user) alert("Access Denied: Admin privileges required.");
-                window.location.href = "login.html";
+            stateLoading.classList.add('hidden'); // Stop spinning icon
+
+            if (user) {
+                if (user.email === ADMIN_EMAIL) {
+                    // Success: Fade out overlay
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                    loadAdminOrders();
+                    checkUnreadMessages();
+                } else {
+                    // Wrong User
+                    stateDenied.classList.remove('hidden');
+                    document.getElementById('current-user-email').innerText = user.email;
+                }
             } else {
-                loadAdminOrders();
+                // Not Logged In
+                stateLogin.classList.remove('hidden');
             }
         });
 
-        window.handleLogout = async () => {
-            if(confirm("Secure Logout: Are you sure?")) {
-                await signOut(auth);
-                window.location.href = "login.html";
+        // 2. QUICK LOGIN LOGIC
+        document.getElementById('quick-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass').value;
+            const errBox = document.getElementById('login-error');
+            
+            try {
+                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
+                // Page refreshes automatically via listener
+            } catch (error) {
+                errBox.innerText = "Error: " + error.message;
+                errBox.classList.remove('hidden');
             }
+        });
+
+        window.forceReset = async () => {
+            if(auth) await signOut(auth);
+            window.location.reload();
+        }
+
+        // 3. UNREAD MESSAGE DOT LOGIC
+        function checkUnreadMessages() {
+            const q = query(collection(db, "chats"), where("unread", "==", true));
+            onSnapshot(q, (snapshot) => {
+                const dot = document.getElementById('inbox-dot');
+                if (!snapshot.empty) {
+                    dot.classList.remove('hidden'); 
+                } else {
+                    dot.classList.add('hidden'); 
+                }
+            });
+        }
+
+        // 4. LOGOUT MODAL LOGIC
+        window.openLogoutModal = () => {
+            const m = document.getElementById('logout-modal');
+            m.classList.remove('hidden');
+            setTimeout(() => { m.classList.remove('opacity-0'); m.querySelector('div').classList.replace('scale-95', 'scale-100'); }, 10);
+        }
+        window.closeLogoutModal = () => {
+            const m = document.getElementById('logout-modal');
+            m.classList.add('opacity-0'); m.querySelector('div').classList.replace('scale-100', 'scale-95');
+            setTimeout(() => m.classList.add('hidden'), 300);
+        }
+        window.confirmLogout = async () => {
+            await signOut(auth);
+            window.location.href = "login.html";
+        }
+
+        // 5. TOAST NOTIFICATION LOGIC
+        window.showToast = (message, type = 'error') => {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            const colorClass = type === 'success' ? 'bg-green-600' : 'bg-red-600';
+            const icon = type === 'success' ? 'fa-check' : 'fa-triangle-exclamation';
+            
+            toast.className = `${colorClass} text-white px-6 py-3 rounded shadow-lg flex items-center gap-3 text-xs font-bold uppercase tracking-wide toast-enter transform transition-all duration-500`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateX(100%)';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
         }
 
         async function loadAdminOrders() {
@@ -204,7 +341,6 @@
                 document.getElementById('pending-orders').innerText = pending;
                 document.getElementById('cancelled-orders').innerText = cancelled;
 
-                // Sort: Newest First
                 allOrders.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
 
                 tbody.innerHTML = "";
@@ -217,7 +353,6 @@
                 allOrders.forEach(order => {
                     const itemsSummary = order.items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 40) + (order.items.length > 1 ? '...' : '');
 
-                    // Responsive Row
                     const row = `
                         <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0 group">
                             <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">
@@ -277,16 +412,11 @@
             selectElem.classList.add('opacity-50');
             
             try {
-                // Update Database
                 await updateDoc(doc(db, "orders", orderId), { status: newStatus });
-                
-                // INSTANT UI UPDATE
-                // Update select coloring immediately
                 selectElem.className = `status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(newStatus)}`;
-                
+                showToast("Order Updated", "success");
             } catch(e) {
-                alert("Failed to update status. Check internet.");
-                location.reload(); 
+                showToast("Update Failed");
             } finally {
                 selectElem.classList.remove('opacity-50');
             }

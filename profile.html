@@ -96,11 +96,16 @@
                 </div>
 
                 <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-[#4A3B32] transition-colors duration-300">
+                    
+                    <a href="chat.html" class="hover:opacity-75 transition group relative" title="Concierge Support">
+                        <i class="fa-solid fa-headset text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </a>
+
                     <div id="auth-container">
-                        </div>
+                    </div>
                     <div onclick="toggleCart()" class="relative cursor-pointer hover:opacity-75 transition">
-                        <i class="fa-solid fa-bag-shopping text-2xl"></i>
-                        <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">0</span>
+                        <i class="fa-solid fa-bag-shopping text-xl"></i>
+                        <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold">0</span>
                     </div>
                     <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
                 </div>
@@ -117,10 +122,13 @@
                 <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
                 <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
                 <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+                <a href="chat.html" class="text-3xl font-serif font-bold hover:text-themeSub flex items-center gap-3 border-b border-themeText/10 pb-4">
+                    <i class="fa-solid fa-headset text-2xl"></i> Concierge Support
+                </a>
             </div>
 
             <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
-                </div>
+            </div>
         </div>
     </nav>
 
@@ -130,6 +138,13 @@
     </div>
 
     <div id="main-content" class="hidden flex-grow container mx-auto px-6 py-24 pt-32">
+        
+        <div class="max-w-6xl mx-auto mb-6">
+            <button onclick="smartBack()" class="flex items-center gap-2 text-themeSub hover:text-themeText transition text-sm font-bold uppercase tracking-widest group">
+                <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back
+            </button>
+        </div>
+
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
             
             <div data-aos="fade-right" class="lg:col-span-4 space-y-6">
@@ -355,6 +370,15 @@
             "Zhob"
         ];
 
+        // --- SMART BACK FUNCTION ---
+        window.smartBack = () => {
+            if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index.html';
+            }
+        }
+
         // --- DROPDOWN LOGIC ---
         function setupDropdown(inputId, listId, items) {
             const input = document.getElementById(inputId);
@@ -501,7 +525,6 @@
                         document.getElementById('addr-state').value = data.addressDetails.state || "";
                         document.getElementById('addr-zip').value = data.addressDetails.zip || "";
                     } else if (data.address) {
-                        // Fallback for old address format
                         document.getElementById('addr-street').value = data.address; 
                     }
 
