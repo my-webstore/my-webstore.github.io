@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Concierge Support - Brand</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        themeBg: '#E6D8C5', 
+                        themeText: '#4A3B32', 
+                        themeSub: '#7A6B63', 
+                        themeBtn: '#4A3B32',
+                        themeLight: '#F5EBE0'
+                    } 
+                } 
+            } 
+        }
+    </script>
+    
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F6F4; overflow: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Custom Scrollbar */
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
+
+        /* Message Bubbles */
+        .msg-user { 
+            background-color: #4A3B32; 
+            color: #E6D8C5; 
+            align-self: flex-end; 
+            border-radius: 12px 12px 0 12px;
+            box-shadow: 0 2px 5px rgba(74, 59, 50, 0.1);
+        }
+        .msg-admin { 
+            background-color: #FFFFFF; 
+            color: #4A3B32; 
+            align-self: flex-start; 
+            border-radius: 12px 12px 12px 0;
+            border: 1px solid #E5E7EB;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        /* Overlay for Loading / Access Denied */
+        .full-screen-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
+    </style>
+</head>
+<body class="h-screen flex flex-col">
+
+    <div id="status-overlay" class="full-screen-overlay">
+        <div id="loading-state" class="text-center">
+            <i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn mb-4"></i>
+            <p class="text-xs font-bold uppercase tracking-widest text-themeBtn">Verifying Membership...</p>
+        </div>
+
+        <div id="denied-state" class="hidden bg-white p-8 rounded-sm shadow-2xl text-center max-w-xs w-full border-t-4 border-themeBtn mx-4 animate-fade-in-up">
+            <div class="mb-5 text-themeBtn text-4xl opacity-80"><i class="fa-solid fa-lock"></i></div>
+            <h2 class="text-xl font-serif font-bold text-themeText mb-3">Members Only</h2>
+            <p class="text-xs text-gray-500 mb-8 leading-relaxed">Concierge support is exclusive to registered members. Please sign in to access this feature.</p>
+            <a href="login.html" class="block w-full bg-themeBtn text-[#E6D8C5] py-3 text-[10px] font-bold uppercase tracking-widest rounded-sm hover:bg-[#3A2B22] transition shadow-lg">Sign In / Register</a>
+            <a href="index.html" class="block mt-5 text-[9px] text-gray-400 font-bold uppercase tracking-widest hover:text-themeText transition">Return to Store</a>
+        </div>
+    </div>
+
+    <header class="bg-white/90 backdrop-blur-md border-b border-[#E6D8C5] px-6 py-4 flex justify-between items-center shadow-sm z-20">
+        <div class="flex items-center gap-4">
+            <a href="profile.html" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-500">
+                <i class="fa-solid fa-arrow-left"></i>
+            </a>
+            <div>
+                <h1 class="text-lg font-serif font-bold text-themeText tracking-wide">Concierge Service</h1>
+                <div class="flex items-center gap-2">
+                    <span class="relative flex h-2 w-2">
+                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
+                      <span class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                    </span>
+                    <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Admin Online</p>
+                </div>
+            </div>
+        </div>
+        <div class="w-10 h-10 rounded-full border border-[#D6C8B5] overflow-hidden">
+            <img src="https://ui-avatars.com/api/?name=Brand+Support&background=4A3B32&color=E6D8C5" alt="Support" class="w-full h-full object-cover">
+        </div>
+    </header>
+
+    <div id="chat-box" class="flex-1 overflow-y-auto p-6 space-y-4 flex flex-col custom-scrollbar bg-[#F9F5F0] relative">
+        <div class="text-center py-6">
+            <div class="inline-block bg-themeBg/30 px-4 py-2 rounded-full mb-2">
+                <i class="fa-solid fa-lock text-xs text-themeText/70 mr-1"></i>
+                <span class="text-[10px] font-bold uppercase tracking-widest text-themeText/70">End-to-End Encrypted</span>
+            </div>
+            <p class="text-xs text-gray-400">Your private line to our support team.</p>
+        </div>
+        </div>
+
+    <div class="bg-white p-4 md:p-6 border-t border-[#E6D8C5] z-20">
+        <form id="chat-form" class="flex items-end gap-3 max-w-4xl mx-auto relative">
+            <div class="flex-1 relative">
+                <input type="text" id="msg-input" 
+                    class="w-full bg-gray-50 border border-gray-200 rounded-lg pl-4 pr-4 py-4 focus:outline-none focus:border-themeText focus:ring-1 focus:ring-themeText transition text-sm text-themeText placeholder-gray-400 shadow-inner" 
+                    placeholder="Type your message here..." 
+                    autocomplete="off">
+            </div>
+            <button type="submit" id="send-btn" class="bg-themeBtn text-[#E6D8C5] h-[54px] w-[54px] rounded-lg hover:bg-[#3A2B22] transition shadow-lg flex items-center justify-center group disabled:opacity-50 disabled:cursor-not-allowed">
+                <i class="fa-solid fa-paper-plane text-lg group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform"></i>
+            </button>
+        </form>
+    </div>
+
+    <script type="module">
+        // Import Check
+        try {
+            var { auth, db, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp, onAuthStateChanged } = await import('./firebase-config.js');
+        } catch (e) {
+            console.error("Firebase Config Missing:", e);
+            document.getElementById('loading-state').innerHTML = `<p class="text-red-500 font-bold">System Error: Config Missing</p>`;
+        }
+
+        let currentUser = null;
+        const chatBox = document.getElementById('chat-box');
+        const overlay = document.getElementById('status-overlay');
+        const loadingState = document.getElementById('loading-state');
+        const deniedState = document.getElementById('denied-state');
+        const inputField = document.getElementById('msg-input');
+
+        // Safety Timeout (in case Firebase is slow/blocked)
+        const safetyTimeout = setTimeout(() => {
+            if (overlay.style.display !== 'none' && deniedState.classList.contains('hidden')) {
+                // If still loading after 8s, show error manually
+                loadingState.innerHTML = `
+                    <div class="text-red-500 mb-2"><i class="fa-solid fa-wifi"></i></div>
+                    <p class="text-xs font-bold uppercase tracking-widest text-red-500">Connection Timeout</p>
+                    <button onclick="window.location.reload()" class="mt-4 text-xs underline">Try Again</button>
+                `;
+            }
+        }, 8000);
+
+        // 1. Strict Security Check (No Popups)
+        if(auth) {
+            onAuthStateChanged(auth, (user) => {
+                clearTimeout(safetyTimeout);
+                if (user) {
+                    // --- AUTHORIZED ---
+                    currentUser = user;
+                    initChat();
+                    // Smoothly fade out overlay
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                } else {
+                    // --- UNAUTHORIZED (Show Lock Screen) ---
+                    loadingState.classList.add('hidden');
+                    deniedState.classList.remove('hidden');
+                    // Overlay stays visible, blocking the chat UI behind it
+                }
+            });
+        }
+
+        // 2. Initialize Chat Listener
+        function initChat() {
+            try {
+                const chatRef = collection(db, "chats", currentUser.uid, "messages");
+                const q = query(chatRef, orderBy("timestamp", "asc"));
+
+                onSnapshot(q, (snapshot) => {
+                    // Reset Chat View (Keep Header)
+                    chatBox.innerHTML = `
+                        <div class="text-center py-6">
+                            <div class="inline-block bg-themeBg/30 px-4 py-2 rounded-full mb-2">
+                                <i class="fa-solid fa-lock text-xs text-themeText/70 mr-1"></i>
+                                <span class="text-[10px] font-bold uppercase tracking-widest text-themeText/70">End-to-End Encrypted</span>
+                            </div>
+                            <p class="text-xs text-gray-400">Your private line to our support team.</p>
+                        </div>
+                    `;
+                    
+                    snapshot.forEach((doc) => {
+                        const msg = doc.data();
+                        renderMessage(msg);
+                    });
+                    
+                    scrollToBottom();
+                }, (error) => {
+                    console.error("Chat Permission Error:", error);
+                });
+            } catch (e) {
+                console.error(e);
+            }
+        }
+
+        // 3. Render Message Bubble
+        function renderMessage(msg) {
+            const div = document.createElement('div');
+            const isMe = msg.senderId === currentUser.uid;
+            
+            // Format Time
+            let timeString = "Just now";
+            if (msg.timestamp) {
+                const date = msg.timestamp.toDate();
+                timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            }
+
+            div.className = `max-w-[75%] px-5 py-3 text-sm leading-relaxed shadow-sm transition-all duration-300 animate-fade-in-up ${isMe ? 'msg-user' : 'msg-admin'}`;
+            
+            div.innerHTML = `
+                <p class="font-medium">${msg.text}</p>
+                <p class="text-[9px] mt-1 opacity-70 text-right uppercase tracking-wider font-bold">${timeString}</p>
+            `;
+            
+            chatBox.appendChild(div);
+        }
+
+        function scrollToBottom() {
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        // 4. Send Message Logic
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const text = inputField.value.trim();
+            if (!text) return;
+
+            inputField.value = ''; 
+            inputField.focus();
+            scrollToBottom();
+
+            try {
+                // A. Add message to subcollection
+                await addDoc(collection(db, "chats", currentUser.uid, "messages"), {
+                    text: text,
+                    senderId: currentUser.uid,
+                    isAdmin: false,
+                    timestamp: serverTimestamp()
+                });
+
+                // B. Update Parent Document (For Admin Dashboard Notification)
+                await setDoc(doc(db, "chats", currentUser.uid), {
+                    userName: currentUser.displayName || currentUser.email || "Valued Customer",
+                    userEmail: currentUser.email,
+                    lastMessage: text,
+                    lastMessageTime: serverTimestamp(),
+                    userId: currentUser.uid,
+                    unread: true 
+                }, { merge: true });
+
+            } catch (error) {
+                console.error("Error sending:", error);
+            }
+        });
+
+        // Add tailwind animation config
+        const style = document.createElement('style');
+        style.innerHTML = `
+            @keyframes fadeInUp {
+                from { opacity: 0; transform: translateY(10px); }
+                to { opacity: 1; transform: translateY(0); }
+            }
+            .animate-fade-in-up { animation: fadeInUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        `;
+        document.head.appendChild(style);
+
+    </script>
+</body>
+</html>

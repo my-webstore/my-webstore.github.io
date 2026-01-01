@@ -6,7 +6,7 @@ import {
     onAuthStateChanged, 
     signOut,
     sendPasswordResetEmail,
-    updateProfile,        // <--- ADDED: Needed to save User Names
+    updateProfile, 
     GoogleAuthProvider, 
     signInWithPopup 
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -21,10 +21,13 @@ import {
     where, 
     updateDoc, 
     deleteDoc,
-    setDoc 
+    setDoc,
+    orderBy,           // <--- ADDED for Chat
+    onSnapshot,        // <--- ADDED for Realtime Chat
+    serverTimestamp    // <--- ADDED for Message Time
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
-import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js"; // <--- ADDED: For Image support
+import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 // --- YOUR SPECIFIC KEYS ---
 const firebaseConfig = {
@@ -41,7 +44,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
-const storage = getStorage(app); // <--- INITIALIZED
+const storage = getStorage(app);
 const analytics = getAnalytics(app); 
 const googleProvider = new GoogleAuthProvider();
 
@@ -52,14 +55,14 @@ export {
     app,
     auth, 
     db, 
-    storage,   // <--- EXPORTED
+    storage,
     analytics,
     createUserWithEmailAndPassword, 
     signInWithEmailAndPassword, 
     onAuthStateChanged, 
     signOut, 
     sendPasswordResetEmail,
-    updateProfile,      // <--- EXPORTED
+    updateProfile,
     signInWithPopup,
     googleProvider,
     collection, 
@@ -71,5 +74,8 @@ export {
     where, 
     updateDoc, 
     deleteDoc,
-    setDoc 
+    setDoc,
+    orderBy,           // <--- EXPORTED
+    onSnapshot,        // <--- EXPORTED
+    serverTimestamp    // <--- EXPORTED
 };

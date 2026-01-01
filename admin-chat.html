@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Concierge Dashboard - Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = { 
+            theme: { 
+                extend: { 
+                    colors: { 
+                        themeBg: '#E6D8C5', 
+                        themeText: '#4A3B32', 
+                        themeSub: '#7A6B63', 
+                        themeBtn: '#4A3B32' 
+                    } 
+                } 
+            } 
+        }
+    </script>
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9f9; overflow: hidden; }
+        .font-serif { font-family: 'Playfair Display', serif; }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+        .chat-bubble { max-width: 75%; padding: 10px 16px; border-radius: 12px; position: relative; font-size: 0.9rem; line-height: 1.5; }
+        .bubble-admin { background-color: #4A3B32; color: #E6D8C5; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .bubble-user { background-color: white; color: #334155; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #E2E8F0; }
+        
+        .active-chat { background-color: #F1F5F9; border-right: 4px solid #4A3B32; }
+        .loader-overlay { position: fixed; inset: 0; background: white; z-index: 50; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="h-screen flex text-gray-800">
+
+    <div id="security-overlay" class="loader-overlay">
+        
+        <div id="state-loading" class="text-center">
+            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
+            <p class="text-xs font-bold uppercase tracking-widest">Verifying Admin Privileges...</p>
+        </div>
+
+        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
+            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
+            <p class="text-xs text-gray-500 mb-6">Please authenticate to access the dashboard.</p>
+            <form id="quick-login-form" class="space-y-4">
+                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
+                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
+                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest">Unlock Dashboard</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
+        </div>
+
+        <div id="state-denied" class="hidden text-center">
+            <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
+            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
+            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
+            <button onclick="logoutAdmin()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
+        </div>
+
+    </div>
+
+    <aside class="w-full md:w-80 bg-white border-r border-gray-200 flex flex-col z-10 shadow-lg">
+        <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-themeText text-[#E6D8C5]">
+            <div>
+                <h1 class="font-serif text-lg font-bold tracking-wider">INBOX</h1>
+                <p class="text-[10px] opacity-70 uppercase tracking-widest">Client Messages</p>
+            </div>
+            <button onclick="logoutAdmin()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition" title="Logout">
+                <i class="fa-solid fa-power-off text-xs"></i>
+            </button>
+        </div>
+
+        <div id="inbox-list" class="flex-1 overflow-y-auto">
+            <div class="p-10 text-center text-gray-400 text-xs uppercase tracking-widest">Loading Chats...</div>
+        </div>
+    </aside>
+
+    <main class="hidden md:flex flex-1 flex-col bg-[#F3F4F6] relative">
+        
+        <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-0">
+            <i class="fa-regular fa-comments text-6xl mb-4 opacity-20"></i>
+            <p class="text-sm font-bold uppercase tracking-widest opacity-50">Select a client to start concierge</p>
+        </div>
+
+        <div id="chat-interface" class="flex flex-col h-full hidden z-10">
+            
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg" id="header-avatar">U</div>
+                    <div>
+                        <h2 id="header-name" class="font-bold text-gray-800 text-sm">Unknown User</h2>
+                        <p id="header-email" class="text-[10px] text-gray-400 font-mono">ID: ...</p>
+                    </div>
+                </div>
+                <div class="flex gap-3">
+                    <button onclick="clearChat()" class="text-red-400 hover:text-red-600 text-xs font-bold uppercase tracking-widest"><i class="fa-solid fa-trash mr-1"></i> Clear</button>
+                </div>
+            </header>
+
+            <div id="messages-box" class="flex-1 overflow-y-auto p-6 space-y-3 flex flex-col"></div>
+
+            <div class="bg-white p-4 border-t border-gray-200">
+                <form id="admin-form" class="flex gap-2 max-w-4xl mx-auto">
+                    <input type="text" id="admin-input" class="flex-1 bg-gray-50 border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-themeBtn focus:ring-1 focus:ring-themeBtn transition" placeholder="Type your reply..." autocomplete="off">
+                    <button type="submit" class="bg-themeBtn text-[#E6D8C5] px-6 py-2 rounded font-bold uppercase text-xs tracking-widest hover:bg-black transition shadow-md">Send</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <script type="module">
+        import { auth, db, collection, query, orderBy, onSnapshot, doc, addDoc, updateDoc, serverTimestamp, onAuthStateChanged, deleteDoc, getDocs, signInWithEmailAndPassword, signOut } from './firebase-config.js';
+
+        // --- SECURITY CONFIG ---
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
+        // -----------------------
+
+        let selectedUserId = null;
+        let unsubscribeMessages = null;
+
+        // UI References
+        const overlay = document.getElementById('security-overlay');
+        const stateLoading = document.getElementById('state-loading');
+        const stateLogin = document.getElementById('state-login');
+        const stateDenied = document.getElementById('state-denied');
+
+        // 1. ADMIN SECURITY CHECK
+        onAuthStateChanged(auth, (user) => {
+            stateLoading.classList.add('hidden'); // Stop spinning
+
+            if (user) {
+                // User is Logged In
+                if (user.email === ADMIN_EMAIL) {
+                    // ACCESS GRANTED
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                    initInbox();
+                } else {
+                    // WRONG USER (e.g. Customer Account)
+                    stateDenied.classList.remove('hidden');
+                    document.getElementById('current-user-email').innerText = user.email;
+                }
+            } else {
+                // NOT LOGGED IN -> Show Login Form
+                stateLogin.classList.remove('hidden');
+            }
+        });
+
+        // 2. Quick Login Logic
+        document.getElementById('quick-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass').value;
+            const errBox = document.getElementById('login-error');
+            
+            try {
+                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
+                // Page will auto-refresh auth state via onAuthStateChanged above
+            } catch (error) {
+                errBox.innerText = "Error: " + error.message;
+                errBox.classList.remove('hidden');
+            }
+        });
+
+        window.logoutAdmin = async () => {
+            await signOut(auth);
+            window.location.reload();
+        }
+
+        // 3. Load Inbox List (Real-time)
+        function initInbox() {
+            const q = query(collection(db, "chats"), orderBy("lastMessageTime", "desc"));
+            
+            onSnapshot(q, (snapshot) => {
+                const list = document.getElementById('inbox-list');
+                list.innerHTML = "";
+
+                if (snapshot.empty) {
+                    list.innerHTML = `<div class="p-10 text-center text-gray-400 text-xs italic">No conversations yet.</div>`;
+                    return;
+                }
+                
+                snapshot.forEach((docSnap) => {
+                    const data = docSnap.data();
+                    // Basic time formatting
+                    let timeDisplay = "";
+                    if(data.lastMessageTime) {
+                        const date = data.lastMessageTime.toDate();
+                        const now = new Date();
+                        if(date.getDate() === now.getDate()) timeDisplay = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        else timeDisplay = date.toLocaleDateString();
+                    }
+
+                    const isActive = data.userId === selectedUserId;
+                    const initial = (data.userName || "U").charAt(0).toUpperCase();
+
+                    const div = document.createElement('div');
+                    div.className = `flex items-center gap-3 p-4 border-b border-gray-50 cursor-pointer transition-all hover:bg-gray-50 ${isActive ? 'active-chat' : ''}`;
+                    
+                    div.innerHTML = `
+                        <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white shadow-sm" style="background-color: ${stringToColor(data.userId)}">
+                            ${initial}
+                        </div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="text-sm font-bold text-gray-800 truncate ${data.unread ? 'text-black' : ''}">${data.userName || 'Guest'}</h4>
+                                <span class="text-[10px] text-gray-400 font-mono">${timeDisplay}</span>
+                            </div>
+                            <div class="flex justify-between items-center">
+                                <p class="text-xs text-gray-500 truncate pr-2 ${data.unread ? 'font-bold text-gray-800' : ''}">${data.lastMessage || 'Image/File'}</p>
+                                ${data.unread ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                    div.onclick = () => loadChat(data.userId, data.userName, data.userEmail);
+                    list.appendChild(div);
+                });
+            });
+        }
+
+        // 4. Load Specific Chat
+        function loadChat(userId, userName, userEmail) {
+            selectedUserId = userId;
+            
+            // UI Updates
+            document.getElementById('empty-state').classList.add('hidden');
+            document.getElementById('chat-interface').classList.remove('hidden');
+            
+            document.getElementById('header-name').innerText = userName || "Guest";
+            document.getElementById('header-email').innerText = userEmail || userId;
+            document.getElementById('header-avatar').innerText = (userName || "U").charAt(0).toUpperCase();
+            document.getElementById('header-avatar').style.backgroundColor = stringToColor(userId);
+            document.getElementById('header-avatar').style.color = "white";
+
+            document.getElementById('admin-input').focus();
+
+            // Mark as Read
+            updateDoc(doc(db, "chats", userId), { unread: false });
+
+            // Unsubscribe previous
+            if (unsubscribeMessages) unsubscribeMessages();
+
+            // Listen for Messages
+            const q = query(collection(db, "chats", userId, "messages"), orderBy("timestamp", "asc"));
+            const box = document.getElementById('messages-box');
+
+            unsubscribeMessages = onSnapshot(q, (snapshot) => {
+                box.innerHTML = "";
+                
+                snapshot.forEach((d) => {
+                    const msg = d.data();
+                    const div = document.createElement('div');
+                    const isAdmin = msg.isAdmin === true;
+                    
+                    // Time format
+                    let time = "";
+                    if(msg.timestamp) time = msg.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+                    div.className = `chat-bubble shadow-sm ${isAdmin ? 'bubble-admin' : 'bubble-user'}`;
+                    div.innerHTML = `
+                        <p>${msg.text}</p>
+                        <p class="text-[9px] mt-1 opacity-60 text-right select-none">${time}</p>
+                    `;
+                    box.appendChild(div);
+                });
+                box.scrollTop = box.scrollHeight;
+            });
+        }
+
+        // 5. Send Reply
+        document.getElementById('admin-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('admin-input');
+            const text = input.value.trim();
+            if(!text || !selectedUserId) return;
+
+            input.value = "";
+
+            try {
+                // Add Message
+                await addDoc(collection(db, "chats", selectedUserId, "messages"), {
+                    text: text,
+                    senderId: "ADMIN",
+                    isAdmin: true,
+                    timestamp: serverTimestamp()
+                });
+
+                // Update Inbox Preview
+                await updateDoc(doc(db, "chats", selectedUserId), {
+                    lastMessage: "You: " + text,
+                    lastMessageTime: serverTimestamp()
+                });
+            } catch (error) {
+                console.error("Send failed", error);
+                alert("Failed to send. Check console.");
+            }
+        });
+
+        // 6. Helper: Generate consistent color from string
+        function stringToColor(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            const c = (hash & 0x00FFFFFF).toString(16).toUpperCase();
+            return '#' + "00000".substring(0, 6 - c.length) + c;
+        }
+
+        // 7. Clear Chat
+        window.clearChat = async () => {
+            if(!selectedUserId) return;
+            if(confirm("Are you sure you want to delete this conversation history?")) {
+                const msgs = await getDocs(collection(db, "chats", selectedUserId, "messages"));
+                msgs.forEach(d => deleteDoc(d.ref));
+                await updateDoc(doc(db, "chats", selectedUserId), { lastMessage: "Chat cleared by admin" });
+            }
+        }
+    </script>
+</body>
+</html>
