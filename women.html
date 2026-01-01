@@ -59,6 +59,11 @@
                 </div>
 
                 <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
+                    
+                    <a href="chat.html" class="hover:opacity-75 transition group relative" title="Concierge Support">
+                        <i class="fa-solid fa-headset text-xl group-hover:scale-110 transition-transform duration-300"></i>
+                    </a>
+
                     <div id="auth-container">
                         <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
                             <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
@@ -85,6 +90,9 @@
                 <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
                 <a href="women.html" class="text-3xl font-serif font-bold text-themeSub border-b-2 border-themeSub pb-4">Women</a>
                 <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+                <a href="chat.html" class="text-3xl font-serif font-bold hover:text-themeSub flex items-center gap-3 border-b border-themeText/10 pb-4">
+                    <i class="fa-solid fa-headset text-2xl"></i> Concierge Support
+                </a>
             </div>
 
             <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
@@ -190,7 +198,7 @@
     </footer>
 
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
-        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
+        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500 transition transform hover:rotate-90">&times;</button></div>
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
         <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]"><div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div><button onclick="window.location.href='checkout.html'" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22]">Checkout</button></div>
     </div>
@@ -239,9 +247,6 @@
                 cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
                 cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
             }
-            const scrollBtn = document.getElementById('scrollTopBtn');
-            if (window.scrollY > 300) scrollBtn.classList.remove('translate-y-20', 'opacity-0', 'invisible');
-            else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
         });
 
         // 1. SMART AUTH & SYNC
