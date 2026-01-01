@@ -73,9 +73,11 @@
 
     <header class="bg-white/90 backdrop-blur-md border-b border-[#E6D8C5] px-6 py-4 flex justify-between items-center shadow-sm z-20">
         <div class="flex items-center gap-4">
-            <a href="index.html" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-500">
+            
+            <button onclick="handleBack()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-500 focus:outline-none">
                 <i class="fa-solid fa-arrow-left"></i>
-            </a>
+            </button>
+
             <div>
                 <h1 class="text-lg font-serif font-bold text-themeText tracking-wide">Concierge Service</h1>
                 <div class="flex items-center gap-2">
@@ -117,6 +119,7 @@
     </div>
 
     <script type="module">
+        // Import Check
         try {
             var { auth, db, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp, onAuthStateChanged } = await import('./firebase-config.js');
         } catch (e) {
@@ -131,6 +134,18 @@
         const deniedState = document.getElementById('denied-state');
         const inputField = document.getElementById('msg-input');
 
+        // --- SMART BACK FUNCTION ---
+        window.handleBack = () => {
+            // Checks if there is history to go back to (e.g., came from Kids or Men page)
+            if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
+                window.history.back();
+            } else {
+                // Fallback if opened directly
+                window.location.href = 'index.html';
+            }
+        }
+
+        // Safety Timeout
         const safetyTimeout = setTimeout(() => {
             if (overlay.style.display !== 'none' && deniedState.classList.contains('hidden')) {
                 loadingState.innerHTML = `
@@ -199,8 +214,7 @@
             // --- TICK LOGIC ---
             let tickHTML = "";
             if (isMe) {
-                // If message is read, show double tick, else single
-                // Note: The 'read' property needs to be updated by Admin side logic
+                // If message 'read' property is true -> Double Tick, else Single Tick
                 const icon = msg.read === true ? "fa-check-double" : "fa-check";
                 tickHTML = `<span class="ml-1.5 text-white/70 text-[10px]"><i class="fa-solid ${icon}"></i></span>`;
             }
@@ -233,11 +247,12 @@
             scrollToBottom();
 
             try {
+                // Default 'read' is false. Admin must update this to true when opening chat.
                 await addDoc(collection(db, "chats", currentUser.uid, "messages"), {
                     text: text,
                     senderId: currentUser.uid,
                     isAdmin: false,
-                    read: false, // Default is unread
+                    read: false, 
                     timestamp: serverTimestamp()
                 });
 
