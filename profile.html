@@ -27,12 +27,16 @@
         ::-webkit-scrollbar-thumb { background: #4A3B32; }
 
         /* Professional Inputs */
-        input, select { 
+        .form-input { 
             background: rgba(255, 255, 255, 0.5); 
             border: 1px solid rgba(74, 59, 50, 0.1); 
             transition: all 0.3s ease; 
+            width: 100%;
+            padding: 12px;
+            border-radius: 2px;
+            font-size: 14px;
         }
-        input:focus, select:focus { 
+        .form-input:focus { 
             background: #fff; 
             border-color: var(--theme-text); 
             box-shadow: 0 0 0 4px rgba(74, 59, 50, 0.05); 
@@ -52,6 +56,24 @@
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
         }
+
+        /* Dropdown Styling */
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            z-index: 50;
+            width: 100%;
+            background: white;
+            border: 1px solid #E5E7EB;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+        }
+        .dropdown-list.active { display: block; }
+        .dropdown-list li { padding: 10px 16px; cursor: pointer; font-size: 14px; color: #4B5563; transition: all 0.2s; }
+        .dropdown-list li:hover { background-color: #F3F4F6; color: #4A3B32; font-weight: 600; padding-left: 20px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-themeText">
@@ -74,9 +96,8 @@
                 </div>
 
                 <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-[#4A3B32] transition-colors duration-300">
-                    <a href="index.html" class="text-xs font-bold uppercase hover:text-themeSub transition flex items-center gap-2">
-                        <i class="fa-solid fa-store"></i> Store
-                    </a>
+                    <div id="auth-container">
+                        </div>
                     <div onclick="toggleCart()" class="relative cursor-pointer hover:opacity-75 transition">
                         <i class="fa-solid fa-bag-shopping text-2xl"></i>
                         <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold">0</span>
@@ -146,15 +167,15 @@
 
                     <form id="profileForm" class="space-y-6">
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div><label>First Name</label><input type="text" id="fname" class="w-full p-3 rounded-sm text-base md:text-sm font-medium" placeholder="John"></div>
-                            <div><label>Last Name</label><input type="text" id="lname" class="w-full p-3 rounded-sm text-base md:text-sm font-medium" placeholder="Doe"></div>
-                            <div><label>Email Address</label><input type="text" id="auth-email" class="w-full p-3 bg-gray-100 text-gray-500 cursor-not-allowed border-gray-200 text-base md:text-sm" disabled value="..."></div>
+                            <div><label>First Name</label><input type="text" id="fname" class="form-input" placeholder="John"></div>
+                            <div><label>Last Name</label><input type="text" id="lname" class="form-input" placeholder="Doe"></div>
+                            <div><label>Email Address</label><input type="text" id="auth-email" class="form-input bg-gray-100 cursor-not-allowed" disabled value="..."></div>
                             
                             <div>
                                 <label>Phone Number</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm border-r border-gray-300 pr-2 select-none">+92</span>
-                                    <input type="tel" id="phone" class="w-full p-3 pl-14 rounded-sm text-base md:text-sm font-medium" placeholder="300 1234567">
+                                    <input type="tel" id="phone" class="form-input pl-14" placeholder="300 1234567">
                                 </div>
                             </div>
                         </div>
@@ -163,11 +184,38 @@
                             <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-themeBtn flex items-center gap-2"><i class="fa-solid fa-map-location-dot"></i> Default Shipping Address</h4>
                             
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="md:col-span-2"><label>House / Flat No.</label><input type="text" id="addr-house" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. Flat 402, Building A"></div>
-                                <div class="md:col-span-2"><label>Street / Road</label><input type="text" id="addr-street" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. Main Boulevard"></div>
-                                <div><label>Area / Sector</label><input type="text" id="addr-area" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. DHA Phase 6"></div>
-                                <div><label>City</label><input type="text" id="addr-city" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. Lahore"></div>
-                                <div><label>Zip Code</label><input type="tel" id="addr-zip" class="w-full p-3 rounded-sm text-base md:text-sm" placeholder="e.g. 54000"></div>
+                                <div class="md:col-span-2"><label>House / Flat No.</label><input type="text" id="addr-house" class="form-input" placeholder="e.g. Flat 402, Building A"></div>
+                                <div class="md:col-span-2"><label>Street / Road</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard"></div>
+                                
+                                <div><label>Area / Sector</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. DHA Phase 6"></div>
+                                
+                                <div class="relative group">
+                                    <label>City</label>
+                                    <div class="relative">
+                                        <input type="text" id="addr-city" class="form-input cursor-pointer" placeholder="Select City" autocomplete="off">
+                                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none transition-transform group-focus-within:rotate-180"></i>
+                                        <ul id="city-list" class="dropdown-list custom-scrollbar"></ul>
+                                    </div>
+                                </div>
+
+                                <div class="relative group">
+                                    <label>State / Province</label>
+                                    <div class="relative">
+                                        <input type="text" id="addr-state" class="form-input cursor-pointer" placeholder="Select State" autocomplete="off">
+                                        <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none transition-transform group-focus-within:rotate-180"></i>
+                                        <ul id="state-list" class="dropdown-list custom-scrollbar"></ul>
+                                    </div>
+                                </div>
+
+                                <div><label>Zip Code</label><input type="tel" id="addr-zip" class="form-input" placeholder="e.g. 54000"></div>
+
+                                <div>
+                                    <label>Country</label>
+                                    <div class="relative">
+                                        <input type="text" value="Pakistan" readonly class="form-input bg-gray-50 text-gray-500 font-bold cursor-not-allowed border-gray-200">
+                                        <i class="fa-solid fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                     </form>
@@ -208,13 +256,13 @@
 
                         <div id="new-card-form" class="hidden bg-gray-50 p-6 rounded-sm border border-gray-200">
                             <form id="cardForm" class="space-y-4">
-                                <div><label>Card Network</label><select id="card-type" class="w-full p-3 rounded-sm text-base md:text-sm"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
-                                <div><label>Card Number</label><div class="relative"><input type="tel" inputmode="numeric" id="card-number" class="w-full p-3 pl-10 rounded-sm text-base md:text-sm font-mono font-bold" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
+                                <div><label>Card Network</label><select id="card-type" class="form-input"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
+                                <div><label>Card Number</label><div class="relative"><input type="tel" inputmode="numeric" id="card-number" class="form-input pl-10 font-mono font-bold" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div><label>Expiry Date</label><input type="tel" id="card-expiry" class="w-full p-3 rounded-sm text-base md:text-sm text-center" placeholder="MM/YY" maxlength="5"></div>
-                                    <div><label>CVC (Not Saved)</label><input type="tel" disabled class="w-full p-3 rounded-sm text-base md:text-sm text-center bg-gray-200 cursor-not-allowed" placeholder="***"></div>
+                                    <div><label>Expiry Date</label><input type="tel" id="card-expiry" class="form-input text-center" placeholder="MM/YY" maxlength="5"></div>
+                                    <div><label>CVC (Not Saved)</label><input type="tel" disabled class="form-input text-center bg-gray-200 cursor-not-allowed" placeholder="***"></div>
                                 </div>
-                                <div><label>Cardholder Name</label><input type="text" id="card-name" class="w-full p-3 rounded-sm text-base md:text-sm uppercase" placeholder="AS ON CARD"></div>
+                                <div><label>Cardholder Name</label><input type="text" id="card-name" class="form-input uppercase" placeholder="AS ON CARD"></div>
                                 <button type="submit" class="w-full bg-themeBtn text-white py-3 font-bold uppercase tracking-widest text-xs rounded-sm hover:bg-[#3A2B22]">Save Card</button>
                             </form>
                         </div>
@@ -228,23 +276,23 @@
     <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] relative z-20 mt-auto">
         <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
             <div class="col-span-1 md:col-span-1">
-                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
+                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6 uppercase">BRAND.</h2>
                 <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
             </div>
             <div>
                 <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
                 <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
-                    <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
-                    <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
+                    <li><a href="men.html" class="hover:text-white transition">Men</a></li>
+                    <li><a href="women.html" class="hover:text-white transition">Women</a></li>
+                    <li><a href="kids.html" class="hover:text-white transition">Kids</a></li>
                 </ul>
             </div>
             <div>
                 <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
                 <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
-                    <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
-                    <li><a href="#" class="hover:text-white hover:underline transition">FAQ</a></li>
+                    <li><a href="orders.html" class="hover:text-white transition">Order Status</a></li>
+                    <li><a href="#" class="hover:text-white transition">Shipping & Returns</a></li>
+                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
                 </ul>
             </div>
             <div>
@@ -257,7 +305,7 @@
             </div>
         </div>
         <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">&copy; 2025 Brand Inc. All rights reserved.</p>
             <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
                 <a href="#" class="hover:text-white transition">Privacy Policy</a>
                 <a href="#" class="hover:text-white transition">Terms of Service</a>
@@ -279,6 +327,63 @@
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let currentUser = null;
 
+        // --- DATA ---
+        const states = ["Azad Kashmir", "Balochistan", "Khyber Pakhtunkhwa", "Punjab", "Sindh"];
+        const cities = [
+            "Abbottabad", "Abdul Hakim", "Ahmedpur East", "Aliabad", "Alipur", "Arifwala", "Attock", 
+            "Badin", "Bagh", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Baska", "Batkhela", "Battagram", "Bhakkar", "Bhalwal", "Bhimber", "Burewala", 
+            "Chakwal", "Chaman", "Charsadda", "Chichawatni", "Chiniot", "Chishtian", "Chitral", "Chunian", 
+            "Dadu", "Daska", "Dera Allah Yar", "Dera Ghazi Khan", "Dera Ismail Khan", "Dera Murad Jamali", "Dina", "Diplo", 
+            "Faisalabad", "Fateh Jang", 
+            "Ghotki", "Gilgit", "Gojra", "Gujar Khan", "Gujranwala", "Gujrat", "Gwadar", 
+            "Hafizabad", "Hangu", "Haripur", "Haroonabad", "Hasan Abdal", "Hasilpur", "Haveli", "Haveli Lakha", "Hub", "Hunza", "Hyderabad", 
+            "Islamabad", 
+            "Jacobabad", "Jalalpur Jattan", "Jampur", "Jaranwala", "Jauharabad", "Jhang", "Jhelum", "Jungshahi", 
+            "Kabirwala", "Kahror Pakka", "Kamalia", "Kambar", "Kamoke", "Kandhkot", "Karachi", "Karak", "Kasur", "Khairpur", "Khanewal", "Khanpur", "Kharian", "Khushab", "Khuzdar", "Kohat", "Kot Addu", "Kotli", "Kotri", 
+            "Lahore", "Larkana", "Layyah", "Liaquat Pur", "Lodhran", "Loralai", 
+            "Mailsi", "Malakand", "Mandi Bahauddin", "Mansehra", "Mardan", "Mian Channu", "Mianwali", "Mingora", "Mirpur", "Mirpur Khas", "Mithi", "Moro", "Multan", "Muridke", "Murree", "Muzaffarabad", "Muzaffargarh", 
+            "Nankana Sahib", "Narowal", "Naudero", "Naushahro Feroze", "Nawabshah", "Nowshera", 
+            "Okara", 
+            "Pakpattan", "Pano Aqil", "Pasrur", "Pattoki", "Peshawar", "Pishin", 
+            "Qila Abdullah", "Quetta", 
+            "Rahim Yar Khan", "Raiwind", "Rajanpur", "Ratodero", "Rawalakot", "Rawalpindi", "Renala Khurd", 
+            "Sadiqabad", "Sahiwal", "Samundri", "Sanghar", "Sangla Hill", "Sargodha", "Sehwan", "Shabqadar", "Shahdadkot", "Shahdadpur", "Shahkot", "Shakargarh", "Sheikhupura", "Shikarpur", "Shorkot", "Sialkot", "Sibi", "Skardu", "Sukkur", "Swabi", "Swat", 
+            "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Tank", "Taxila", "Thatta", "Toba Tek Singh", "Topi", "Turbat", 
+            "Umerkot", 
+            "Vehari", 
+            "Wah Cantonment", "Wazirabad", 
+            "Zhob"
+        ];
+
+        // --- DROPDOWN LOGIC ---
+        function setupDropdown(inputId, listId, items) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+
+            const render = (filter = '') => {
+                list.innerHTML = '';
+                const filtered = items.filter(i => i.toLowerCase().startsWith(filter.toLowerCase()));
+                if (filtered.length === 0) { list.classList.remove('active'); return; }
+                
+                filtered.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    li.onclick = () => { input.value = item; list.classList.remove('active'); };
+                    list.appendChild(li);
+                });
+                list.classList.add('active');
+            };
+
+            input.addEventListener('input', (e) => render(e.target.value));
+            input.addEventListener('focus', () => render(input.value));
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('active');
+            });
+        }
+
+        setupDropdown('addr-state', 'state-list', states);
+        setupDropdown('addr-city', 'city-list', cities);
+
         // 0. PRELOADER & NAVBAR SCROLL
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
@@ -289,17 +394,10 @@
         // NAVBAR SCROLL LOGIC
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
-            const logo = document.getElementById('nav-logo');
-            const links = document.getElementById('nav-links');
-            const icons = document.getElementById('nav-icons');
-            const cartBadge = document.getElementById('cart-count');
-
             if(window.scrollY > 50) {
-                // Scrolled: Solid Beige
                 nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.remove('py-6', 'border-transparent');
             } else {
-                // Top: Transparent
                 nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.add('py-6', 'border-transparent');
             }
@@ -323,11 +421,10 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
-                setupMobileMenu(user);
+                setupNavbar(user);
                 initInputMasks();
                 await loadProfile(user);
                 
-                // Load cart
                 const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
                 cart.length = 0;
                 cart.push(...latestCart);
@@ -337,12 +434,28 @@
             }
         });
 
-        function setupMobileMenu(u) {
+        function setupNavbar(u) {
+            const container = document.getElementById('auth-container');
             const mobileLinks = document.getElementById('mobile-auth-links');
-            if(u) {
+
+            if (u) {
                 const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
                 const isAdmin = u.email === ADMIN_EMAIL;
                 
+                // Desktop
+                container.innerHTML = `
+                    <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
+                        Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                    </button>
+                    <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
+                        ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
+                        <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
+                        <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
+                        <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
+                        <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
+                    </div>`;
+                
+                // Mobile Menu
                 mobileLinks.innerHTML = `
                     <div class="flex flex-col gap-4 text-center">
                         <div class="flex items-center justify-center gap-3 mb-2">
@@ -354,6 +467,8 @@
                     </div>`;
             }
         }
+
+        window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
 
         async function loadProfile(user) {
             try {
@@ -383,8 +498,10 @@
                         document.getElementById('addr-street').value = data.addressDetails.street || "";
                         document.getElementById('addr-area').value = data.addressDetails.area || "";
                         document.getElementById('addr-city').value = data.addressDetails.city || "";
+                        document.getElementById('addr-state').value = data.addressDetails.state || "";
                         document.getElementById('addr-zip').value = data.addressDetails.zip || "";
                     } else if (data.address) {
+                        // Fallback for old address format
                         document.getElementById('addr-street').value = data.address; 
                     }
 
@@ -417,9 +534,10 @@
                     street: document.getElementById('addr-street').value,
                     area: document.getElementById('addr-area').value,
                     city: document.getElementById('addr-city').value,
+                    state: document.getElementById('addr-state').value,
                     zip: document.getElementById('addr-zip').value
                 };
-                const fullAddress = `${addrObj.house}, ${addrObj.street}, ${addrObj.area}, ${addrObj.city} - ${addrObj.zip}`;
+                const fullAddress = `${addrObj.house}, ${addrObj.street}, ${addrObj.area}, ${addrObj.city}, ${addrObj.state}, Pakistan - ${addrObj.zip}`;
 
                 let rawPhone = document.getElementById('phone').value.trim();
                 if(rawPhone.startsWith('0')) rawPhone = rawPhone.slice(1); 

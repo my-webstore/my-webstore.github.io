@@ -24,7 +24,7 @@
             background: white; 
             border: 1px solid #E5E7EB; 
             padding: 12px 16px; 
-            font-size: 16px; /* Prevents iOS Zoom */
+            font-size: 16px; 
             transition: all 0.3s ease; 
             border-radius: 2px; 
         }
@@ -39,6 +39,24 @@
         
         input[type="radio"]:checked + div { border-color: #4A3B32; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         input[type="radio"]:checked + div .radio-indicator { background-color: #4A3B32; border-color: #4A3B32; }
+
+        /* Professional Dropdown Styling */
+        .dropdown-list {
+            display: none;
+            position: absolute;
+            z-index: 50;
+            width: 100%;
+            background: white;
+            border: 1px solid #E5E7EB;
+            margin-top: 4px;
+            max-height: 200px;
+            overflow-y: auto;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            border-radius: 2px;
+        }
+        .dropdown-list.active { display: block; }
+        .dropdown-list li { padding: 10px 16px; cursor: pointer; font-size: 14px; color: #4B5563; transition: all 0.2s; }
+        .dropdown-list li:hover { background-color: #F3F4F6; color: #4A3B32; font-weight: 600; padding-left: 20px; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
@@ -70,6 +88,10 @@
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">1</div>
                     <h2 class="text-lg font-serif font-bold mb-6 text-themeText">Contact Information</h2>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                        <div class="md:col-span-2">
+                            <label>Email Address</label>
+                            <input type="email" id="billing-email" class="form-input" placeholder="e.g. name@example.com" required>
+                        </div>
                         <div><label>Full Name</label><input type="text" id="billing-name" class="form-input" placeholder="e.g. Awais Altaf"></div>
                         <div><label>Mobile Number</label><div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">+92</span><input type="tel" inputmode="numeric" id="billing-phone" class="form-input pl-10" placeholder="300 1234567"></div></div>
                     </div>
@@ -96,10 +118,38 @@
                     <div id="view-new-address" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="md:col-span-2"><label>House / Office No.</label><input type="text" id="addr-house" class="form-input" placeholder="e.g. Apt 402, Block B"></div>
                         <div class="md:col-span-2"><label>Street Address</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard"></div>
+                        
+                        <div class="md:col-span-2"><label>Landmark (Optional)</label><input type="text" id="addr-landmark" class="form-input" placeholder="e.g. Near Civic Center"></div>
+
                         <div><label>Area / Sector</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. Phase 6"></div>
-                        <div><label>City</label><input type="text" id="addr-city" class="form-input" placeholder="e.g. Lahore"></div>
+                        
+                        <div class="relative group">
+                            <label>City</label>
+                            <div class="relative">
+                                <input type="text" id="addr-city" class="form-input cursor-pointer" placeholder="Select City" autocomplete="off">
+                                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none transition-transform group-focus-within:rotate-180"></i>
+                                <ul id="city-list" class="dropdown-list custom-scrollbar"></ul>
+                            </div>
+                        </div>
+                        
+                        <div class="relative group">
+                            <label>State / Province</label>
+                            <div class="relative">
+                                <input type="text" id="addr-state" class="form-input cursor-pointer" placeholder="Select State" autocomplete="off">
+                                <i class="fa-solid fa-chevron-down absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none transition-transform group-focus-within:rotate-180"></i>
+                                <ul id="state-list" class="dropdown-list custom-scrollbar"></ul>
+                            </div>
+                        </div>
+
                         <div><label>Zip Code</label><input type="text" inputmode="numeric" id="addr-zip" class="form-input" placeholder="54000"></div>
-                        <div><label>Landmark (Optional)</label><input type="text" id="addr-landmark" class="form-input" placeholder="e.g. Near Civic Center"></div>
+
+                        <div>
+                            <label>Country</label>
+                            <div class="relative">
+                                <input type="text" value="Pakistan" readonly class="form-input bg-gray-50 text-gray-500 font-bold cursor-not-allowed border-gray-200">
+                                <i class="fa-solid fa-lock absolute right-3 top-1/2 -translate-y-1/2 text-gray-300 text-xs"></i>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -219,6 +269,66 @@
         const SHIPPING_COST = 250;
         let useSavedCard = false; 
 
+        // --- DATA ---
+        const states = ["Azad Kashmir", "Balochistan", "Khyber Pakhtunkhwa", "Punjab", "Sindh"];
+        const cities = [
+            "Abbottabad", "Abdul Hakim", "Ahmedpur East", "Aliabad", "Alipur", "Arifwala", "Attock", 
+            "Badin", "Bagh", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Baska", "Batkhela", "Battagram", "Bhakkar", "Bhalwal", "Bhimber", "Burewala", 
+            "Chakwal", "Chaman", "Charsadda", "Chichawatni", "Chiniot", "Chishtian", "Chitral", "Chunian", 
+            "Dadu", "Daska", "Dera Allah Yar", "Dera Ghazi Khan", "Dera Ismail Khan", "Dera Murad Jamali", "Dina", "Diplo", 
+            "Faisalabad", "Fateh Jang", 
+            "Ghotki", "Gilgit", "Gojra", "Gujar Khan", "Gujranwala", "Gujrat", "Gwadar", 
+            "Hafizabad", "Hangu", "Haripur", "Haroonabad", "Hasan Abdal", "Hasilpur", "Haveli", "Haveli Lakha", "Hub", "Hunza", "Hyderabad", 
+            "Islamabad", 
+            "Jacobabad", "Jalalpur Jattan", "Jampur", "Jaranwala", "Jauharabad", "Jhang", "Jhelum", "Jungshahi", 
+            "Kabirwala", "Kahror Pakka", "Kamalia", "Kambar", "Kamoke", "Kandhkot", "Karachi", "Karak", "Kasur", "Khairpur", "Khanewal", "Khanpur", "Kharian", "Khushab", "Khuzdar", "Kohat", "Kot Addu", "Kotli", "Kotri", 
+            "Lahore", "Larkana", "Layyah", "Liaquat Pur", "Lodhran", "Loralai", 
+            "Mailsi", "Malakand", "Mandi Bahauddin", "Mansehra", "Mardan", "Mian Channu", "Mianwali", "Mingora", "Mirpur", "Mirpur Khas", "Mithi", "Moro", "Multan", "Muridke", "Murree", "Muzaffarabad", "Muzaffargarh", 
+            "Nankana Sahib", "Narowal", "Naudero", "Naushahro Feroze", "Nawabshah", "Nowshera", 
+            "Okara", 
+            "Pakpattan", "Pano Aqil", "Pasrur", "Pattoki", "Peshawar", "Pishin", 
+            "Qila Abdullah", "Quetta", 
+            "Rahim Yar Khan", "Raiwind", "Rajanpur", "Ratodero", "Rawalakot", "Rawalpindi", "Renala Khurd", 
+            "Sadiqabad", "Sahiwal", "Samundri", "Sanghar", "Sangla Hill", "Sargodha", "Sehwan", "Shabqadar", "Shahdadkot", "Shahdadpur", "Shahkot", "Shakargarh", "Sheikhupura", "Shikarpur", "Shorkot", "Sialkot", "Sibi", "Skardu", "Sukkur", "Swabi", "Swat", 
+            "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Tank", "Taxila", "Thatta", "Toba Tek Singh", "Topi", "Turbat", 
+            "Umerkot", 
+            "Vehari", 
+            "Wah Cantonment", "Wazirabad", 
+            "Zhob"
+        ];
+
+        // --- DROPDOWN LOGIC ---
+        function setupDropdown(inputId, listId, items) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+
+            const render = (filter = '') => {
+                list.innerHTML = '';
+                const filtered = items.filter(i => i.toLowerCase().startsWith(filter.toLowerCase()));
+                if (filtered.length === 0) { list.classList.remove('active'); return; }
+                
+                filtered.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    li.onclick = () => { input.value = item; list.classList.remove('active'); };
+                    list.appendChild(li);
+                });
+                list.classList.add('active');
+            };
+
+            input.addEventListener('input', (e) => render(e.target.value));
+            input.addEventListener('focus', () => render(input.value));
+            
+            // Hide click outside
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('active');
+            });
+        }
+
+        setupDropdown('addr-state', 'state-list', states);
+        setupDropdown('addr-city', 'city-list', cities);
+        // -------------------------
+
         const initUI = () => {
             document.getElementById('card-number')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 16);
@@ -240,8 +350,14 @@
         });
 
         onAuthStateChanged(auth, async (user) => {
-            if (user) { currentUser = user; await loadUserData(user.uid); } 
-            else { toggleAddressMode('new'); finishLoading(); }
+            if (user) { 
+                currentUser = user; 
+                if(user.email) document.getElementById('billing-email').value = user.email;
+                await loadUserData(user.uid); 
+            } else { 
+                toggleAddressMode('new'); 
+                finishLoading(); 
+            }
         });
 
         async function loadUserData(uid) {
@@ -313,8 +429,16 @@
         window.validateAndDecide = () => {
             const name = document.getElementById('billing-name').value.trim();
             const phone = document.getElementById('billing-phone').value.trim();
-            if (!name || !phone) return alert("Contact Info Required");
-            if (currentMode === 'new' && !document.getElementById('addr-city').value) return alert("City & Address Required");
+            const email = document.getElementById('billing-email').value.trim();
+            
+            if (!name || !phone || !email) return alert("Contact Info (Name, Email, Phone) Required");
+            if (!email.includes('@')) return alert("Please enter a valid email address.");
+
+            if (currentMode === 'new') {
+                if(!document.getElementById('addr-city').value || !document.getElementById('addr-state').value) 
+                    return alert("City, State & Address Required");
+            }
+
             if (activePayment === 'card' && !useSavedCard) {
                 if(document.getElementById('card-number').value.length < 16) return alert("Valid Card Required");
             }
@@ -330,7 +454,21 @@
             const originalHTML = btn.innerHTML;
             const name = document.getElementById('billing-name').value.trim();
             const phone = document.getElementById('billing-phone').value.trim();
-            let finalAddress = currentMode === 'saved' ? savedProfileData.address : `${document.getElementById('addr-house').value}, ${document.getElementById('addr-street').value}, ${document.getElementById('addr-city').value}`;
+            const email = document.getElementById('billing-email').value.trim();
+            
+            let finalAddress;
+            if (currentMode === 'saved') {
+                finalAddress = savedProfileData.address;
+            } else {
+                const house = document.getElementById('addr-house').value;
+                const street = document.getElementById('addr-street').value;
+                const area = document.getElementById('addr-area').value;
+                const city = document.getElementById('addr-city').value;
+                const state = document.getElementById('addr-state').value;
+                const zip = document.getElementById('addr-zip').value;
+                const landmark = document.getElementById('addr-landmark').value;
+                finalAddress = `${house}, ${street}, ${landmark ? landmark + ', ' : ''}${area}, ${city}, ${state}, Pakistan - ${zip}`;
+            }
 
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Securing Transaction...';
             btn.disabled = true;
@@ -358,7 +496,7 @@
                 const subtotal = cart.reduce((acc, i) => acc + ((i.discountPrice||i.price) * i.qty), 0);
                 const order = {
                     userId: type === 'user' ? currentUser.uid : 'GUEST',
-                    customer: { name, phone, address: finalAddress, email: currentUser ? currentUser.email : '' },
+                    customer: { name, phone, email, address: finalAddress }, 
                     items: cart, totalAmount: subtotal + (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST),
                     status: "Processing", paymentMethod: activePayment.toUpperCase(),
                     date: new Date().toLocaleDateString(), timestamp: new Date()
