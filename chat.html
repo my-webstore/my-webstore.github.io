@@ -50,7 +50,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
         }
         
-        /* Overlay for Loading / Access Denied */
         .full-screen-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
     </style>
 </head>
@@ -73,11 +72,9 @@
 
     <header class="bg-white/90 backdrop-blur-md border-b border-[#E6D8C5] px-6 py-4 flex justify-between items-center shadow-sm z-20">
         <div class="flex items-center gap-4">
-            
-            <button onclick="handleBack()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-500 focus:outline-none">
+            <button onclick="smartBack()" class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-gray-100 transition text-gray-500 focus:outline-none">
                 <i class="fa-solid fa-arrow-left"></i>
             </button>
-
             <div>
                 <h1 class="text-lg font-serif font-bold text-themeText tracking-wide">Concierge Service</h1>
                 <div class="flex items-center gap-2">
@@ -119,7 +116,6 @@
     </div>
 
     <script type="module">
-        // Import Check
         try {
             var { auth, db, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp, onAuthStateChanged } = await import('./firebase-config.js');
         } catch (e) {
@@ -135,12 +131,20 @@
         const inputField = document.getElementById('msg-input');
 
         // --- SMART BACK FUNCTION ---
-        window.handleBack = () => {
-            // Checks if there is history to go back to (e.g., came from Kids or Men page)
-            if (document.referrer && document.referrer.indexOf(window.location.host) !== -1) {
-                window.history.back();
+        window.smartBack = () => {
+            const referrer = document.referrer || "";
+            
+            // Explicitly check where the user came from and redirect accordingly
+            if (referrer.includes('men.html')) {
+                window.location.href = 'men.html';
+            } else if (referrer.includes('women.html')) {
+                window.location.href = 'women.html';
+            } else if (referrer.includes('kids.html')) {
+                window.location.href = 'kids.html';
+            } else if (referrer.includes('profile.html')) {
+                window.location.href = 'profile.html';
             } else {
-                // Fallback if opened directly
+                // If typed directly or came from home
                 window.location.href = 'index.html';
             }
         }
@@ -177,6 +181,7 @@
                 const q = query(chatRef, orderBy("timestamp", "asc"));
 
                 onSnapshot(q, (snapshot) => {
+                    // Re-render chat on any update (new msg or status change)
                     chatBox.innerHTML = `
                         <div class="text-center py-6">
                             <div class="inline-block bg-themeBg/30 px-4 py-2 rounded-full mb-2">
@@ -194,7 +199,7 @@
                     
                     scrollToBottom();
                 }, (error) => {
-                    console.error("Chat Permission Error:", error);
+                    console.error("Chat Error:", error);
                 });
             } catch (e) {
                 console.error(e);
@@ -211,20 +216,19 @@
                 timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             }
 
-            // --- TICK LOGIC ---
+            // --- TICK LOGIC (Single vs Double) ---
             let tickHTML = "";
             if (isMe) {
-                // If message 'read' property is true -> Double Tick, else Single Tick
-                const icon = msg.read === true ? "fa-check-double" : "fa-check";
-                tickHTML = `<span class="ml-1.5 text-white/70 text-[10px]"><i class="fa-solid ${icon}"></i></span>`;
+                const iconClass = msg.read === true ? "fa-check-double" : "fa-check";
+                tickHTML = `<span class="ml-1.5 text-white/80 text-[10px]"><i class="fa-solid ${iconClass}"></i></span>`;
             }
-            // ------------------
+            // -------------------------------------
 
             div.className = `max-w-[75%] px-5 py-3 text-sm leading-relaxed shadow-sm transition-all duration-300 animate-fade-in-up ${isMe ? 'msg-user' : 'msg-admin'}`;
             
             div.innerHTML = `
                 <p class="font-medium">${msg.text}</p>
-                <div class="flex justify-end items-center mt-1 opacity-70">
+                <div class="flex justify-end items-center mt-1 opacity-70 gap-1">
                     <p class="text-[9px] uppercase tracking-wider font-bold">${timeString}</p>
                     ${tickHTML}
                 </div>
@@ -247,17 +251,16 @@
             scrollToBottom();
 
             try {
-                // Default 'read' is false. Admin must update this to true when opening chat.
                 await addDoc(collection(db, "chats", currentUser.uid, "messages"), {
                     text: text,
                     senderId: currentUser.uid,
                     isAdmin: false,
-                    read: false, 
+                    read: false, // Default unread
                     timestamp: serverTimestamp()
                 });
 
                 await setDoc(doc(db, "chats", currentUser.uid), {
-                    userName: currentUser.displayName || currentUser.email || "Valued Customer",
+                    userName: currentUser.displayName || currentUser.email,
                     userEmail: currentUser.email,
                     lastMessage: text,
                     lastMessageTime: serverTimestamp(),
