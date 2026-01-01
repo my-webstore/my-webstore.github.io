@@ -118,7 +118,7 @@
     </main>
 
     <script type="module">
-        import { auth, db, collection, query, orderBy, onSnapshot, doc, addDoc, updateDoc, serverTimestamp, onAuthStateChanged, deleteDoc, getDocs, signInWithEmailAndPassword, signOut } from './firebase-config.js';
+        import { auth, db, collection, query, orderBy, onSnapshot, doc, addDoc, updateDoc, serverTimestamp, onAuthStateChanged, deleteDoc, getDocs, signInWithEmailAndPassword, signOut, where, writeBatch } from './firebase-config.js';
 
         // --- SECURITY CONFIG ---
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
@@ -138,19 +138,15 @@
             stateLoading.classList.add('hidden'); // Stop spinning
 
             if (user) {
-                // User is Logged In
                 if (user.email === ADMIN_EMAIL) {
-                    // ACCESS GRANTED
                     overlay.style.opacity = '0';
                     setTimeout(() => overlay.style.display = 'none', 500);
                     initInbox();
                 } else {
-                    // WRONG USER (e.g. Customer Account)
                     stateDenied.classList.remove('hidden');
                     document.getElementById('current-user-email').innerText = user.email;
                 }
             } else {
-                // NOT LOGGED IN -> Show Login Form
                 stateLogin.classList.remove('hidden');
             }
         });
@@ -160,10 +156,8 @@
             e.preventDefault();
             const pass = document.getElementById('admin-pass').value;
             const errBox = document.getElementById('login-error');
-            
             try {
                 await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
-                // Page will auto-refresh auth state via onAuthStateChanged above
             } catch (error) {
                 errBox.innerText = "Error: " + error.message;
                 errBox.classList.remove('hidden');
@@ -190,7 +184,6 @@
                 
                 snapshot.forEach((docSnap) => {
                     const data = docSnap.data();
-                    // Basic time formatting
                     let timeDisplay = "";
                     if(data.lastMessageTime) {
                         const date = data.lastMessageTime.toDate();
@@ -226,8 +219,8 @@
             });
         }
 
-        // 4. Load Specific Chat
-        function loadChat(userId, userName, userEmail) {
+        // 4. Load Specific Chat & Mark as Read
+        async function loadChat(userId, userName, userEmail) {
             selectedUserId = userId;
             
             // UI Updates
@@ -242,10 +235,28 @@
 
             document.getElementById('admin-input').focus();
 
-            // Mark as Read
+            // --- READ RECEIPT LOGIC ---
+            // 1. Mark main chat doc as read (removes dot from inbox)
             updateDoc(doc(db, "chats", userId), { unread: false });
 
-            // Unsubscribe previous
+            // 2. Mark ALL unread user messages as read (triggers Double Tick on user side)
+            const qUnread = query(
+                collection(db, "chats", userId, "messages"), 
+                where("read", "==", false),
+                where("isAdmin", "==", false) // Only mark user messages as read
+            );
+            const unreadSnap = await getDocs(qUnread);
+            
+            if (!unreadSnap.empty) {
+                const batch = writeBatch(db);
+                unreadSnap.forEach((doc) => {
+                    batch.update(doc.ref, { read: true });
+                });
+                await batch.commit();
+            }
+            // --------------------------
+
+            // Unsubscribe previous listener
             if (unsubscribeMessages) unsubscribeMessages();
 
             // Listen for Messages
@@ -260,7 +271,6 @@
                     const div = document.createElement('div');
                     const isAdmin = msg.isAdmin === true;
                     
-                    // Time format
                     let time = "";
                     if(msg.timestamp) time = msg.timestamp.toDate().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
 
@@ -285,15 +295,14 @@
             input.value = "";
 
             try {
-                // Add Message
                 await addDoc(collection(db, "chats", selectedUserId, "messages"), {
                     text: text,
                     senderId: "ADMIN",
                     isAdmin: true,
+                    read: false, 
                     timestamp: serverTimestamp()
                 });
 
-                // Update Inbox Preview
                 await updateDoc(doc(db, "chats", selectedUserId), {
                     lastMessage: "You: " + text,
                     lastMessageTime: serverTimestamp()
@@ -304,7 +313,7 @@
             }
         });
 
-        // 6. Helper: Generate consistent color from string
+        // 6. Helper
         function stringToColor(str) {
             let hash = 0;
             for (let i = 0; i < str.length; i++) {
