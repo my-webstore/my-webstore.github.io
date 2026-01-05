@@ -29,6 +29,14 @@
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
             pointer-events: auto;
         }
+
+        /* Fade Animation for Chat */
+        .fade-in { animation: fadeIn 0.5s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        /* Pulse for Dot */
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
+        .dot-pulse { animation: pulse-ring 2s infinite; }
     </style>
 </head>
 <body class="bg-themeBg text-themeText min-h-screen flex flex-col">
@@ -37,49 +45,9 @@
         <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
     </div>
 
-    <nav class="sticky top-0 z-50 bg-[#E6D8C5]/95 backdrop-blur-md border-b border-[#D6C8B5] shadow-sm py-4">
-        <div class="container mx-auto px-6">
-            <div class="flex justify-between items-center">
-                <a href="index.html" class="relative z-50">
-                    <h1 class="text-3xl font-serif font-bold tracking-widest text-[#4A3B32]">BRAND.</h1>
-                </a>
-                
-                <div class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-[#4A3B32]">
-                    <a href="men.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Men</a>
-                    <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
-                    <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
-                </div>
+    <nav id="app-navbar"></nav>
 
-                <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-[#4A3B32]">
-                    <div id="auth-container">
-                        </div>
-                    <div onclick="toggleCart()" class="relative cursor-pointer hover:opacity-75 transition">
-                        <i class="fa-solid fa-bag-shopping text-2xl"></i>
-                        <span id="cart-count" class="absolute -top-1 -right-2 bg-themeText text-[#E6D8C5] text-[10px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#4A3B32]">0</span>
-                    </div>
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
-                </div>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
-                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="flex flex-col space-y-8">
-                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
-                <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
-                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
-            </div>
-
-            <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
-                </div>
-        </div>
-    </nav>
-
-    <div class="container mx-auto px-6 py-12 flex-grow">
+    <div class="container mx-auto px-6 py-12 flex-grow pt-32">
         <div class="text-center mb-12" data-aos="fade-down">
             <h1 class="text-4xl md:text-5xl font-serif font-bold mb-4">My Wishlist</h1>
             <p class="text-xs text-themeSub uppercase tracking-[0.2em]">Your curated collection of favorites</p>
@@ -97,46 +65,7 @@
         <div id="wishlist-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8"></div>
     </div>
 
-    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto relative z-20">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div class="col-span-1 md:col-span-1">
-                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
-                <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
-                <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
-                    <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
-                    <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
-                <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
-                    <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
-                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
-                <div class="flex gap-4 text-lg text-white">
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
-            <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
-                <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition">Terms of Service</a>
-            </div>
-            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
-        </div>
-    </footer>
+    <footer id="app-footer"></footer>
 
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
         <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
@@ -145,8 +74,21 @@
     </div>
     <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
 
+    <div id="chat-container" class="fixed bottom-8 right-8 z-50 hidden flex items-center gap-3 flex-row-reverse group">
+        <a id="chat-btn-link" href="chat.html" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]">
+            <i class="fa-solid fa-message text-xl"></i>
+            <span id="chat-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border border-[#4A3B32] hidden dot-pulse z-20"></span>
+        </a>
+        <div id="chat-tooltip" class="bg-white text-themeText px-3 py-1 rounded-sm shadow-xl border border-[#D6C8B5] text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden relative transition-opacity duration-500 flex items-center">
+            <span id="chat-tooltip-text">Support</span>
+            <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none">&times;</button>
+            <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white transform -translate-y-1/2 rotate-45 border-r border-t border-[#D6C8B5]"></div>
+        </div>
+    </div>
+
+    <script src="components.js"></script>
     <script type="module">
-        import { auth, db, collection, query, where, getDocs, deleteDoc, doc, onAuthStateChanged, signOut } from './firebase-config.js';
+        import { auth, db, collection, query, where, getDocs, deleteDoc, doc, onAuthStateChanged, signOut, onSnapshot } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
 
@@ -155,58 +97,95 @@
             const preloader = document.getElementById('preloader');
             preloader.style.opacity = '0';
             setTimeout(() => preloader.style.display = 'none', 500);
+            setNavbarDark(); // FORCE DARK NAVBAR ON LOAD
         });
+
+        // NAVBAR SCROLL LOGIC
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if(!nav) return;
+            
+            if(window.scrollY > 50) {
+                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+                nav.classList.remove('py-6', 'border-transparent');
+            } else {
+                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+                nav.classList.add('py-6', 'border-transparent');
+            }
+        });
+
+        // Function to force navbar text to dark brown
+        function setNavbarDark() {
+            const nav = document.getElementById('navbar');
+            const logo = document.getElementById('nav-logo');
+            const links = document.getElementById('nav-links');
+            const icons = document.getElementById('nav-icons');
+            const cartBadge = document.getElementById('cart-count');
+
+            if(nav) {
+                if(logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
+                if(links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
+                if(icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
+                if(cartBadge) {
+                    cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+                    cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+                }
+            }
+        }
+
+        // --- CHAT HELPERS ---
+        window.hideChatDot = () => document.getElementById('chat-notification-dot').classList.add('hidden');
+        window.closeChatTooltip = () => {
+            document.getElementById('chat-tooltip').classList.add('hidden');
+            sessionStorage.setItem('chatPromptDismissed', 'true');
+        };
 
         // 1. AUTH CHECK
         onAuthStateChanged(auth, user => {
             if (user) {
-                setupNavbar(user);
+                if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
+                setNavbarDark(); // Ensure dark text after auth update
                 loadWishlist(user.uid);
+
+                // --- CHAT LOGIC ---
+                const chatContainer = document.getElementById('chat-container');
+                const chatTooltip = document.getElementById('chat-tooltip');
+                const chatText = document.getElementById('chat-tooltip-text');
+                const chatLink = document.getElementById('chat-btn-link');
+
+                chatLink.href = "chat.html";
+                chatText.innerText = "Need assistance?";
+                chatContainer.classList.remove('hidden');
+
+                if (sessionStorage.getItem('sessionChatStarted')) {
+                    chatContainer.classList.remove('hidden');
+                } else {
+                    setTimeout(() => {
+                        chatContainer.classList.remove('hidden');
+                        chatContainer.classList.add('fade-in');
+                        sessionStorage.setItem('sessionChatStarted', 'true');
+                        if (!sessionStorage.getItem('chatPromptDismissed')) {
+                            chatTooltip.classList.remove('hidden');
+                            setTimeout(() => chatTooltip.classList.add('hidden'), 5000);
+                        }
+                    }, 5000); 
+                }
+
+                onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
+                    if(docSnap.exists() && docSnap.data().userUnread) {
+                        document.getElementById('chat-notification-dot').classList.remove('hidden');
+                        chatTooltip.classList.remove('hidden');
+                        chatText.innerText = "New Message";
+                    }
+                });
+
             } else {
                 window.location.href = "login.html";
             }
         });
 
-        function setupNavbar(u) {
-            const container = document.getElementById('auth-container');
-            const mobileLinks = document.getElementById('mobile-auth-links');
-
-            if (u) {
-                const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
-                const isAdmin = u.email === ADMIN_EMAIL;
-                
-                // Desktop
-                container.innerHTML = `
-                    <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
-                        Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
-                    </button>
-                    <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
-                        ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
-                        <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
-                        <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
-                        <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
-                        <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
-                    </div>`;
-                
-                // Mobile Menu
-                mobileLinks.innerHTML = `
-                    <div class="flex flex-col gap-4 text-center">
-                        <div class="flex items-center justify-center gap-3 mb-2">
-                             <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
-                             <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
-                        </div>
-                        ${isAdmin ? `<a href="admin.html" class="text-lg font-bold text-black border-b border-black pb-2">Admin Dashboard</a>` : ''}
-                        <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
-                    </div>`;
-            }
-        }
-
-        window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
-        window.toggleMobileMenu = () => { 
-            const menu = document.getElementById('mobile-menu');
-            if(menu.classList.contains('translate-x-full')) menu.classList.remove('translate-x-full');
-            else menu.classList.add('translate-x-full');
-        }
+        window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
+        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
         // 2. LOAD WISHLIST (WITH DEDUPLICATION)
@@ -271,14 +250,11 @@
             }
         }
 
-        // 3. REMOVE ITEM (NO POPUP)
+        // 3. REMOVE ITEM
         window.removeFromWishlist = async (docId) => {
             const card = document.getElementById(`card-${docId}`);
             const btn = event.target.closest('button');
             
-            // NO CONFIRMATION POPUP - DIRECT DELETE
-            
-            // UI Feedback (Instant)
             if (card) card.classList.add('removing');
             if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
             
@@ -317,6 +293,7 @@
         window.changeQty = (id, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}` === id); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
         window.toggleCart = () => { const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay'); if(s.classList.contains('translate-x-full')) { s.classList.remove('translate-x-full'); o.classList.remove('hidden'); updateCartUI(); } else { s.classList.add('translate-x-full'); o.classList.add('hidden'); } }
         window.removeItem = (id) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}` === id); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
+        window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
         updateCartUI();
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
