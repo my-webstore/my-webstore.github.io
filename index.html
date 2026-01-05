@@ -32,17 +32,6 @@
         /* Loader */
         .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
         
-        /* Mobile Menu Fix - SOLID background */
-        #mobile-menu { 
-            position: fixed;
-            inset: 0;
-            z-index: 9999 !important;
-            background-color: #E6D8C5 !important; 
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: auto;
-            visibility: visible;
-        }
-
         /* Fade Animation for Chat */
         .fade-in { animation: fadeIn 0.5s ease-in forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -58,56 +47,7 @@
         <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
     </div>
 
-    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6 border-b border-transparent">
-        <div class="container mx-auto px-6">
-            <div class="flex justify-between items-center">
-                <a href="index.html" class="relative z-50">
-                    <h1 id="nav-logo" class="text-3xl font-serif font-bold tracking-widest text-white transition-colors duration-300 uppercase">BRAND.</h1>
-                </a>
-                
-                <div id="nav-links" class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-white/90 transition-colors duration-300 items-center">
-                    <a href="men.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Men</a>
-                    <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
-                    <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
-                </div>
-
-                <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
-                    
-                    <div id="auth-container">
-                        <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
-                            <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
-                        </a>
-                    </div>
-
-                    <div onclick="toggleCart()" class="relative cursor-pointer group">
-                        <i class="fa-solid fa-bag-shopping text-xl group-hover:scale-110 transition"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#E6D8C5]">0</span>
-                    </div>
-                    
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
-                </div>
-            </div>
-        </div>
-
-        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
-                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="flex flex-col space-y-8">
-                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
-                <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
-                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
-                <a href="chat.html" class="text-3xl font-serif font-bold flex items-center gap-3 border-b border-themeText/10 pb-4 hover:text-themeSub transition-colors">
-                    <i class="fa-solid fa-message text-2xl"></i> Concierge Support
-                </a>
-            </div>
-
-            <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
-            </div>
-        </div>
-    </nav>
+    <nav id="app-navbar"></nav>
 
     <header class="relative h-screen w-full overflow-hidden flex items-center justify-center">
         <div class="absolute inset-0 z-0">
@@ -204,46 +144,7 @@
         </div>
     </section>
 
-    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] relative z-20">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div class="col-span-1 md:col-span-1">
-                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6 uppercase">BRAND.</h2>
-                <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
-                <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="men.html" class="hover:text-white transition">Men</a></li>
-                    <li><a href="women.html" class="hover:text-white transition">Women</a></li>
-                    <li><a href="kids.html" class="hover:text-white transition">Kids</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
-                <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="orders.html" class="hover:text-white transition">Order Status</a></li>
-                    <li><a href="#" class="hover:text-white transition">Shipping & Returns</a></li>
-                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
-                <div class="flex gap-4 text-lg text-white">
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">&copy; 2025 Brand Inc. All rights reserved.</p>
-            <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
-                <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition">Terms of Service</a>
-            </div>
-            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
-        </div>
-    </footer>
+    <footer id="app-footer"></footer>
 
     <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[110] flex flex-col border-l border-[#D6C8B5]">
         <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
@@ -261,12 +162,10 @@
     <button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-24 right-8 bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 transform translate-y-20 opacity-0 invisible z-50 flex items-center justify-center border border-[#E6D8C5]"><i class="fa-solid fa-arrow-up text-xl"></i></button>
 
     <div id="chat-container" class="fixed bottom-8 right-8 z-50 hidden flex items-center gap-3 flex-row-reverse group">
-        
         <a id="chat-btn-link" href="#" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]">
             <i class="fa-solid fa-message text-xl"></i>
             <span id="chat-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border border-[#4A3B32] hidden dot-pulse z-20"></span>
         </a>
-
         <div id="chat-tooltip" class="bg-white text-themeText px-3 py-1 rounded-sm shadow-xl border border-[#D6C8B5] text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden relative transition-opacity duration-500 flex items-center">
             <span id="chat-tooltip-text">Contact Support</span>
             <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none">&times;</button>
@@ -274,10 +173,12 @@
         </div>
     </div>
 
+    <script src="components.js"></script>
     <script type="module">
-        import { auth, onAuthStateChanged, signOut } from './firebase-config.js';
+        import { auth, onAuthStateChanged, signOut, doc, onSnapshot, db } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
+        let currentUser = null;
 
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
@@ -285,30 +186,38 @@
             setTimeout(() => preloader.style.display = 'none', 500);
         });
 
-        // FIXED SCROLL NAVBAR LOGIC
+        // NAVBAR SCROLL LOGIC
         window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
+            const nav = document.getElementById('navbar'); // ID injected by components.js
+            if(!nav) return;
+            
             const logo = document.getElementById('nav-logo');
             const links = document.getElementById('nav-links');
             const icons = document.getElementById('nav-icons');
             const cartBadge = document.getElementById('cart-count');
 
             if(window.scrollY > 50) {
-                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4'); // SOLID BACKGROUND
+                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.remove('py-6', 'border-transparent');
+                
                 logo.classList.replace('text-white', 'text-[#4A3B32]');
                 if(links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
-                icons.classList.replace('text-white', 'text-[#4A3B32]');
-                cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
-                cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+                if(icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
+                if(cartBadge) {
+                    cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+                    cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+                }
             } else {
                 nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.add('py-6', 'border-transparent');
+                
                 logo.classList.replace('text-[#4A3B32]', 'text-white');
                 if(links) links.classList.replace('text-[#4A3B32]', 'text-white/90');
-                icons.classList.replace('text-[#4A3B32]', 'text-white');
-                cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
-                cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
+                if(icons) icons.classList.replace('text-[#4A3B32]', 'text-white');
+                if(cartBadge) {
+                    cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
+                    cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
+                }
             }
             
             const scrollBtn = document.getElementById('scrollTopBtn');
@@ -316,132 +225,72 @@
             else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
         });
 
-        let currentUser = null;
-
-        // Function to hide dot when user clicks chat or X
-        window.hideChatDot = () => {
-            document.getElementById('chat-notification-dot').classList.add('hidden');
-        };
-
-        // Global function to close tooltip manually
+        // --- CHAT HELPERS ---
+        window.hideChatDot = () => document.getElementById('chat-notification-dot').classList.add('hidden');
         window.closeChatTooltip = () => {
-            const tooltip = document.getElementById('chat-tooltip');
-            tooltip.classList.add('hidden');
-            // NOTE: We do NOT hide the dot here. The dot only hides when user opens chat.
+            document.getElementById('chat-tooltip').classList.add('hidden');
             sessionStorage.setItem('chatPromptDismissed', 'true');
         };
 
-        // FUNCTION TO SIMULATE INCOMING MESSAGE 
-        // Call window.receiveAdminMessage() in console to test dot appearance
-        window.receiveAdminMessage = () => {
-            if (!currentUser) return; // Only show for logged in users
-            const chatTooltip = document.getElementById('chat-tooltip');
-            const chatDot = document.getElementById('chat-notification-dot');
-            const chatText = document.getElementById('chat-tooltip-text');
-            
-            chatText.innerText = "New Message from Admin";
-            chatTooltip.classList.remove('hidden');
-            chatDot.classList.remove('hidden'); // This is the ONLY place dot gets shown
-        };
-
+        // AUTH STATE & CHAT LOGIC
         onAuthStateChanged(auth, async (user) => {
-            currentUser = user; 
-            setupNavbar(user); 
+            currentUser = user;
+            if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
             
-            // --- CHAT BUTTON LOGIC ---
+            // Chat Logic
             const chatContainer = document.getElementById('chat-container');
             const chatTooltip = document.getElementById('chat-tooltip');
-            const chatText = document.getElementById('chat-tooltip-text');
             const chatLink = document.getElementById('chat-btn-link');
-            
-            // 1. Determine Content & Link based on Auth
+            const chatText = document.getElementById('chat-tooltip-text');
+
             if (user) {
                 chatLink.href = "chat.html";
-                chatText.innerText = "Hello! Need assistance?"; // Simple prompt
+                chatText.innerText = "Need assistance?";
+                
+                // Real-time listener for Admin Reply
+                onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
+                    if(docSnap.exists() && docSnap.data().userUnread) {
+                        document.getElementById('chat-notification-dot').classList.remove('hidden');
+                        chatTooltip.classList.remove('hidden');
+                        chatText.innerText = "New Message";
+                    }
+                });
             } else {
                 chatLink.href = "login.html";
-                chatText.innerText = "Login/Signup to contact";
+                chatText.innerText = "Login to chat";
             }
 
-            // 2. Logic to Show Button (Immediate vs Delayed)
-            const sessionStarted = sessionStorage.getItem('sessionChatStarted');
-            
-            if (sessionStarted) {
-                // ALREADY IN SESSION: Show Button Immediately
+            // Show Chat Button logic
+            if (sessionStorage.getItem('sessionChatStarted')) {
                 chatContainer.classList.remove('hidden');
             } else {
-                // FIRST TIME IN SESSION: Wait 5 Seconds
                 setTimeout(() => {
                     chatContainer.classList.remove('hidden');
                     chatContainer.classList.add('fade-in');
                     sessionStorage.setItem('sessionChatStarted', 'true');
-
-                    // Show PROMPT Tooltip (NO DOT here - as requested)
                     if (!sessionStorage.getItem('chatPromptDismissed')) {
                         chatTooltip.classList.remove('hidden');
-                        
-                        // Auto-hide prompt after 5 seconds
-                        setTimeout(() => {
-                            chatTooltip.classList.add('hidden');
-                        }, 5000);
+                        setTimeout(() => chatTooltip.classList.add('hidden'), 5000);
                     }
-                }, 5000); 
+                }, 4000);
             }
-            // -------------------------
-
+            
             const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
             cart.length = 0; 
             cart.push(...latestCart);
             updateCartUI();
         });
 
-        function setupNavbar(user) {
-            const container = document.getElementById('auth-container');
-            const mobileLinks = document.getElementById('mobile-auth-links');
-
-            if (user) {
-                const name = user.displayName ? user.displayName.split(' ')[0] : 'Member';
-                const isAdmin = user.email === ADMIN_EMAIL;
-
-                container.innerHTML = `
-                    <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
-                        Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
-                    </button>
-                    <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down">
-                        ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
-                        <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-themeText">My Profile</a>
-                        <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-themeText">My Orders</a>
-                        <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-themeText text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
-                        <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
-                    </div>`;
-                
-                mobileLinks.innerHTML = `
-                    <div class="flex flex-col gap-6 text-center">
-                        <div class="flex items-center justify-center gap-3 mb-2">
-                             <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
-                             <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
-                        </div>
-                        ${isAdmin ? `<a href="admin.html" class="text-2xl font-serif font-bold uppercase tracking-widest text-black">Dashboard</a>` : ''}
-                        <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
-                    </div>`;
-            } else {
-                container.innerHTML = `<a href="login.html" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2"><span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i></a>`;
-                mobileLinks.innerHTML = `<a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
-            }
-        }
-
-        window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
-        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
-        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
-
+        // GLOBAL CART LOGIC
         const cart = JSON.parse(localStorage.getItem('myCart')) || [];
-        function updateCartUI() {
+        window.updateCartUI = () => {
             const count = cart.reduce((a,b)=>a+b.qty,0);
-            const cartCountElement = document.getElementById('cart-count');
-            if(cartCountElement) cartCountElement.innerText = count;
+            const badge = document.getElementById('cart-count');
+            if(badge) badge.innerText = count;
             
             const con = document.getElementById('cart-items');
             if(!con) return;
+            
             con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10 font-serif italic uppercase tracking-widest">Bag is Empty</p>';
             let t = 0;
             cart.forEach(i => {
@@ -466,8 +315,8 @@
                         </div>
                     </div>`;
             });
-            const totalElement = document.getElementById('cart-total');
-            if(totalElement) totalElement.innerText = 'Rs. ' + t.toLocaleString();
+            const total = document.getElementById('cart-total');
+            if(total) total.innerText = 'Rs. ' + t.toLocaleString();
         }
 
         window.changeQty = (uid, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
@@ -478,7 +327,10 @@
         }
         window.removeItem = (uid) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
         window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
-        
+        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
+        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
+        window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
+
         updateCartUI();
     </script>
     
