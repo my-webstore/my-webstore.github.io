@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     
     <script>
         tailwind.config = { 
@@ -16,28 +16,61 @@
                         themeBg: '#E6D8C5', 
                         themeText: '#4A3B32', 
                         themeSub: '#7A6B63', 
-                        themeBtn: '#4A3B32' 
+                        themeBtn: '#4A3B32',
+                        themeLight: '#F5EBE0'
                     } 
                 } 
             } 
         }
     </script>
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #f9f9f9; overflow: hidden; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F3F4F6; overflow: hidden; }
         .font-serif { font-family: 'Playfair Display', serif; }
         
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #4A3B32; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #7A6B63; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #9CA3AF; }
 
-        .chat-bubble { max-width: 75%; padding: 10px 16px; border-radius: 12px; position: relative; font-size: 0.9rem; line-height: 1.5; }
-        .bubble-admin { background-color: #4A3B32; color: #E6D8C5; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .bubble-user { background-color: white; color: #334155; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #E2E8F0; }
+        /* --- Bubble Tails Logic (Admin Version) --- */
+        .chat-bubble { position: relative; max-width: 75%; padding: 12px 16px; font-size: 0.9rem; line-height: 1.5; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+
+        /* Admin Bubble (Right) */
+        .bubble-admin { 
+            background-color: #4A3B32; 
+            color: #FFFFFF; 
+            align-self: flex-end; 
+            border-radius: 18px 18px 0 18px;
+            margin-left: auto;
+        }
+        .bubble-admin::after {
+            content: ""; position: absolute; bottom: 0; right: -8px; width: 12px; height: 20px;
+            background: #4A3B32; border-bottom-left-radius: 16px; clip-path: polygon(0 0, 0% 100%, 100% 100%);
+        }
+
+        /* User Bubble (Left) */
+        .bubble-user { 
+            background-color: #FFFFFF; 
+            color: #1F2937; 
+            align-self: flex-start; 
+            border-radius: 18px 18px 18px 0;
+            margin-right: auto;
+            border: 1px solid #E5E7EB;
+        }
+        .bubble-user::after {
+            content: ""; position: absolute; bottom: 0; left: -8px; width: 12px; height: 20px;
+            background: #FFFFFF; border-bottom-right-radius: 16px; clip-path: polygon(100% 0, 100% 100%, 0% 100%);
+            border-bottom: 1px solid #E5E7EB;
+        }
         
-        .active-chat { background-color: #E6D8C5; border-right: 4px solid #4A3B32; }
-        .active-chat h4 { color: #4A3B32; }
-        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 50; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+        /* Sidebar Active State */
+        .active-chat { 
+            background-color: #FDFBF9; 
+            border-left: 4px solid #4A3B32;
+        }
+        
+        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 50; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
     </style>
 </head>
 <body class="h-screen flex text-gray-800">
@@ -45,95 +78,125 @@
     <div id="security-overlay" class="loader-overlay">
         
         <div id="state-loading" class="text-center">
-            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
-            <p id="loading-msg" class="text-xs font-bold uppercase tracking-widest mb-4">Verifying Admin Privileges...</p>
-            <button onclick="forceReset()" id="panic-btn" class="hidden text-[10px] text-red-500 underline uppercase font-bold tracking-widest cursor-pointer hover:text-red-700">Stuck? Click to Reset</button>
+            <div class="relative w-16 h-16 mx-auto mb-4">
+                <div class="absolute inset-0 border-4 border-[#4A3B32]/20 rounded-full"></div>
+                <div class="absolute inset-0 border-4 border-[#4A3B32] border-t-transparent rounded-full animate-spin"></div>
+            </div>
+            <p id="loading-msg" class="text-xs font-bold uppercase tracking-[0.2em] text-[#4A3B32]">Verifying Privileges...</p>
+            <button onclick="forceReset()" id="panic-btn" class="hidden mt-4 text-[10px] text-red-500 underline uppercase font-bold tracking-widest cursor-pointer hover:text-red-700">Stuck? Reset System</button>
         </div>
 
-        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
-            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
-            <p class="text-xs text-gray-500 mb-6">Please authenticate to access the dashboard.</p>
-            <form id="quick-login-form" class="space-y-4">
-                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
-                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
-                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Dashboard</button>
+        <div id="state-login" class="hidden bg-white p-10 rounded-2xl shadow-2xl border border-gray-200 w-96 text-center transform transition-all duration-500">
+            <h2 class="text-2xl font-serif font-bold text-themeText mb-2">Concierge Access</h2>
+            <p class="text-xs text-gray-500 mb-8 uppercase tracking-widest">Admin Authentication Required</p>
+            
+            <form id="quick-login-form" class="space-y-4 text-left">
+                <div>
+                    <label class="text-[10px] font-bold uppercase text-gray-400">Admin Email</label>
+                    <input type="email" id="admin-email" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg text-sm font-bold text-gray-700 mt-1 focus:outline-none focus:border-themeBtn" value="mr.awaisaltaf@gmail.com" readonly>
+                </div>
+                <div>
+                    <label class="text-[10px] font-bold uppercase text-gray-400">Password</label>
+                    <input type="password" id="admin-pass" class="w-full bg-gray-50 border border-gray-200 p-3 rounded-lg text-sm mt-1 focus:outline-none focus:border-themeBtn" placeholder="Enter Credentials" required>
+                </div>
+                <button type="submit" class="w-full bg-themeBtn text-[#E6D8C5] py-4 rounded-lg font-bold text-xs uppercase tracking-widest hover:bg-black transition shadow-lg mt-4">Unlock Dashboard</button>
             </form>
-            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
+            <p id="login-error" class="text-red-500 text-xs mt-4 hidden font-bold"></p>
         </div>
 
-        <div id="state-denied" class="hidden text-center">
+        <div id="state-denied" class="hidden text-center bg-white p-10 rounded-2xl shadow-2xl">
             <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
-            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
-            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
-            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
+            <h2 class="text-xl font-bold text-gray-800 mb-2">ACCESS DENIED</h2>
+            <p class="text-xs text-gray-500 mb-6 leading-relaxed">You are logged in as <span id="current-user-email" class="font-bold text-black"></span>.<br>This account does not have concierge privileges.</p>
+            <button onclick="forceReset()" class="bg-gray-800 text-white px-8 py-3 rounded-lg text-xs font-bold uppercase tracking-widest hover:bg-black transition">Switch Account</button>
         </div>
     </div>
 
     <div id="clear-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-2xl p-6 w-80 text-center transform scale-95 transition-transform duration-300">
-            <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 text-red-500 text-xl">
+        <div class="bg-white rounded-xl shadow-2xl p-8 w-96 text-center transform scale-95 transition-transform duration-300">
+            <div class="w-16 h-16 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-5 text-red-500 text-2xl">
                 <i class="fa-solid fa-triangle-exclamation"></i>
             </div>
-            <h3 class="font-serif font-bold text-lg text-gray-800 mb-2">Clear Conversation?</h3>
-            <p class="text-xs text-gray-500 mb-6 leading-relaxed">This will permanently delete all messages in this chat. This action cannot be undone.</p>
-            <div class="flex gap-3">
-                <button onclick="closeClearModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded text-xs font-bold uppercase text-gray-600 hover:bg-gray-50 transition">Cancel</button>
-                <button onclick="executeClearChat()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded text-xs font-bold uppercase hover:bg-red-700 transition shadow-md">Yes, Clear</button>
+            <h3 class="font-serif font-bold text-xl text-gray-800 mb-2">Clear Conversation?</h3>
+            <p class="text-xs text-gray-500 mb-8 leading-relaxed px-4">This action will permanently delete the entire message history with this client. This cannot be undone.</p>
+            <div class="flex gap-4">
+                <button onclick="closeClearModal()" class="flex-1 px-4 py-3 border border-gray-200 rounded-lg text-xs font-bold uppercase text-gray-600 hover:bg-gray-50 transition">Cancel</button>
+                <button onclick="executeClearChat()" class="flex-1 px-4 py-3 bg-red-600 text-white rounded-lg text-xs font-bold uppercase hover:bg-red-700 transition shadow-lg">Yes, Delete</button>
             </div>
         </div>
     </div>
 
-    <aside class="w-full md:w-80 bg-white border-r border-gray-200 flex flex-col z-10 shadow-lg">
-        <div class="p-5 border-b border-gray-100 flex justify-between items-center bg-themeText text-[#E6D8C5]">
-            <div class="flex items-center gap-3">
-                <button onclick="adminSmartBack()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition text-[#E6D8C5] focus:outline-none" title="Back">
-                    <i class="fa-solid fa-arrow-left text-xs"></i>
+    <aside class="w-full md:w-96 bg-white border-r border-gray-200 flex flex-col z-20 shadow-xl">
+        <div class="p-6 border-b border-gray-100 bg-[#4A3B32] text-[#E6D8C5] flex justify-between items-center relative overflow-hidden">
+            <div class="absolute inset-0 opacity-10" style="background-image: radial-gradient(#E6D8C5 1px, transparent 1px); background-size: 10px 10px;"></div>
+            
+            <div class="flex items-center gap-4 relative z-10">
+                <button onclick="adminSmartBack()" class="w-10 h-10 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition text-[#E6D8C5] focus:outline-none border border-white/10" title="Back to Site">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
                 </button>
                 <div>
-                    <h1 class="font-serif text-lg font-bold tracking-wider">INBOX</h1>
-                    <p class="text-[10px] opacity-70 uppercase tracking-widest">Client Messages</p>
+                    <h1 class="font-serif text-xl font-bold tracking-wide">INBOX</h1>
+                    <p class="text-[9px] opacity-70 uppercase tracking-widest font-bold">Client Messages</p>
                 </div>
             </div>
-            <button onclick="forceReset()" class="w-8 h-8 flex items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition" title="Logout">
-                <i class="fa-solid fa-power-off text-xs"></i>
+            <button onclick="forceReset()" class="relative z-10 text-[10px] font-bold uppercase tracking-widest opacity-60 hover:opacity-100 transition border border-white/20 px-3 py-1 rounded-sm hover:bg-white/10">
+                Logout
             </button>
         </div>
 
-        <div id="inbox-list" class="flex-1 overflow-y-auto">
-            <div class="p-10 text-center text-gray-400 text-xs uppercase tracking-widest">Loading Chats...</div>
+        <div class="p-4 border-b border-gray-100 bg-gray-50">
+            <div class="relative">
+                <i class="fa-solid fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+                <input type="text" placeholder="Search clients..." class="w-full pl-10 pr-4 py-2 text-xs bg-white border border-gray-200 rounded-lg focus:outline-none focus:border-themeBtn placeholder-gray-400">
+            </div>
+        </div>
+
+        <div id="inbox-list" class="flex-1 overflow-y-auto bg-white">
+            <div class="p-10 text-center flex flex-col items-center justify-center h-40">
+                <i class="fa-solid fa-circle-notch fa-spin text-themeBtn mb-3"></i>
+                <p class="text-gray-400 text-[10px] uppercase tracking-widest">Syncing Database...</p>
+            </div>
         </div>
     </aside>
 
-    <main class="hidden md:flex flex-1 flex-col bg-[#F3F4F6] relative">
+    <main class="hidden md:flex flex-1 flex-col bg-[#F9F5F0] relative">
         
-        <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-400 z-0">
-            <i class="fa-regular fa-comments text-6xl mb-4 opacity-20"></i>
-            <p class="text-sm font-bold uppercase tracking-widest opacity-50">Select a client to start concierge</p>
+        <div id="empty-state" class="absolute inset-0 flex flex-col items-center justify-center text-gray-300 z-0 select-none">
+            <i class="fa-regular fa-paper-plane text-8xl mb-6 opacity-20"></i>
+            <h3 class="font-serif text-2xl font-bold text-gray-400 mb-2">Concierge Dashboard</h3>
+            <p class="text-xs font-bold uppercase tracking-widest opacity-60">Select a conversation from the inbox</p>
         </div>
 
         <div id="chat-interface" class="flex flex-col h-full hidden z-10">
             
-            <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center shadow-sm">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-full bg-gray-200 flex items-center justify-center text-gray-500 font-bold text-lg" id="header-avatar">U</div>
+            <header class="bg-white/90 backdrop-blur-sm border-b border-gray-200 px-8 py-4 flex justify-between items-center shadow-sm">
+                <div class="flex items-center gap-4">
+                    <div class="relative">
+                        <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center text-gray-500 font-bold text-lg shadow-inner overflow-hidden" id="header-avatar">
+                            U
+                        </div>
+                        <div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+                    </div>
                     <div>
-                        <h2 id="header-name" class="font-bold text-gray-800 text-sm">Unknown User</h2>
-                        <p id="header-email" class="text-[10px] text-gray-400 font-mono">ID: ...</p>
+                        <h2 id="header-name" class="font-bold text-gray-800 text-base">Unknown User</h2>
+                        <p id="header-email" class="text-[10px] text-gray-400 font-mono tracking-wide uppercase">ID: Loading...</p>
                     </div>
                 </div>
-                <div class="flex gap-3">
-                    <button onclick="openClearModal()" class="text-red-400 hover:text-red-600 text-xs font-bold uppercase tracking-widest flex items-center gap-1 transition-colors">
-                        <i class="fa-solid fa-trash"></i> Clear Chat
-                    </button>
-                </div>
+                <button onclick="openClearModal()" class="text-gray-400 hover:text-red-500 text-[10px] font-bold uppercase tracking-widest flex items-center gap-2 transition-colors border border-gray-200 px-4 py-2 rounded-lg hover:bg-red-50 hover:border-red-100">
+                    <i class="fa-solid fa-trash"></i> Clear History
+                </button>
             </header>
 
-            <div id="messages-box" class="flex-1 overflow-y-auto p-6 space-y-3 flex flex-col"></div>
+            <div id="messages-box" class="flex-1 overflow-y-auto p-8 space-y-4 flex flex-col custom-scrollbar"></div>
 
-            <div class="bg-white p-4 border-t border-gray-200">
-                <form id="admin-form" class="flex gap-2 max-w-4xl mx-auto">
-                    <input type="text" id="admin-input" class="flex-1 bg-gray-50 border border-gray-300 rounded px-4 py-3 text-sm focus:outline-none focus:border-themeBtn focus:ring-1 focus:ring-themeBtn transition" placeholder="Type your reply..." autocomplete="off">
-                    <button type="submit" class="bg-themeBtn text-[#E6D8C5] px-6 py-2 rounded font-bold uppercase text-xs tracking-widest hover:bg-black transition shadow-md">Send</button>
+            <div class="bg-white p-6 border-t border-gray-200">
+                <form id="admin-form" class="flex gap-4 max-w-5xl mx-auto">
+                    <div class="flex-1 relative">
+                        <input type="text" id="admin-input" class="w-full bg-gray-50 border border-gray-200 rounded-xl pl-5 pr-5 py-4 text-sm focus:outline-none focus:border-themeBtn focus:ring-1 focus:ring-themeBtn focus:bg-white transition shadow-inner placeholder-gray-400" placeholder="Type your reply here..." autocomplete="off">
+                    </div>
+                    <button type="submit" class="bg-themeBtn text-[#E6D8C5] h-[54px] px-8 rounded-xl font-bold uppercase text-xs tracking-widest hover:bg-black hover:scale-105 active:scale-95 transition-all shadow-lg flex items-center gap-2">
+                        <span>Send</span> <i class="fa-solid fa-paper-plane"></i>
+                    </button>
                 </form>
             </div>
         </div>
@@ -161,12 +224,10 @@
         // --- ADMIN SMART BACK LOGIC ---
         window.adminSmartBack = () => {
             const referrer = document.referrer || "";
-            // Explicitly check for Orders Page
             if (referrer.includes('admin-orders.html')) {
                 window.location.href = 'admin-orders.html';
             } else {
-                // Default to Dashboard
-                window.location.href = 'index.html'; // Changed to index.html as main dashboard
+                window.location.href = 'index.html'; 
             }
         }
 
@@ -197,8 +258,7 @@
                     } else {
                         stateDenied.classList.remove('hidden');
                         document.getElementById('current-user-email').innerText = user.email;
-                        // SECURITY FIX: Redirect non-admins away immediately
-                        setTimeout(() => window.location.replace("index.html"), 2000);
+                        setTimeout(() => window.location.replace("index.html"), 2500);
                     }
                 } else {
                     stateLogin.classList.remove('hidden');
@@ -223,8 +283,6 @@
 
         // 3. Load Inbox List (Real-time)
         function initInbox() {
-            // SECURITY FIX: This query will fail with "Permission Denied" if rules are set correctly
-            // and the user is NOT the admin. We catch that error below.
             const q = query(collection(db, "chats"), orderBy("lastMessageTime", "desc"));
             
             onSnapshot(q, (snapshot) => {
@@ -232,7 +290,11 @@
                 list.innerHTML = "";
 
                 if (snapshot.empty) {
-                    list.innerHTML = `<div class="p-10 text-center text-gray-400 text-xs italic">No conversations yet.</div>`;
+                    list.innerHTML = `
+                        <div class="p-10 text-center opacity-50 mt-10">
+                            <i class="fa-solid fa-inbox text-4xl mb-2 text-gray-300"></i>
+                            <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Inbox Empty</p>
+                        </div>`;
                     return;
                 }
                 
@@ -241,27 +303,35 @@
                     let timeDisplay = "";
                     if(data.lastMessageTime) {
                         const date = data.lastMessageTime.toDate();
-                        timeDisplay = date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+                        const isToday = new Date().toDateString() === date.toDateString();
+                        timeDisplay = isToday 
+                            ? date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})
+                            : date.toLocaleDateString([], {month: 'short', day: 'numeric'});
                     }
 
                     const isActive = data.userId === selectedUserId;
                     const initial = (data.userName || "U").charAt(0).toUpperCase();
+                    // Avatar Color Generator
+                    const avatarColor = stringToColor(data.userId);
 
                     const div = document.createElement('div');
-                    div.className = `flex items-center gap-3 p-4 border-b border-gray-50 cursor-pointer transition-all hover:bg-gray-50 ${isActive ? 'active-chat' : ''}`;
+                    div.className = `flex items-center gap-4 p-5 border-b border-gray-50 cursor-pointer transition-all hover:bg-gray-50 group ${isActive ? 'active-chat' : ''}`;
                     
                     div.innerHTML = `
-                        <div class="w-10 h-10 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white shadow-sm" style="background-color: ${stringToColor(data.userId)}">
-                            ${initial}
+                        <div class="relative">
+                            <div class="w-12 h-12 rounded-full flex-shrink-0 flex items-center justify-center text-sm font-bold text-white shadow-sm transition-transform group-hover:scale-105" style="background-color: ${avatarColor}">
+                                ${initial}
+                            </div>
+                            ${data.unread ? '<div class="absolute top-0 right-0 w-3 h-3 bg-blue-500 border-2 border-white rounded-full"></div>' : ''}
                         </div>
                         <div class="flex-1 min-w-0">
                             <div class="flex justify-between items-center mb-1">
-                                <h4 class="text-sm font-bold text-gray-800 truncate ${data.unread ? 'text-black' : ''}">${data.userName || 'Guest'}</h4>
-                                <span class="text-[10px] text-gray-400 font-mono">${timeDisplay}</span>
+                                <h4 class="text-sm font-bold text-gray-800 truncate ${data.unread ? 'text-black' : ''}">${data.userName || 'Guest User'}</h4>
+                                <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wide">${timeDisplay}</span>
                             </div>
                             <div class="flex justify-between items-center">
-                                <p class="text-xs text-gray-500 truncate pr-2 ${data.unread ? 'font-bold text-gray-800' : ''}">${data.lastMessage || 'Image/File'}</p>
-                                ${data.unread ? '<span class="w-2 h-2 bg-blue-500 rounded-full"></span>' : ''}
+                                <p class="text-xs text-gray-500 truncate pr-4 leading-relaxed ${data.unread ? 'font-bold text-gray-900' : ''}">${data.lastMessage || 'Sent an attachment'}</p>
+                                <i class="fa-solid fa-chevron-right text-[10px] text-gray-300 opacity-0 group-hover:opacity-100 transition"></i>
                             </div>
                         </div>
                     `;
@@ -269,14 +339,13 @@
                     list.appendChild(div);
                 });
             }, (error) => {
-                // SECURITY FIX: Graceful error handling if database access is denied
                 console.error("Inbox Load Error:", error);
                 const list = document.getElementById('inbox-list');
                 list.innerHTML = `
-                    <div class="p-10 text-center text-red-500 font-bold text-xs uppercase tracking-widest">
-                        <i class="fa-solid fa-lock text-2xl mb-2"></i><br>
+                    <div class="p-10 text-center text-red-500 font-bold text-xs uppercase tracking-widest mt-10">
+                        <i class="fa-solid fa-lock text-3xl mb-3 opacity-50"></i><br>
                         Access Denied<br>
-                        <span class="text-[9px] font-normal text-gray-500">Database rejected connection</span>
+                        <span class="text-[9px] font-normal text-gray-400 mt-2 block">Database Connection Rejected</span>
                     </div>
                 `;
             });
@@ -326,6 +395,10 @@
             unsubscribeMessages = onSnapshot(q, (snapshot) => {
                 box.innerHTML = "";
                 
+                if(snapshot.empty) {
+                    box.innerHTML = `<div class="text-center mt-20 text-gray-300 text-sm font-serif italic">This conversation is empty.</div>`;
+                }
+
                 snapshot.forEach((d) => {
                     const msg = d.data();
                     const div = document.createElement('div');
@@ -338,14 +411,14 @@
                     if (isAdmin) {
                         const isRead = msg.read === true;
                         const icon = isRead ? "fa-check-double" : "fa-check";
-                        const color = isRead ? "text-blue-300" : "text-[#E6D8C5]";
-                        tickHTML = `<span class="ml-1.5 ${color} text-[10px]"><i class="fa-solid ${icon}"></i></span>`;
+                        const color = isRead ? "text-blue-300" : "text-[#E6D8C5]/70";
+                        tickHTML = `<span class="ml-2 ${color} text-[10px]"><i class="fa-solid ${icon}"></i></span>`;
                     }
 
                     div.className = `chat-bubble shadow-sm ${isAdmin ? 'bubble-admin' : 'bubble-user'}`;
                     div.innerHTML = `
-                        <p class="break-words">${msg.text}</p>
-                        <div class="flex justify-end items-center mt-1 gap-1 select-none opacity-80">
+                        <p class="break-words font-medium">${msg.text}</p>
+                        <div class="flex justify-end items-center mt-1 select-none opacity-80">
                             <span class="text-[9px] uppercase tracking-wider font-bold">${time}</span>
                             ${tickHTML}
                         </div>
@@ -374,7 +447,7 @@
                     timestamp: serverTimestamp()
                 });
 
-                // UPDATED: Set userUnread to true so the user gets a notification
+                // Trigger User Notification Red Dot
                 await updateDoc(doc(db, "chats", selectedUserId), {
                     lastMessage: "You: " + text,
                     lastMessageTime: serverTimestamp(),
@@ -420,7 +493,7 @@
                 const deletePromises = msgs.docs.map(d => deleteDoc(d.ref));
                 await Promise.all(deletePromises);
                 
-                await updateDoc(doc(db, "chats", selectedUserId), { lastMessage: "Chat cleared by admin" });
+                await updateDoc(doc(db, "chats", selectedUserId), { lastMessage: "History cleared by admin" });
             } catch (e) {
                 alert("Failed to clear chat: " + e.message);
             }

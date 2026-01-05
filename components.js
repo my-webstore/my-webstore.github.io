@@ -38,9 +38,6 @@ const navbarHTML = `
             <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
             <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
             <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
-            <a href="chat.html" class="text-3xl font-serif font-bold hover:text-themeSub flex items-center gap-3 border-b border-themeText/10 pb-4">
-                <i class="fa-solid fa-headset text-2xl"></i> Concierge Support
-            </a>
         </div>
 
         <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4"></div>
