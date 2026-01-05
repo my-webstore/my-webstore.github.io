@@ -448,6 +448,7 @@
         window.openAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); setTimeout(() => { m.classList.replace('opacity-0', 'opacity-100'); m.querySelector('div').classList.replace('scale-95', 'scale-100'); }, 10); }
         window.closeAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.replace('opacity-100', 'opacity-0'); m.querySelector('div').classList.replace('scale-100', 'scale-95'); setTimeout(() => m.classList.add('hidden'), 300); }
 
+        // --- UPDATED PLACE ORDER FUNCTION (SERVER-SIDE PRICE VERIFICATION) ---
         window.placeOrder = async (type) => {
             closeAuthModal();
             const btn = document.getElementById('place-order-btn');
@@ -470,22 +471,62 @@
                 finalAddress = `${house}, ${street}, ${landmark ? landmark + ', ' : ''}${area}, ${city}, ${state}, Pakistan - ${zip}`;
             }
 
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Securing Transaction...';
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Prices...';
             btn.disabled = true;
 
             try {
-                // Stock Deduction
-                for (const item of cart) {
-                    const pref = doc(db, "products", item.id);
-                    const snap = await getDoc(pref);
-                    if (snap.exists()) {
-                        const newStock = snap.data().stock - item.qty;
-                        if(newStock < 0) throw new Error(`Item ${item.name} just sold out!`);
-                        await updateDoc(pref, { stock: newStock });
+                // 1. RE-FETCH PRICES FROM DATABASE (SECURITY FIX)
+                const verifiedItems = [];
+                let verifiedSubtotal = 0;
+
+                // Create a list of promises to fetch all products in parallel
+                const productPromises = cart.map(cartItem => getDoc(doc(db, "products", cartItem.id)));
+                const productSnapshots = await Promise.all(productPromises);
+
+                for (let i = 0; i < cart.length; i++) {
+                    const cartItem = cart[i];
+                    const snap = productSnapshots[i];
+
+                    if (!snap.exists()) {
+                        throw new Error(`Product "${cartItem.name}" is no longer available.`);
                     }
+
+                    const dbData = snap.data();
+                    
+                    // Verify Price
+                    const realPrice = dbData.price;
+                    const realDiscount = dbData.discountPrice || 0;
+                    const finalPrice = realDiscount > 0 ? realDiscount : realPrice;
+
+                    // Verify Stock
+                    if (dbData.stock < cartItem.qty) {
+                        throw new Error(`Insufficient stock for "${dbData.name}". Available: ${dbData.stock}`);
+                    }
+
+                    // Deduct Stock
+                    const newStock = dbData.stock - cartItem.qty;
+                    await updateDoc(snap.ref, { stock: newStock });
+
+                    verifiedSubtotal += finalPrice * cartItem.qty;
+
+                    // Push secure object
+                    verifiedItems.push({
+                        id: cartItem.id,
+                        name: dbData.name, 
+                        image: dbData.image || (dbData.media && dbData.media[0]?.url) || "",
+                        price: realPrice,
+                        discountPrice: realDiscount,
+                        qty: cartItem.qty,
+                        selectedSize: cartItem.selectedSize,
+                        selectedColor: cartItem.selectedColor
+                    });
                 }
 
-                // Card Saving
+                // 2. RE-CALCULATE TOTAL
+                const shipping = verifiedSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+                const finalTotal = verifiedSubtotal + shipping;
+
+                // 3. SAVE CARD (Optional)
                 if (type === 'user' && activePayment === 'card' && !useSavedCard && document.getElementById('chk-save-card').checked) {
                     const rawNum = document.getElementById('card-number').value;
                     await updateDoc(doc(db, "users", currentUser.uid), { 
@@ -493,20 +534,28 @@
                     });
                 }
 
-                const subtotal = cart.reduce((acc, i) => acc + ((i.discountPrice||i.price) * i.qty), 0);
+                // 4. CREATE ORDER
+                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Processing Order...';
+                
                 const order = {
                     userId: type === 'user' ? currentUser.uid : 'GUEST',
                     customer: { name, phone, email, address: finalAddress }, 
-                    items: cart, totalAmount: subtotal + (subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST),
-                    status: "Processing", paymentMethod: activePayment.toUpperCase(),
-                    date: new Date().toLocaleDateString(), timestamp: new Date()
+                    items: verifiedItems, 
+                    subtotal: verifiedSubtotal, // Good for records
+                    totalAmount: finalTotal,
+                    status: "Processing", 
+                    paymentMethod: activePayment.toUpperCase(),
+                    date: new Date().toLocaleDateString(), 
+                    timestamp: new Date()
                 };
 
                 const docRef = await addDoc(collection(db, "orders"), order);
                 localStorage.removeItem('myCart');
                 window.location.href = `order-success.html?id=${docRef.id}`;
+
             } catch (e) {
-                alert("Security block: " + e.message);
+                console.error(e);
+                alert("Order Failed: " + e.message);
                 btn.innerHTML = originalHTML;
                 btn.disabled = false;
             }

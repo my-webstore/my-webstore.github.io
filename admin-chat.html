@@ -28,15 +28,16 @@
         
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+        ::-webkit-scrollbar-thumb { background: #4A3B32; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #7A6B63; }
 
         .chat-bubble { max-width: 75%; padding: 10px 16px; border-radius: 12px; position: relative; font-size: 0.9rem; line-height: 1.5; }
         .bubble-admin { background-color: #4A3B32; color: #E6D8C5; align-self: flex-end; border-bottom-right-radius: 2px; }
         .bubble-user { background-color: white; color: #334155; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #E2E8F0; }
         
-        .active-chat { background-color: #F1F5F9; border-right: 4px solid #4A3B32; }
-        .loader-overlay { position: fixed; inset: 0; background: white; z-index: 50; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+        .active-chat { background-color: #E6D8C5; border-right: 4px solid #4A3B32; }
+        .active-chat h4 { color: #4A3B32; }
+        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 50; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
     </style>
 </head>
 <body class="h-screen flex text-gray-800">
@@ -55,7 +56,7 @@
             <form id="quick-login-form" class="space-y-4">
                 <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
                 <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
-                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest">Unlock Dashboard</button>
+                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Dashboard</button>
             </form>
             <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
         </div>
@@ -165,7 +166,7 @@
                 window.location.href = 'admin-orders.html';
             } else {
                 // Default to Dashboard
-                window.location.href = 'admin.html';
+                window.location.href = 'index.html'; // Changed to index.html as main dashboard
             }
         }
 
@@ -196,6 +197,8 @@
                     } else {
                         stateDenied.classList.remove('hidden');
                         document.getElementById('current-user-email').innerText = user.email;
+                        // SECURITY FIX: Redirect non-admins away immediately
+                        setTimeout(() => window.location.replace("index.html"), 2000);
                     }
                 } else {
                     stateLogin.classList.remove('hidden');
@@ -220,6 +223,8 @@
 
         // 3. Load Inbox List (Real-time)
         function initInbox() {
+            // SECURITY FIX: This query will fail with "Permission Denied" if rules are set correctly
+            // and the user is NOT the admin. We catch that error below.
             const q = query(collection(db, "chats"), orderBy("lastMessageTime", "desc"));
             
             onSnapshot(q, (snapshot) => {
@@ -263,6 +268,17 @@
                     div.onclick = () => loadChat(data.userId, data.userName, data.userEmail);
                     list.appendChild(div);
                 });
+            }, (error) => {
+                // SECURITY FIX: Graceful error handling if database access is denied
+                console.error("Inbox Load Error:", error);
+                const list = document.getElementById('inbox-list');
+                list.innerHTML = `
+                    <div class="p-10 text-center text-red-500 font-bold text-xs uppercase tracking-widest">
+                        <i class="fa-solid fa-lock text-2xl mb-2"></i><br>
+                        Access Denied<br>
+                        <span class="text-[9px] font-normal text-gray-500">Database rejected connection</span>
+                    </div>
+                `;
             });
         }
 
@@ -358,9 +374,11 @@
                     timestamp: serverTimestamp()
                 });
 
+                // UPDATED: Set userUnread to true so the user gets a notification
                 await updateDoc(doc(db, "chats", selectedUserId), {
                     lastMessage: "You: " + text,
-                    lastMessageTime: serverTimestamp()
+                    lastMessageTime: serverTimestamp(),
+                    userUnread: true 
                 });
             } catch (error) {
                 console.error("Send failed", error);

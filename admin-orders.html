@@ -241,9 +241,10 @@
                     loadAdminOrders();
                     checkUnreadMessages();
                 } else {
-                    // Wrong User
+                    // Wrong User: Show Denied Screen & Kick
                     stateDenied.classList.remove('hidden');
                     document.getElementById('current-user-email').innerText = user.email;
+                    setTimeout(() => window.location.replace("index.html"), 2000);
                 }
             } else {
                 // Not Logged In
@@ -324,7 +325,9 @@
             const loadingMsg = document.getElementById('loading-msg');
             
             try {
+                // SECURITY CHECK: This will FAIL if rules are set and user is not admin
                 const querySnapshot = await getDocs(collection(db, "orders"));
+                
                 allOrders = [];
                 let revenue = 0, pending = 0, cancelled = 0;
 
@@ -395,8 +398,9 @@
 
             } catch (e) {
                 console.error(e);
-                loadingMsg.innerText = "Error: Unable to fetch secure data.";
-                loadingMsg.className = "text-center py-10 text-red-500 font-bold text-xs uppercase tracking-widest";
+                // SECURITY FIX: Graceful error handling
+                loadingMsg.innerHTML = `<i class="fa-solid fa-lock text-3xl mb-2"></i><br>ACCESS DENIED<br>Database rejected connection.`;
+                loadingMsg.className = "text-center py-20 text-red-500 font-bold text-xs uppercase tracking-widest";
             }
         }
 

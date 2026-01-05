@@ -74,6 +74,10 @@
         .dropdown-list.active { display: block; }
         .dropdown-list li { padding: 10px 16px; cursor: pointer; font-size: 14px; color: #4B5563; transition: all 0.2s; }
         .dropdown-list li:hover { background-color: #F3F4F6; color: #4A3B32; font-weight: 600; padding-left: 20px; }
+
+        /* Pulse for Dot */
+        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
+        .dot-pulse { animation: pulse-ring 2s infinite; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col text-themeText">
@@ -97,10 +101,6 @@
 
                 <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-[#4A3B32] transition-colors duration-300">
                     
-                    <a href="chat.html" class="hover:opacity-75 transition group relative" title="Concierge Support">
-                        <i class="fa-solid fa-headset text-xl group-hover:scale-110 transition-transform duration-300"></i>
-                    </a>
-
                     <div id="auth-container">
                     </div>
                     <div onclick="toggleCart()" class="relative cursor-pointer hover:opacity-75 transition">
@@ -336,8 +336,20 @@
     </div>
     <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
 
+    <div id="chat-container" class="fixed bottom-8 right-8 z-50 hidden flex items-center gap-3 flex-row-reverse group">
+        <a id="chat-btn-link" href="chat.html" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]">
+            <i class="fa-solid fa-message text-xl"></i>
+            <span id="chat-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border border-[#4A3B32] hidden dot-pulse z-20"></span>
+        </a>
+        <div id="chat-tooltip" class="bg-white text-themeText px-3 py-1 rounded-sm shadow-xl border border-[#D6C8B5] text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden relative transition-opacity duration-500 flex items-center">
+            <span id="chat-tooltip-text">Support</span>
+            <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none">&times;</button>
+            <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white transform -translate-y-1/2 rotate-45 border-r border-t border-[#D6C8B5]"></div>
+        </div>
+    </div>
+
     <script type="module">
-        import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged, signOut } from './firebase-config.js';
+        import { auth, db, doc, getDoc, updateDoc, onAuthStateChanged, signOut, onSnapshot } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let currentUser = null;
@@ -400,6 +412,8 @@
 
             input.addEventListener('input', (e) => render(e.target.value));
             input.addEventListener('focus', () => render(input.value));
+            
+            // Hide click outside
             document.addEventListener('click', (e) => {
                 if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('active');
             });
@@ -407,6 +421,7 @@
 
         setupDropdown('addr-state', 'state-list', states);
         setupDropdown('addr-city', 'city-list', cities);
+        // -------------------------
 
         // 0. PRELOADER & NAVBAR SCROLL
         window.addEventListener('load', () => {
@@ -448,6 +463,18 @@
                 setupNavbar(user);
                 initInputMasks();
                 await loadProfile(user);
+                
+                // --- CHAT NOTIFICATION LOGIC ---
+                const chatContainer = document.getElementById('chat-container');
+                chatContainer.classList.remove('hidden');
+                
+                onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
+                    if(docSnap.exists() && docSnap.data().userUnread) {
+                        document.getElementById('chat-notification-dot').classList.remove('hidden');
+                        document.getElementById('chat-tooltip').classList.remove('hidden');
+                        document.getElementById('chat-tooltip-text').innerText = "New Message";
+                    }
+                });
                 
                 const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
                 cart.length = 0;
@@ -584,7 +611,6 @@
 
         document.getElementById('cardForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            
             const rawNum = document.getElementById('card-number').value;
             if(rawNum.length < 16) { alert("Invalid Card Number"); return; }
 
@@ -635,8 +661,15 @@
         window.changeQty = (id, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}` === id); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
         window.toggleCart = () => { const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay'); if(s.classList.contains('translate-x-full')) { s.classList.remove('translate-x-full'); o.classList.remove('hidden'); updateCartUI(); } else { s.classList.add('translate-x-full'); o.classList.add('hidden'); } }
         window.removeItem = (id) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}` === id); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
+        
+        // --- CHAT HELPERS ---
+        window.hideChatDot = () => {
+            document.getElementById('chat-notification-dot').classList.add('hidden');
+        }
+        window.closeChatTooltip = () => {
+            document.getElementById('chat-tooltip').classList.add('hidden');
+        }
     </script>
-    
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>

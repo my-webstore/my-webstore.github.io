@@ -44,6 +44,9 @@
         .tag-chip button { margin-left: 0.5rem; color: #9CA3AF; transition: color 0.2s; }
         .tag-chip button:hover { color: #EF4444; }
 
+        /* Loader Overlay */
+        .loader-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+
         /* Mobile Responsive Table */
         @media (max-width: 768px) {
             .admin-table-header { display: none; }
@@ -56,6 +59,32 @@
     </style>
 </head>
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
+
+    <div id="security-overlay" class="loader-overlay">
+        
+        <div id="state-loading" class="text-center">
+            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
+            <p id="loading-msg" class="text-xs font-bold uppercase tracking-widest mb-4">Verifying Admin Privileges...</p>
+        </div>
+
+        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
+            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
+            <p class="text-xs text-gray-500 mb-6">Please authenticate to access the dashboard.</p>
+            <form id="quick-login-form" class="space-y-4">
+                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
+                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
+                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Dashboard</button>
+            </form>
+            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
+        </div>
+
+        <div id="state-denied" class="hidden text-center">
+            <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
+            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
+            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
+            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
+        </div>
+    </div>
 
     <header class="bg-[#1a1a1a] text-white py-4 px-4 md:px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
@@ -253,7 +282,7 @@
     </div>
 
     <script type="module">
-        import { db, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, auth, onAuthStateChanged, signOut, query, where, onSnapshot } from './firebase-config.js';
+        import { db, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, auth, onAuthStateChanged, signOut, query, where, onSnapshot, signInWithEmailAndPassword } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
         let allProducts = [];
@@ -263,15 +292,56 @@
         let tempSizes = [];
         let tempMedia = [];
 
+        // UI References
+        const overlay = document.getElementById('security-overlay');
+        const stateLoading = document.getElementById('state-loading');
+        const stateLogin = document.getElementById('state-login');
+        const stateDenied = document.getElementById('state-denied');
+
+        // --- AUTH & SECURITY CHECK ---
         onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== ADMIN_EMAIL) {
-                window.location.href = "login.html";
+            stateLoading.classList.add('hidden'); // Hide loading spinner
+
+            if (user) {
+                if (user.email === ADMIN_EMAIL) {
+                    // SUCCESS: Hide overlay and load app
+                    overlay.style.opacity = '0';
+                    setTimeout(() => overlay.style.display = 'none', 500);
+                    document.getElementById('admin-user-display').innerText = user.email;
+                    loadProducts();
+                    setupNotifications();
+                } else {
+                    // WRONG USER: Show Denied screen
+                    stateDenied.classList.remove('hidden');
+                    document.getElementById('current-user-email').innerText = user.email;
+                }
             } else {
-                document.getElementById('admin-user-display').innerText = user.email;
-                loadProducts();
-                setupNotifications(); // Initialize Real-time Badges
+                // NO USER: Show Login screen
+                stateLogin.classList.remove('hidden');
             }
         });
+
+        // --- QUICK LOGIN LOGIC ---
+        document.getElementById('quick-login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const pass = document.getElementById('admin-pass').value;
+            const errBox = document.getElementById('login-error');
+            errBox.classList.add('hidden');
+            
+            try {
+                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
+                // On success, the onAuthStateChanged listener will handle the UI update
+            } catch (error) {
+                errBox.innerText = "Login Failed: " + error.message;
+                errBox.classList.remove('hidden');
+            }
+        });
+
+        // --- FORCE RESET ---
+        window.forceReset = async () => {
+            if(auth) await signOut(auth);
+            window.location.reload();
+        }
 
         // --- DYNAMIC BADGE LOGIC ---
         function setupNotifications() {
@@ -303,6 +373,7 @@
             const tbody = document.getElementById('product-table-body');
             try {
                 const snap = await getDocs(collection(db, "products"));
+                
                 allProducts = [];
                 let counts = { Men: 0, Women: 0, Kids: 0 };
 
@@ -434,7 +505,6 @@
         window.addMedia = () => {
             const val = document.getElementById('media-input').value.trim();
             if(val) {
-                // Determine Type (Video if mp4, else Image)
                 const type = val.endsWith('.mp4') ? 'video' : 'image';
                 tempMedia.push({ type, url: val });
                 renderMediaList();
@@ -472,9 +542,9 @@
                 subcategory: document.getElementById('p-subcategory').value,
                 description: document.getElementById('p-desc').value,
                 colors: tempColors,
-                sizes: tempSizes, // Added support for explicit sizes
+                sizes: tempSizes,
                 media: tempMedia,
-                image: tempMedia.length > 0 ? tempMedia[0].url : "", // Backwards compatibility for card thumbnail
+                image: tempMedia.length > 0 ? tempMedia[0].url : "",
                 priority: Number(document.getElementById('p-priority').value || 50),
                 isVisible: document.getElementById('p-visible').value === 'true'
             };
@@ -516,11 +586,9 @@
             document.getElementById('p-priority').value = p.priority || 50;
             document.getElementById('p-visible').value = String(p.isVisible !== false);
             
-            // Populate Tags
             tempColors = p.colors || [];
             tempSizes = p.sizes || [];
             
-            // Handle Media Migration (If old format used 'image' string only)
             if(p.media && p.media.length > 0) {
                 tempMedia = p.media;
             } else if (p.image) {
