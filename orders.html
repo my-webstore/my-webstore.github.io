@@ -113,7 +113,7 @@
             setNavbarDark(); // FORCE DARK NAVBAR ON LOAD
         });
 
-        // NAVBAR SCROLL LOGIC (MODIFIED FOR ORDERS TO STAY DARK)
+        // NAVBAR SCROLL LOGIC
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if(!nav) return;
@@ -201,7 +201,7 @@
         window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
-        // 2. LOAD ORDERS
+        // 2. LOAD ORDERS (OPTIMIZED LOOP)
         async function loadOrders(uid) {
             const container = document.getElementById('orders-container');
             const loading = document.getElementById('loading');
@@ -223,7 +223,9 @@
                     return;
                 }
 
-                container.innerHTML = "";
+                // ISSUE B FIX: String Builder Pattern
+                let ordersHTML = "";
+
                 orders.forEach(order => {
                     // 1. Calculate Status State for Timeline
                     let step = 0; 
@@ -286,8 +288,8 @@
                         </div>
                     `).join('');
 
-                    // 4. Final Card HTML
-                    const html = `
+                    // 4. Append to String
+                    ordersHTML += `
                         <div class="bg-white rounded-sm shadow-xl border border-[#D6C8B5]/50 overflow-hidden group" data-aos="fade-up">
                             
                             <div class="p-6 md:p-8 flex flex-col md:flex-row justify-between md:items-center gap-6 border-b border-gray-100">
@@ -319,9 +321,10 @@
                             </div>
                         </div>
                     `;
-                    container.innerHTML += html;
                 });
 
+                // 5. Update DOM once
+                container.innerHTML = ordersHTML;
                 loading.classList.add('hidden');
                 container.classList.remove('hidden');
 

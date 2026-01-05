@@ -40,7 +40,6 @@
         input[type="radio"]:checked + div { border-color: #4A3B32; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         input[type="radio"]:checked + div .radio-indicator { background-color: #4A3B32; border-color: #4A3B32; }
 
-        /* Professional Dropdown Styling */
         .dropdown-list {
             display: none;
             position: absolute;
@@ -57,28 +56,21 @@
         .dropdown-list.active { display: block; }
         .dropdown-list li { padding: 10px 16px; cursor: pointer; font-size: 14px; color: #4B5563; transition: all 0.2s; }
         .dropdown-list li:hover { background-color: #F3F4F6; color: #4A3B32; font-weight: 600; padding-left: 20px; }
+        
+        /* Navbar Tweaks for Checkout */
+        #navbar { background-color: white !important; padding-top: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB; }
     </style>
 </head>
 <body class="min-h-screen flex flex-col">
 
-    <header class="bg-white/90 backdrop-blur-md border-b border-gray-200 sticky top-0 z-50">
-        <div class="container mx-auto px-4 md:px-6 py-4 flex justify-between items-center">
-            <a href="index.html" class="flex items-center gap-2 group text-gray-400 hover:text-themeText transition">
-                <i class="fa-solid fa-arrow-left text-xs"></i><span class="text-[10px] font-bold uppercase tracking-widest">Back</span>
-            </a>
-            <h1 class="text-xl md:text-2xl font-serif font-bold tracking-widest text-themeText">BRAND.</h1>
-            <div class="flex items-center gap-2 text-green-700 bg-green-50 px-2 md:px-3 py-1.5 rounded-sm border border-green-100">
-                <i class="fa-solid fa-lock text-[10px]"></i><span class="text-[8px] md:text-[9px] font-bold uppercase tracking-widest">Secure</span>
-            </div>
-        </div>
-    </header>
+    <nav id="app-navbar"></nav>
 
     <div id="loading" class="fixed inset-0 bg-white z-[60] flex flex-col items-center justify-center">
         <i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn mb-4"></i>
         <p class="text-xs font-bold uppercase tracking-widest text-gray-400">Verifying Session...</p>
     </div>
 
-    <div id="main-content" class="hidden flex-grow container mx-auto px-4 md:px-6 py-6 md:py-10">
+    <div id="main-content" class="hidden flex-grow container mx-auto px-4 md:px-6 py-6 md:py-10 pt-28">
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
             
             <div class="lg:col-span-7 order-2 lg:order-1" data-aos="fade-up">
@@ -118,9 +110,7 @@
                     <div id="view-new-address" class="grid grid-cols-1 md:grid-cols-2 gap-5">
                         <div class="md:col-span-2"><label>House / Office No.</label><input type="text" id="addr-house" class="form-input" placeholder="e.g. Apt 402, Block B"></div>
                         <div class="md:col-span-2"><label>Street Address</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard"></div>
-                        
                         <div class="md:col-span-2"><label>Landmark (Optional)</label><input type="text" id="addr-landmark" class="form-input" placeholder="e.g. Near Civic Center"></div>
-
                         <div><label>Area / Sector</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. Phase 6"></div>
                         
                         <div class="relative group">
@@ -250,19 +240,13 @@
         </div>
     </div>
 
-    <footer class="bg-white border-t border-gray-100 py-10 mt-auto text-center">
-        <p class="text-[10px] text-gray-400 uppercase tracking-[0.2em] mb-4">&copy; 2025 Brand Luxury. Official Distributor.</p>
-        <div class="container mx-auto px-6">
-            <table class="mx-auto text-[9px] text-gray-400 uppercase tracking-widest border-t border-gray-50 pt-4 w-full max-w-xs">
-                <tr><td class="py-1">Environment: Standard</td><td class="py-1 text-right">Packaging: Silk tissue</td></tr>
-                <tr><td colspan="2" class="py-2 text-center text-themeSub border-t border-gray-50 font-bold uppercase">Maintain storage: 15°C - 25°C</td></tr>
-            </table>
-        </div>
-    </footer>
+    <footer id="app-footer"></footer>
 
+    <script src="components.js"></script>
     <script type="module">
         import { auth, db, doc, getDoc, addDoc, updateDoc, collection, onAuthStateChanged } from './firebase-config.js';
 
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let currentUser = null, savedProfileData = null, currentMode = 'new', activePayment = 'cod';
         let cart = JSON.parse(localStorage.getItem('myCart')) || [];
         const FREE_SHIPPING_THRESHOLD = 5000;
@@ -329,6 +313,35 @@
         setupDropdown('addr-city', 'city-list', cities);
         // -------------------------
 
+        // 0. PRELOADER
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            if(preloader) {
+                preloader.style.opacity = '0';
+                setTimeout(() => preloader.style.display = 'none', 500);
+            }
+            setNavbarDark(); // FORCE DARK NAVBAR
+        });
+
+        function setNavbarDark() {
+            const nav = document.getElementById('navbar');
+            const logo = document.getElementById('nav-logo');
+            const links = document.getElementById('nav-links');
+            const icons = document.getElementById('nav-icons');
+            const cartBadge = document.getElementById('cart-count');
+
+            if(nav) {
+                nav.style.backgroundColor = "white"; // Override for checkout
+                if(logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
+                if(links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
+                if(icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
+                if(cartBadge) {
+                    cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+                    cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+                }
+            }
+        }
+
         const initUI = () => {
             document.getElementById('card-number')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 16);
@@ -352,13 +365,21 @@
         onAuthStateChanged(auth, async (user) => {
             if (user) { 
                 currentUser = user; 
+                if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
+                setNavbarDark();
                 if(user.email) document.getElementById('billing-email').value = user.email;
                 await loadUserData(user.uid); 
             } else { 
+                if(window.setupNavbarAuth) window.setupNavbarAuth(null, ADMIN_EMAIL);
+                setNavbarDark();
                 toggleAddressMode('new'); 
                 finishLoading(); 
             }
         });
+
+        window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
+        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
+        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
         async function loadUserData(uid) {
             try {
@@ -418,7 +439,8 @@
             cart.forEach(item => {
                 const price = item.discountPrice > 0 ? item.discountPrice : item.price;
                 subtotal += price * item.qty;
-                container.innerHTML += `<div class="flex gap-4 py-3 border-b border-dashed border-gray-50 last:border-0 items-center"><img src="${item.image}" class="w-12 h-14 object-cover rounded shadow-sm"><div class="flex-1 min-w-0"><p class="text-xs font-bold text-themeText truncate uppercase">${item.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">Qty: ${item.qty} | ${item.selectedSize}</p></div><p class="text-xs font-bold text-themeText font-mono">Rs. ${(price * item.qty).toLocaleString()}</p></div>`;
+                // OPTIMIZED IMAGE: Added &w=150&q=75 for speed
+                container.innerHTML += `<div class="flex gap-4 py-3 border-b border-dashed border-gray-50 last:border-0 items-center"><img src="${item.image}&w=150&q=75" class="w-12 h-14 object-cover rounded shadow-sm"><div class="flex-1 min-w-0"><p class="text-xs font-bold text-themeText truncate uppercase">${item.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">Qty: ${item.qty} | ${item.selectedSize}</p></div><p class="text-xs font-bold text-themeText font-mono">Rs. ${(price * item.qty).toLocaleString()}</p></div>`;
             });
             const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
             document.getElementById('summary-subtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
@@ -448,7 +470,6 @@
         window.openAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); setTimeout(() => { m.classList.replace('opacity-0', 'opacity-100'); m.querySelector('div').classList.replace('scale-95', 'scale-100'); }, 10); }
         window.closeAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.replace('opacity-100', 'opacity-0'); m.querySelector('div').classList.replace('scale-100', 'scale-95'); setTimeout(() => m.classList.add('hidden'), 300); }
 
-        // --- UPDATED PLACE ORDER FUNCTION (SERVER-SIDE PRICE VERIFICATION) ---
         window.placeOrder = async (type) => {
             closeAuthModal();
             const btn = document.getElementById('place-order-btn');
@@ -479,7 +500,6 @@
                 const verifiedItems = [];
                 let verifiedSubtotal = 0;
 
-                // Create a list of promises to fetch all products in parallel
                 const productPromises = cart.map(cartItem => getDoc(doc(db, "products", cartItem.id)));
                 const productSnapshots = await Promise.all(productPromises);
 
@@ -493,12 +513,10 @@
 
                     const dbData = snap.data();
                     
-                    // Verify Price
                     const realPrice = dbData.price;
                     const realDiscount = dbData.discountPrice || 0;
                     const finalPrice = realDiscount > 0 ? realDiscount : realPrice;
 
-                    // Verify Stock
                     if (dbData.stock < cartItem.qty) {
                         throw new Error(`Insufficient stock for "${dbData.name}". Available: ${dbData.stock}`);
                     }
@@ -509,7 +527,6 @@
 
                     verifiedSubtotal += finalPrice * cartItem.qty;
 
-                    // Push secure object
                     verifiedItems.push({
                         id: cartItem.id,
                         name: dbData.name, 
@@ -527,7 +544,7 @@
                 const finalTotal = verifiedSubtotal + shipping;
 
                 // 3. SAVE CARD (Optional)
-                if (type === 'user' && activePayment === 'card' && !useSavedCard && document.getElementById('chk-save-card').checked) {
+                if (type === 'user' && currentUser && activePayment === 'card' && !useSavedCard && document.getElementById('chk-save-card').checked) {
                     const rawNum = document.getElementById('card-number').value;
                     await updateDoc(doc(db, "users", currentUser.uid), { 
                         savedCard: { number: "••••" + rawNum.slice(-4), name: document.getElementById('card-name').value, expiry: document.getElementById('card-expiry').value } 
@@ -537,8 +554,11 @@
                 // 4. CREATE ORDER
                 btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Processing Order...';
                 
+                // GUEST SAFETY CHECK (ISSUE 4 FIX)
+                const uid = (type === 'user' && currentUser) ? currentUser.uid : 'GUEST';
+
                 const order = {
-                    userId: type === 'user' ? currentUser.uid : 'GUEST',
+                    userId: uid,
                     customer: { name, phone, email, address: finalAddress }, 
                     items: verifiedItems, 
                     subtotal: verifiedSubtotal, // Good for records

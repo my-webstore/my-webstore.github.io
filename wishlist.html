@@ -91,6 +91,7 @@
         import { auth, db, collection, query, where, getDocs, deleteDoc, doc, onAuthStateChanged, signOut, onSnapshot } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
+        let currentUser = null;
 
         // 0. PRELOADER
         window.addEventListener('load', () => {
@@ -143,6 +144,7 @@
         // 1. AUTH CHECK
         onAuthStateChanged(auth, user => {
             if (user) {
+                currentUser = user;
                 if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
                 setNavbarDark(); // Ensure dark text after auth update
                 loadWishlist(user.uid);
@@ -188,7 +190,7 @@
         window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
-        // 2. LOAD WISHLIST (WITH DEDUPLICATION)
+        // 2. LOAD WISHLIST (OPTIMIZED RENDER)
         async function loadWishlist(uid) {
             const grid = document.getElementById('wishlist-grid');
             const loading = document.getElementById('loading');
@@ -199,50 +201,50 @@
                 const snap = await getDocs(q);
 
                 loading.classList.add('hidden');
-                grid.innerHTML = ""; 
-
+                
                 if (snap.empty) {
                     empty.classList.remove('hidden');
+                    grid.innerHTML = "";
                     return;
                 }
 
                 empty.classList.add('hidden');
                 
-                // --- DEDUPLICATION LOGIC ---
+                // --- OPTIMIZATION: String Builder Pattern ---
+                let wishlistHTML = "";
                 const seenProducts = new Set();
 
                 snap.forEach(d => {
                     const item = d.data();
                     const docId = d.id; 
                     
-                    // If product ID already seen, skip rendering this card
+                    // Deduplication
                     if (seenProducts.has(item.productId)) return;
                     seenProducts.add(item.productId);
                     
-                    const card = document.createElement('div');
-                    card.className = "bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30 product-card";
-                    card.setAttribute('data-aos', 'fade-up');
-                    card.id = `card-${docId}`;
-
-                    card.innerHTML = `
-                        <div class="relative h-[300px] overflow-hidden bg-gray-100">
-                            <img src="${item.image}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" alt="${item.name}">
-                            <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
-                            <button onclick="removeFromWishlist('${docId}')" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md" title="Remove">
-                                <i class="fa-solid fa-xmark"></i>
-                            </button>
-                        </div>
-                        <div class="p-6 text-center">
-                            <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${item.category}</p>
-                            <h3 class="text-xl font-serif font-bold text-themeText mb-2 line-clamp-1">${item.name}</h3>
-                            <p class="text-themeBtn font-mono text-sm mb-6">Rs. ${item.price.toLocaleString()}</p>
-                            <a href="product-details.html?id=${item.productId}" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition rounded-sm">
-                                View Product
-                            </a>
+                    wishlistHTML += `
+                        <div id="card-${docId}" data-aos="fade-up" class="bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30 product-card">
+                            <div class="relative h-[300px] overflow-hidden bg-gray-100">
+                                <img src="${item.image}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" alt="${item.name}">
+                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
+                                <button onclick="removeFromWishlist('${docId}')" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md" title="Remove">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                            <div class="p-6 text-center">
+                                <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${item.category}</p>
+                                <h3 class="text-xl font-serif font-bold text-themeText mb-2 line-clamp-1">${item.name}</h3>
+                                <p class="text-themeBtn font-mono text-sm mb-6">Rs. ${item.price.toLocaleString()}</p>
+                                <a href="product-details.html?id=${item.productId}" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition rounded-sm">
+                                    View Product
+                                </a>
+                            </div>
                         </div>
                     `;
-                    grid.appendChild(card);
                 });
+
+                // Update DOM Once
+                grid.innerHTML = wishlistHTML;
 
             } catch (e) {
                 console.error("Wishlist error:", e);

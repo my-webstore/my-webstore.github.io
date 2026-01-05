@@ -141,6 +141,7 @@
 
     <script type="module">
         import { auth, db, createUserWithEmailAndPassword, doc, setDoc } from './firebase-config.js';
+        import { syncCartOnLogin } from './cart-sync.js'; // NEW: Cart Sync Logic
         
         import { 
             RecaptchaVerifier, 
@@ -177,6 +178,9 @@
                     createdAt: new Date(),
                     verifiedBy: "google"
                 }, { merge: true });
+
+                // SYNC CART
+                await syncCartOnLogin(user);
 
                 window.location.href = "profile.html";
             } catch (error) {
@@ -314,6 +318,9 @@
                     verifiedBy: activeTab,
                     firstName: "", lastName: "", address: ""
                 });
+
+                // SYNC CART
+                await syncCartOnLogin(user);
 
                 window.location.href = "profile.html";
 
