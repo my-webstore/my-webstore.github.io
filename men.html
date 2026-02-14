@@ -241,7 +241,6 @@
         });
 
         window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
-        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
         // 2. LOAD WISHLIST DATA

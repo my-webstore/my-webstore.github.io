@@ -28,19 +28,43 @@ const navbarHTML = `
         </div>
     </div>
 
-    <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto bg-[#E6D8C5] fixed inset-0 z-[9999] transition-transform duration-500">
-        <div class="flex justify-between items-center mb-12">
-            <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
-            <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
+    <!-- Mobile Menu Overlay (click to close) -->
+    <div id="mobile-menu-overlay"
+         style="
+            position:fixed; inset:0;
+            background: rgba(0,0,0,0.40);
+            opacity:0; visibility:hidden; pointer-events:none;
+            transition: opacity 250ms ease, visibility 250ms ease;
+            z-index: 9998;
+         "></div>
+
+    <!-- Mobile Menu Panel (card-style slide-in like your reference site) -->
+    <div id="mobile-menu"
+         class="flex flex-col overflow-y-auto bg-[#E6D8C5] fixed z-[9999]"
+         style="
+            left: 12px;
+            top: 80px;
+            width: min(78vw, 330px);
+            max-height: calc(100vh - 92px);
+            border-radius: 18px;
+            border: 1px solid rgba(0,0,0,0.10);
+            box-shadow: 10px 10px 40px rgba(0,0,0,0.18);
+            transform: translateX(-120%);
+            transition: transform 280ms ease;
+            -webkit-overflow-scrolling: touch;
+         ">
+        <div class="flex justify-between items-center mb-0 px-5 py-4 border-b border-themeText/10">
+            <h2 class="text-sm font-serif font-bold tracking-widest uppercase">Menu</h2>
+            <button onclick="toggleMobileMenu(false)" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
         </div>
         
-        <div class="flex flex-col space-y-8">
-            <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
-            <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
-            <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+        <div class="flex flex-col px-4 py-2">
+            <a href="men.html" class="block w-full py-4 px-2 text-[15px] font-bold text-themeText border-b border-themeText/10 hover:opacity-80 transition">Men</a>
+            <a href="women.html" class="block w-full py-4 px-2 text-[15px] font-bold text-themeText border-b border-themeText/10 hover:opacity-80 transition">Women</a>
+            <a href="kids.html" class="block w-full py-4 px-2 text-[15px] font-bold text-themeText hover:opacity-80 transition">Kids</a>
         </div>
 
-        <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4"></div>
+        <div id="mobile-auth-links" class="mt-auto pt-6 pb-5 px-4 border-t border-themeText/10"></div>
     </div>
 `;
 
@@ -154,4 +178,66 @@ window.setupNavbarAuth = (user, adminEmail) => {
         mobileLinks.innerHTML = `
             <a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
     }
-}
+};
+
+// 6. Mobile Menu Logic (inline styles, not Tailwind classes)
+window.toggleMobileMenu = (force) => {
+    const menu = document.getElementById('mobile-menu');
+    const overlay = document.getElementById('mobile-menu-overlay');
+    const navbar = document.getElementById('navbar');
+    if (!menu || !overlay) return;
+
+    // Put menu below navbar (dynamic)
+    if (navbar) {
+        const navH = navbar.getBoundingClientRect().height || 0;
+        menu.style.top = `${Math.max(56, navH + 8)}px`;
+        menu.style.maxHeight = `calc(100vh - ${Math.max(56, navH + 20)}px)`;
+    }
+
+    const isOpen = overlay.style.pointerEvents === 'auto';
+    const shouldOpen = (typeof force === 'boolean') ? force : !isOpen;
+
+    if (shouldOpen) {
+        overlay.style.opacity = '1';
+        overlay.style.visibility = 'visible';
+        overlay.style.pointerEvents = 'auto';
+        menu.style.transform = 'translateX(0)';
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+    } else {
+        overlay.style.opacity = '0';
+        overlay.style.visibility = 'hidden';
+        overlay.style.pointerEvents = 'none';
+        menu.style.transform = 'translateX(-120%)';
+        document.documentElement.style.overflow = '';
+        document.body.style.overflow = '';
+    }
+};
+
+window.closeMobileMenu = () => window.toggleMobileMenu(false);
+
+// Close: overlay click
+document.addEventListener('click', (e) => {
+    if (e.target && e.target.id === 'mobile-menu-overlay') {
+        window.closeMobileMenu();
+    }
+});
+
+// Close: click any link inside mobile menu
+document.addEventListener('click', (e) => {
+    const a = e.target && e.target.closest ? e.target.closest('#mobile-menu a') : null;
+    if (a) window.closeMobileMenu();
+});
+
+// Close: Escape
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') window.closeMobileMenu();
+});
+
+// Keep position correct on resize
+window.addEventListener('resize', () => {
+    const overlay = document.getElementById('mobile-menu-overlay');
+    if (overlay && overlay.style.pointerEvents === 'auto') {
+        window.toggleMobileMenu(true);
+    }
+});

@@ -328,7 +328,8 @@
         window.removeItem = (uid) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
         window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
         window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
-        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
+
+        // ✅ IMPORTANT: removed old toggleMobileMenu override (components.js handles it now)
         window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
 
         updateCartUI();
