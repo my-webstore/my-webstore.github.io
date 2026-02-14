@@ -174,9 +174,9 @@ window.setupNavbarAuth = (user, adminEmail) => {
             <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
                 <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
             </a>`;
-        // Mobile Guest
+        // Mobile Guest (✅ updated: wider button)
         mobileLinks.innerHTML = `
-            <a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
+            <a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center rounded-full shadow-lg border border-themeText/20 hover:opacity-90 transition px-8">Sign In</a>`;
     }
 };
 
