@@ -136,10 +136,11 @@
                 <span class="text-xs font-bold uppercase tracking-[0.3em] text-[#E6D8C5] mb-4 block">The Inner Circle</span>
                 <h3 class="text-4xl md:text-5xl font-serif font-bold mb-6 text-white">Join the Narrative.</h3>
                 <p class="mb-10 text-[#F5EBE0] font-light leading-relaxed text-sm md:text-base">Unlock access to exclusive drops, private sales, and editorial content curated for the discerning individual.</p>
-                <form class="flex flex-col sm:flex-row gap-0">
-                    <input type="email" placeholder="Email Address" class="flex-grow p-4 bg-[#F5EBE0]/90 border-none text-themeText placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#E6D8C5] transition rounded-l-sm min-w-0">
-                    <button type="button" class="bg-[#2E241E] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-[#7A6B63] transition rounded-r-sm text-xs whitespace-nowrap">Subscribe</button>
+                <form id="newsletter-form" class="flex flex-col sm:flex-row gap-0">
+                    <input id="newsletter-email" type="email" placeholder="Email Address" class="flex-grow p-4 bg-[#F5EBE0]/90 border-none text-themeText placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#E6D8C5] transition rounded-l-sm min-w-0">
+                    <button id="newsletter-submit" type="submit" class="bg-[#2E241E] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-[#7A6B63] transition rounded-r-sm text-xs whitespace-nowrap">Subscribe</button>
                 </form>
+                <p id="newsletter-message" class="mt-4 text-xs uppercase tracking-widest font-bold text-[#E6D8C5] hidden"></p>
             </div>
         </div>
     </section>
@@ -175,7 +176,7 @@
 
     <script src="components.js"></script>
     <script type="module">
-        import { auth, onAuthStateChanged, signOut, doc, onSnapshot, db } from './firebase-config.js';
+        import { auth, onAuthStateChanged, signOut, doc, onSnapshot, db, setDoc, Timestamp } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let currentUser = null;
@@ -331,6 +332,54 @@
 
         // ✅ IMPORTANT: removed old toggleMobileMenu override (components.js handles it now)
         window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
+
+        // NEWSLETTER SUBSCRIBE LOGIC
+        const newsletterForm = document.getElementById('newsletter-form');
+        const newsletterEmail = document.getElementById('newsletter-email');
+        const newsletterMsg = document.getElementById('newsletter-message');
+        const newsletterBtn = document.getElementById('newsletter-submit');
+
+        const showNewsletterMessage = (text) => {
+            newsletterMsg.innerText = text;
+            newsletterMsg.classList.remove('hidden');
+        };
+
+        if (newsletterForm) {
+            newsletterForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                const email = (newsletterEmail?.value || '').trim().toLowerCase();
+                const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+                if (!emailRegex.test(email)) {
+                    showNewsletterMessage("Please enter a valid email.");
+                    return;
+                }
+
+                try {
+                    if (newsletterBtn) newsletterBtn.disabled = true;
+
+                    // Use email as document ID to prevent duplicates
+                    await setDoc(doc(db, "newsletterSubscribers", email), {
+                        email: email,
+                        subscribedAt: Timestamp.now()
+                    });
+
+                    showNewsletterMessage("Subscribed successfully.");
+                    if (newsletterEmail) newsletterEmail.value = "";
+                } catch (err) {
+                    // If already exists, create becomes update -> denied by rules
+                    if (err?.code === "permission-denied") {
+                        showNewsletterMessage("You are already subscribed.");
+                    } else {
+                        showNewsletterMessage("Subscription failed. Try again.");
+                    }
+                    console.error(err);
+                } finally {
+                    if (newsletterBtn) newsletterBtn.disabled = false;
+                }
+            });
+        }
 
         updateCartUI();
     </script>
