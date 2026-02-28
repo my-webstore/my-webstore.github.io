@@ -267,8 +267,8 @@
                 <div class="glass border-b border-white/40 px-4 md:px-6 py-4 flex justify-between items-center shadow-sm shrink-0">
                     <div class="flex items-center gap-4">
                         <!-- MOBILE back to inbox -->
-                        <button id="mobile-back" onclick="showInboxMobile()" class="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-[#F5EBE0] text-[#4A3B32] hover:bg-[#E6D8C5] transition duration-300" title="Back to inbox">
-                            <i class="fa-solid fa-chevron-left text-sm"></i>
+                        <button id="mobile-back" onclick="showInboxMobile()" class="md:hidden w-9 h-9 flex items-center justify-center rounded-full bg-[#F5EBE0] text-[#4A3B32] hover:bg-[#E6D8C5] transition duration-300" title="Back to inbox">
+                            <i class="fa-solid fa-chevron-left text-[12px]"></i>
                         </button>
 
                         <div class="relative">
@@ -280,7 +280,7 @@
                             <div class="flex items-center gap-2">
                                 <h2 id="header-name" class="text-sm md:text-base font-bold text-[#4A3B32]">Unknown User</h2>
                             </div>
-                            <p id="header-email" class="text-[10px] text-gray-500 font-mono tracking-wide uppercase">ID: Loading...</p>
+                            <p id="header-email" class="text-[10px] text-gray-500 font-mono tracking-wide">ID: Loading...</p>
                             <p id="header-status" class="text-[9px] text-gray-500 uppercase tracking-widest font-bold mt-0.5">Status: Unknown</p>
                         </div>
                     </div>
@@ -340,6 +340,7 @@
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let selectedUserId = null;
+        let selectedUserFullName = null;
         let unsubscribeMessages = null;
         let unsubscribePresence = null;
         let inboxSnapshotCache = [];
@@ -404,6 +405,22 @@
 
         // ---------- MOBILE VIEW (perfect full-screen + no cut content) ----------
         function isMobile() { return window.matchMedia("(max-width: 767px)").matches; }
+        function isTabletOrMobile() { return window.matchMedia("(max-width: 1023px)").matches; } /* mobile + tablet */
+
+        function applyHeaderNameResponsive() {
+            const el = document.getElementById('header-name');
+            if (!el) return;
+
+            const full = selectedUserFullName || el.innerText || "Guest";
+            if (!full) return;
+
+            if (isTabletOrMobile()) {
+                const first = String(full).trim().split(/\s+/)[0] || full;
+                el.innerText = first;
+            } else {
+                el.innerText = full;
+            }
+        }
 
         function showChatMobile() {
             if (!isMobile()) return;
@@ -414,6 +431,8 @@
             inboxPanel.classList.add('hidden');
             chatPanel.classList.remove('hidden');
             chatPanel.classList.add('flex');
+
+            applyHeaderNameResponsive();
         }
 
         window.showInboxMobile = () => {
@@ -597,12 +616,20 @@
             });
         }
 
-        // ---------- ONLINE STATUS (fix: not always green) ----------
+        // ---------- ONLINE STATUS (real-time via snapshot; supports common field names) ----------
         function setOnlineStatusFromChatDoc(chatData) {
             const dot = document.getElementById('status-dot');
             const status = document.getElementById('header-status');
 
-            const online = chatData?.userOnline === true || chatData?.isOnline === true || chatData?.online === true;
+            // read online flag from common possibilities (boolean or string)
+            const rawOnline =
+                chatData?.userOnline ?? chatData?.isOnline ?? chatData?.online ?? chatData?.presence ?? chatData?.status;
+
+            const online =
+                rawOnline === true ||
+                rawOnline === "online" ||
+                rawOnline === "ONLINE" ||
+                rawOnline === 1;
 
             dot.classList.remove('bg-green-500', 'bg-yellow-500', 'bg-gray-300');
             if (online) {
@@ -622,7 +649,7 @@
             }
         }
 
-        // ---------- READ RECEIPTS (keep logic, black ticks) ----------
+        // ---------- READ RECEIPTS (keep logic; DO NOT change tick style) ----------
         async function markAdminMessagesReadIfLikelySeen(userId) {
             try {
                 const msgsQ = query(
@@ -649,6 +676,7 @@
         // ---------- LOAD CHAT ----------
         async function loadChat(userId, userName, userEmail) {
             selectedUserId = userId;
+            selectedUserFullName = userName || "Guest";
 
             chatPanel.classList.remove('hidden');
             chatPanel.classList.add('flex');
@@ -657,21 +685,32 @@
 
             showChatMobile();
 
-            document.getElementById('header-name').innerText = userName || "Guest";
-            document.getElementById('header-email').innerText = userEmail || userId;
-            document.getElementById('header-avatar').innerText = (userName || "U").charAt(0).toUpperCase();
+            // header (name responsive)
+            document.getElementById('header-name').innerText = selectedUserFullName;
+            applyHeaderNameResponsive();
+
+            // email should be lowercase (NO uppercase transform)
+            const emailOrId = (userEmail || userId);
+            document.getElementById('header-email').innerText = String(emailOrId || "").toLowerCase();
+
+            document.getElementById('header-avatar').innerText = (selectedUserFullName || "U").charAt(0).toUpperCase();
             document.getElementById('header-avatar').style.backgroundColor = stringToColor(userId);
             document.getElementById('header-avatar').style.color = "white";
 
             setTimeout(() => document.getElementById('admin-input').focus(), 50);
 
+            // presence listener (REAL-TIME)
             if (unsubscribePresence) unsubscribePresence();
             unsubscribePresence = onSnapshot(doc(db, "chats", userId), async (snap) => {
                 if (snap.exists()) {
                     const data = snap.data();
                     setOnlineStatusFromChatDoc(data);
 
-                    const online = data?.userOnline === true || data?.isOnline === true || data?.online === true;
+                    const rawOnline =
+                        data?.userOnline ?? data?.isOnline ?? data?.online ?? data?.presence ?? data?.status;
+                    const online =
+                        rawOnline === true || rawOnline === "online" || rawOnline === "ONLINE" || rawOnline === 1;
+
                     if (online) await markAdminMessagesReadIfLikelySeen(userId);
                 } else {
                     setOnlineStatusFromChatDoc(null);
@@ -733,20 +772,14 @@
                         timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     }
 
-                    // TICKS RULES:
+                    // TICKS RULES (OLD STYLE):
                     // - single tick = sent
                     // - double tick = read by customer
-                    // - tick color = black (no blue)
+                    // - tick colour is black (NOT blue)
                     let tickHTML = "";
                     if (isAdmin) {
                         const iconClass = msg.read ? "fa-check-double" : "fa-check";
-                        tickHTML = `
-                            <span class="ml-1.5 text-[10px]">
-                                <span class="inline-flex items-center justify-center bg-white/80 rounded-md px-1 py-[1px] text-black/80">
-                                    <i class="fa-solid ${iconClass}"></i>
-                                </span>
-                            </span>
-                        `;
+                        tickHTML = `<span class="ml-1.5 text-black/80 text-[10px]"><i class="fa-solid ${iconClass}"></i></span>`;
                     }
 
                     const wrap = document.createElement('div');
@@ -862,6 +895,7 @@
                 if (unsubscribePresence) unsubscribePresence();
 
                 selectedUserId = null;
+                selectedUserFullName = null;
                 document.getElementById('messages-box').innerHTML = '';
                 chatInterface.classList.add('hidden');
                 emptyState.classList.remove('hidden');
@@ -888,6 +922,8 @@
 
         // keep panels correct on resize
         window.addEventListener('resize', () => {
+            applyHeaderNameResponsive();
+
             if (!isMobile()) {
                 topbar.classList.remove('hidden');
                 contentWrap.style.paddingTop = "";

@@ -1,390 +1,627 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <title>Brand - Redefining Luxury</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32', themeLight: '#F5EBE0' } } } }</script>
-    
-    <style>
-        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
-        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #E6D8C5; }
-        ::-webkit-scrollbar-thumb { background: #4A3B32; }
+  <meta charset="UTF-8" />
+  <title>Brand - Redefining Luxury</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        /* Text Stroke Effect */
-        .text-outline { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
-        
-        /* Marquee Animation */
-        .marquee-container { overflow: hidden; white-space: nowrap; position: relative; }
-        .marquee-content { display: inline-block; animation: marquee 20s linear infinite; }
-        @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+  <!-- Performance: preconnects -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com" />
+  <link rel="preconnect" href="https://unpkg.com" />
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
-        /* Loader */
-        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        
-        /* Fade Animation for Chat */
-        .fade-in { animation: fadeIn 0.5s ease-in forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
-        /* Pulse for Dot */
-        @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
-        .dot-pulse { animation: pulse-ring 2s infinite; }
-    </style>
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <!-- Tailwind (CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+
+  <!-- AOS CSS (animations) -->
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            themeBg: '#E6D8C5',
+            themeText: '#4A3B32',
+            themeSub: '#7A6B63',
+            themeBtn: '#4A3B32',
+            themeLight: '#F5EBE0'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
+    h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #E6D8C5; }
+    ::-webkit-scrollbar-thumb { background: #4A3B32; }
+
+    /* Text Stroke Effect */
+    .text-outline { -webkit-text-stroke: 1px rgba(255,255,255,0.2); color: transparent; }
+
+    /* Marquee Animation */
+    .marquee-container { overflow: hidden; white-space: nowrap; position: relative; }
+    .marquee-content { display: inline-block; animation: marquee 20s linear infinite; will-change: transform; }
+    @keyframes marquee { 0% { transform: translateX(0); } 100% { transform: translateX(-50%); } }
+
+    /* Loader */
+    .loader-overlay {
+      position: fixed; inset: 0; background: #E6D8C5; z-index: 9999;
+      display: flex; justify-content: center; align-items: center;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Fade Animation for Chat */
+    .fade-in { animation: fadeIn 0.5s ease-in forwards; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    /* Pulse for Dot */
+    @keyframes pulse-ring {
+      0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); }
+    }
+    .dot-pulse { animation: pulse-ring 2s infinite; }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      .marquee-content { animation: none !important; }
+      [data-aos] { transition: none !important; transform: none !important; }
+    }
+  </style>
 </head>
+
 <body class="bg-themeBg text-themeText flex flex-col min-h-screen">
 
-    <div id="preloader" class="loader-overlay">
-        <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
+  <!-- Preloader -->
+  <div id="preloader" class="loader-overlay" aria-hidden="true">
+    <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
+  </div>
+
+  <!-- Navbar injected by components.js -->
+  <nav id="app-navbar"></nav>
+
+  <!-- HERO (✅ improved mobile height + no fixed image jitter) -->
+  <header class="relative min-h-[100dvh] w-full overflow-hidden flex items-center justify-center">
+    <div class="absolute inset-0 z-0">
+      <div class="absolute inset-0 bg-black/40 z-10"></div>
+      <div class="absolute inset-0 bg-gradient-to-t from-[#E6D8C5] via-transparent to-black/60 z-10"></div>
+
+      <!-- ✅ Not fixed: better performance on mobile -->
+      <img
+        src="https://images.unsplash.com/photo-1534126511673-b6899657816a?q=80&w=1970&auto=format&fit=crop"
+        class="w-full h-full object-cover absolute inset-0"
+        alt="Luxury Fashion"
+        fetchpriority="high"
+        decoding="async"
+      />
     </div>
 
-    <nav id="app-navbar"></nav>
+    <div class="relative z-20 text-center px-4" data-aos="fade-up" data-aos-duration="1200">
+      <p class="text-[#F5EBE0] text-xs font-bold uppercase tracking-[0.5em] mb-6 animate-pulse">Spring / Summer 2025</p>
 
-    <header class="relative h-screen w-full overflow-hidden flex items-center justify-center">
-        <div class="absolute inset-0 z-0">
-            <div class="absolute inset-0 bg-black/40 z-10"></div>
-            <div class="absolute inset-0 bg-gradient-to-t from-[#E6D8C5] via-transparent to-black/60 z-10"></div>
-            <img src="https://images.unsplash.com/photo-1534126511673-b6899657816a?q=80&w=1970&auto=format&fit=crop" class="w-full h-full object-cover fixed top-0 left-0 -z-10" alt="Luxury Fashion">
-        </div>
-        
-        <div class="relative z-20 text-center px-4" data-aos="fade-up" data-aos-duration="1200">
-            <p class="text-[#F5EBE0] text-xs font-bold uppercase tracking-[0.5em] mb-6 animate-pulse">Spring / Summer 2025</p>
-            
-            <div class="relative inline-block mb-12 md:mb-16">
-                <h2 class="text-6xl md:text-9xl font-serif font-bold text-white leading-none tracking-tighter drop-shadow-2xl relative z-10 uppercase">
-                    ELEGANCE
-                </h2>
-                <h2 class="text-6xl md:text-9xl font-serif font-bold text-transparent text-outline leading-none tracking-tighter absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none transform translate-x-1 translate-y-1 md:translate-x-2 md:translate-y-2 opacity-50 uppercase">
-                    ELEGANCE
-                </h2>
-            </div>
-            
-            <div class="flex flex-col md:flex-row gap-6 justify-center mt-12">
-                <a href="men.html" class="bg-white/10 backdrop-blur-md border border-white text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-themeText transition shadow-xl min-w-[160px] text-xs text-center">Shop Men</a>
-                <a href="women.html" class="bg-white text-themeText px-10 py-4 font-bold uppercase tracking-widest hover:bg-[#E6D8C5] transition shadow-xl transform hover:-translate-y-1 min-w-[160px] text-xs text-center">Shop Women</a>
-                <a href="kids.html" class="bg-white/10 backdrop-blur-md border border-white text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-themeText transition shadow-xl min-w-[160px] text-xs text-center">Shop Kids</a>
-            </div>
-        </div>
-    </header>
+      <div class="relative inline-block mb-12 md:mb-16">
+        <h2 class="text-6xl md:text-9xl font-serif font-bold text-white leading-none tracking-tighter drop-shadow-2xl relative z-10 uppercase">
+          ELEGANCE
+        </h2>
+        <h2 class="text-6xl md:text-9xl font-serif font-bold text-transparent text-outline leading-none tracking-tighter absolute top-0 left-0 w-full h-full flex items-center justify-center pointer-events-none transform translate-x-1 translate-y-1 md:translate-x-2 md:translate-y-2 opacity-50 uppercase">
+          ELEGANCE
+        </h2>
+      </div>
 
-    <div class="bg-themeText py-4 border-y border-[#7A6B63] marquee-container relative z-20">
-        <div class="marquee-content text-[#E6D8C5] text-xs font-bold uppercase tracking-[0.3em]">
-            New Arrivals &nbsp;&bull;&nbsp; Free Shipping Worldwide &nbsp;&bull;&nbsp; Luxury Defined &nbsp;&bull;&nbsp; Sustainable Materials &nbsp;&bull;&nbsp; 
-            New Arrivals &nbsp;&bull;&nbsp; Free Shipping Worldwide &nbsp;&bull;&nbsp; Luxury Defined &nbsp;&bull;&nbsp; Sustainable Materials &nbsp;&bull;&nbsp; 
-        </div>
+      <div class="flex flex-col md:flex-row gap-6 justify-center mt-12">
+        <a href="men.html" class="bg-white/10 backdrop-blur-md border border-white text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-themeText transition shadow-xl min-w-[160px] text-xs text-center">Shop Men</a>
+        <a href="women.html" class="bg-white text-themeText px-10 py-4 font-bold uppercase tracking-widest hover:bg-[#E6D8C5] transition shadow-xl transform hover:-translate-y-1 min-w-[160px] text-xs text-center">Shop Women</a>
+        <a href="kids.html" class="bg-white/10 backdrop-blur-md border border-white text-white px-10 py-4 font-bold uppercase tracking-widest hover:bg-white hover:text-themeText transition shadow-xl min-w-[160px] text-xs text-center">Shop Kids</a>
+      </div>
+    </div>
+  </header>
+
+  <div class="bg-themeText py-4 border-y border-[#7A6B63] marquee-container relative z-20">
+    <div class="marquee-content text-[#E6D8C5] text-xs font-bold uppercase tracking-[0.3em]">
+      New Arrivals &nbsp;&bull;&nbsp; Free Shipping Worldwide &nbsp;&bull;&nbsp; Luxury Defined &nbsp;&bull;&nbsp; Sustainable Materials &nbsp;&bull;&nbsp;
+      New Arrivals &nbsp;&bull;&nbsp; Free Shipping Worldwide &nbsp;&bull;&nbsp; Luxury Defined &nbsp;&bull;&nbsp; Sustainable Materials &nbsp;&bull;&nbsp;
+    </div>
+  </div>
+
+  <section class="py-24 px-6 container mx-auto bg-themeBg relative z-10">
+    <div class="flex justify-between items-end mb-16" data-aos="fade-up">
+      <div>
+        <h3 class="text-4xl font-serif font-bold text-themeText">The Collections</h3>
+        <p class="text-themeSub mt-2 font-serif italic">Curated for the modern aesthetic.</p>
+      </div>
+      <a href="women.html" class="hidden md:block text-xs font-bold uppercase tracking-widest border-b border-themeText pb-1 hover:text-themeSub transition">View All Categories</a>
     </div>
 
-    <section class="py-24 px-6 container mx-auto bg-themeBg relative z-10">
-        <div class="flex justify-between items-end mb-16" data-aos="fade-up">
-            <div>
-                <h3 class="text-4xl font-serif font-bold text-themeText">The Collections</h3>
-                <p class="text-themeSub mt-2 font-serif italic">Curated for the modern aesthetic.</p>
-            </div>
-            <a href="women.html" class="hidden md:block text-xs font-bold uppercase tracking-widest border-b border-themeText pb-1 hover:text-themeSub transition">View All Categories</a>
+    <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px]">
+      <div class="group relative md:col-span-2 md:row-span-2 bg-gray-200 overflow-hidden cursor-pointer" onclick="window.location.href='women.html'" data-aos="fade-up" data-aos-delay="0">
+        <!-- ✅ REPLACED hamster-looking image with a clear women fashion image -->
+        <img
+          src="https://images.unsplash.com/photo-1520962917968-5e3a3f2f6e82?q=80&w=1887&auto=format&fit=crop"
+          class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
+          alt="Women Collection"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-500"></div>
+        <div class="absolute bottom-6 left-6 text-white z-10">
+          <h4 class="text-3xl font-serif font-bold">Women</h4>
+          <p class="text-[10px] uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-500">Explore Collection</p>
         </div>
-        
-        <div class="grid grid-cols-1 md:grid-cols-4 grid-rows-2 gap-4 h-auto md:h-[600px]">
-            <div class="group relative md:col-span-2 md:row-span-2 bg-gray-200 overflow-hidden cursor-pointer" onclick="window.location.href='women.html'" data-aos="fade-up" data-aos-delay="0">
-                <img src="https://images.unsplash.com/photo-1548767797-d8c844163c4c?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0">
-                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-500"></div>
-                <div class="absolute bottom-6 left-6 text-white z-10">
-                    <h4 class="text-3xl font-serif font-bold">Women</h4>
-                    <p class="text-[10px] uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-500">Explore Collection</p>
-                </div>
-            </div>
-            <div class="group relative md:col-span-1 md:row-span-2 bg-gray-200 overflow-hidden cursor-pointer" onclick="window.location.href='men.html'" data-aos="fade-up" data-aos-delay="100">
-                <img src="https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=1887&auto=format&fit=crop" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0">
-                <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-500"></div>
-                <div class="absolute bottom-6 left-6 text-white z-10">
-                    <h4 class="text-2xl font-serif font-bold">Men</h4>
-                    <p class="text-[10px] uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-500">Shop Now</p>
-                </div>
-            </div>
-            <div class="group relative md:col-span-1 md:row-span-1 bg-gray-200 overflow-hidden cursor-pointer" onclick="window.location.href='kids.html'" data-aos="fade-up" data-aos-delay="200">
-                <img src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?q=80&w=1740&auto=format&fit=crop" class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0">
-                <div class="absolute bottom-4 left-4 text-white z-10 uppercase font-bold tracking-widest"><h4 class="text-xl font-serif">Kids</h4></div>
-            </div>
-            <div class="group relative md:col-span-1 md:row-span-1 bg-[#4A3B32] overflow-hidden cursor-pointer flex items-center justify-center" data-aos="fade-up" data-aos-delay="300">
-                <div class="text-center group-hover:scale-110 transition duration-500">
-                    <p class="text-[#E6D8C5] text-xs uppercase tracking-widest mb-2">Winter Sale</p>
-                    <h4 class="text-white text-3xl font-serif font-bold italic">Up to 50% Off</h4>
-                    <div class="mt-4 w-12 h-[1px] bg-[#E6D8C5] mx-auto"></div>
-                </div>
-            </div>
-        </div>
-    </section>
+      </div>
 
-    <section class="relative py-24 px-6 overflow-hidden">
-        <div class="absolute inset-0">
-            <img src="https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?q=80&w=2069&auto=format&fit=crop" class="w-full h-full object-cover" alt="Craftsmanship">
-            <div class="absolute inset-0 bg-black/50"></div>
+      <div class="group relative md:col-span-1 md:row-span-2 bg-gray-200 overflow-hidden cursor-pointer" onclick="window.location.href='men.html'" data-aos="fade-up" data-aos-delay="100">
+        <img
+          src="https://images.unsplash.com/photo-1617127365659-c47fa864d8bc?q=80&w=1887&auto=format&fit=crop"
+          class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
+          alt="Men Collection"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="absolute inset-0 bg-black/20 group-hover:bg-transparent transition duration-500"></div>
+        <div class="absolute bottom-6 left-6 text-white z-10">
+          <h4 class="text-2xl font-serif font-bold">Men</h4>
+          <p class="text-[10px] uppercase tracking-widest mt-1 opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0 duration-500">Shop Now</p>
         </div>
-        <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
-            <h2 class="text-[15rem] md:text-[25rem] font-serif font-bold text-white/[0.05] leading-none whitespace-nowrap">BRAND</h2>
-        </div>
-        <div class="max-w-3xl mx-auto text-center relative z-10" data-aos="zoom-in">
-            <div class="bg-black/60 backdrop-blur-sm p-10 md:p-14 rounded-sm border border-white/10 shadow-2xl">
-                <span class="text-xs font-bold uppercase tracking-[0.3em] text-[#E6D8C5] mb-4 block">The Inner Circle</span>
-                <h3 class="text-4xl md:text-5xl font-serif font-bold mb-6 text-white">Join the Narrative.</h3>
-                <p class="mb-10 text-[#F5EBE0] font-light leading-relaxed text-sm md:text-base">Unlock access to exclusive drops, private sales, and editorial content curated for the discerning individual.</p>
-                <form id="newsletter-form" class="flex flex-col sm:flex-row gap-0">
-                    <input id="newsletter-email" type="email" placeholder="Email Address" class="flex-grow p-4 bg-[#F5EBE0]/90 border-none text-themeText placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#E6D8C5] transition rounded-l-sm min-w-0">
-                    <button id="newsletter-submit" type="submit" class="bg-[#2E241E] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-[#7A6B63] transition rounded-r-sm text-xs whitespace-nowrap">Subscribe</button>
-                </form>
-                <p id="newsletter-message" class="mt-4 text-xs uppercase tracking-widest font-bold text-[#E6D8C5] hidden"></p>
-            </div>
-        </div>
-    </section>
+      </div>
 
-    <footer id="app-footer"></footer>
+      <div class="group relative md:col-span-1 md:row-span-1 bg-gray-200 overflow-hidden cursor-pointer" onclick="window.location.href='kids.html'" data-aos="fade-up" data-aos-delay="200">
+        <img
+          src="https://images.unsplash.com/photo-1514090458221-65bb69cf63e6?q=80&w=1740&auto=format&fit=crop"
+          class="w-full h-full object-cover transition duration-1000 group-hover:scale-110 grayscale group-hover:grayscale-0"
+          alt="Kids Collection"
+          loading="lazy"
+          decoding="async"
+        />
+        <div class="absolute bottom-4 left-4 text-white z-10 uppercase font-bold tracking-widest"><h4 class="text-xl font-serif">Kids</h4></div>
+      </div>
 
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[110] flex flex-col border-l border-[#D6C8B5]">
-        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
-            <h2 class="text-2xl font-serif font-bold">Shopping Bag</h2>
-            <button onclick="toggleCart()" class="text-2xl hover:rotate-90 transition-transform duration-300">&times;</button>
+      <div class="group relative md:col-span-1 md:row-span-1 bg-[#4A3B32] overflow-hidden cursor-pointer flex items-center justify-center" data-aos="fade-up" data-aos-delay="300">
+        <div class="text-center group-hover:scale-110 transition duration-500">
+          <p class="text-[#E6D8C5] text-xs uppercase tracking-widest mb-2">Winter Sale</p>
+          <h4 class="text-white text-3xl font-serif font-bold italic">Up to 50% Off</h4>
+          <div class="mt-4 w-12 h-[1px] bg-[#E6D8C5] mx-auto"></div>
         </div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]">
-            <div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div>
-            <button onclick="checkout()" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg">Checkout</button>
-        </div>
+      </div>
     </div>
-    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-[105] backdrop-blur-sm"></div>
+  </section>
 
-    <button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-24 right-8 bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 transform translate-y-20 opacity-0 invisible z-50 flex items-center justify-center border border-[#E6D8C5]"><i class="fa-solid fa-arrow-up text-xl"></i></button>
-
-    <div id="chat-container" class="fixed bottom-8 right-8 z-50 hidden flex items-center gap-3 flex-row-reverse group">
-        <a id="chat-btn-link" href="#" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]">
-            <i class="fa-solid fa-message text-xl"></i>
-            <span id="chat-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border border-[#4A3B32] hidden dot-pulse z-20"></span>
-        </a>
-        <div id="chat-tooltip" class="bg-white text-themeText px-3 py-1 rounded-sm shadow-xl border border-[#D6C8B5] text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden relative transition-opacity duration-500 flex items-center">
-            <span id="chat-tooltip-text">Contact Support</span>
-            <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none">&times;</button>
-            <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white transform -translate-y-1/2 rotate-45 border-r border-t border-[#D6C8B5]"></div>
-        </div>
+  <section class="relative py-24 px-6 overflow-hidden">
+    <div class="absolute inset-0">
+      <img
+        src="https://images.unsplash.com/photo-1598532163257-ae3c6b2524b6?q=80&w=2069&auto=format&fit=crop"
+        class="w-full h-full object-cover"
+        alt="Craftsmanship"
+        loading="lazy"
+        decoding="async"
+      />
+      <div class="absolute inset-0 bg-black/50"></div>
     </div>
 
-    <script src="components.js"></script>
-    <script type="module">
-        import { auth, onAuthStateChanged, signOut, doc, onSnapshot, db, setDoc, Timestamp } from './firebase-config.js';
+    <div class="absolute inset-0 flex items-center justify-center pointer-events-none select-none overflow-hidden z-0">
+      <h2 class="text-[15rem] md:text-[25rem] font-serif font-bold text-white/[0.05] leading-none whitespace-nowrap">BRAND</h2>
+    </div>
 
-        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
-        let currentUser = null;
+    <div class="max-w-3xl mx-auto text-center relative z-10" data-aos="zoom-in">
+      <div class="bg-black/60 backdrop-blur-sm p-10 md:p-14 rounded-sm border border-white/10 shadow-2xl">
+        <span class="text-xs font-bold uppercase tracking-[0.3em] text-[#E6D8C5] mb-4 block">The Inner Circle</span>
+        <h3 class="text-4xl md:text-5xl font-serif font-bold mb-6 text-white">Join the Narrative.</h3>
+        <p class="mb-10 text-[#F5EBE0] font-light leading-relaxed text-sm md:text-base">Unlock access to exclusive drops, private sales, and editorial content curated for the discerning individual.</p>
 
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            preloader.style.opacity = '0';
-            setTimeout(() => preloader.style.display = 'none', 500);
-        });
+        <form id="newsletter-form" class="flex flex-col sm:flex-row gap-0">
+          <input id="newsletter-email" type="email" placeholder="Email Address" class="flex-grow p-4 bg-[#F5EBE0]/90 border-none text-themeText placeholder-gray-500 outline-none focus:ring-2 focus:ring-[#E6D8C5] transition rounded-l-sm min-w-0">
+          <button id="newsletter-submit" type="submit" class="bg-[#2E241E] text-white px-8 py-4 font-bold uppercase tracking-widest hover:bg-[#7A6B63] transition rounded-r-sm text-xs whitespace-nowrap">Subscribe</button>
+        </form>
+        <p id="newsletter-message" class="mt-4 text-xs uppercase tracking-widest font-bold text-[#E6D8C5] hidden"></p>
+      </div>
+    </div>
+  </section>
 
-        // NAVBAR SCROLL LOGIC
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar'); // ID injected by components.js
-            if(!nav) return;
-            
-            const logo = document.getElementById('nav-logo');
-            const links = document.getElementById('nav-links');
-            const icons = document.getElementById('nav-icons');
-            const cartBadge = document.getElementById('cart-count');
+  <footer id="app-footer"></footer>
 
-            if(window.scrollY > 50) {
-                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
-                nav.classList.remove('py-6', 'border-transparent');
-                
-                logo.classList.replace('text-white', 'text-[#4A3B32]');
-                if(links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
-                if(icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
-                if(cartBadge) {
-                    cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
-                    cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
-                }
-            } else {
-                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
-                nav.classList.add('py-6', 'border-transparent');
-                
-                logo.classList.replace('text-[#4A3B32]', 'text-white');
-                if(links) links.classList.replace('text-[#4A3B32]', 'text-white/90');
-                if(icons) icons.classList.replace('text-[#4A3B32]', 'text-white');
-                if(cartBadge) {
-                    cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
-                    cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
-                }
-            }
-            
-            const scrollBtn = document.getElementById('scrollTopBtn');
-            if (window.scrollY > 300) scrollBtn.classList.remove('translate-y-20', 'opacity-0', 'invisible');
-            else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
-        });
+  <!-- CART -->
+  <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[110] flex flex-col border-l border-[#D6C8B5]">
+    <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
+      <h2 class="text-2xl font-serif font-bold">Shopping Bag</h2>
+      <button onclick="toggleCart()" class="text-2xl hover:rotate-90 transition-transform duration-300" aria-label="Close cart">&times;</button>
+    </div>
+    <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
+    <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]">
+      <div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div>
+      <button onclick="checkout()" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg">Checkout</button>
+    </div>
+  </div>
+  <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-[105] backdrop-blur-sm"></div>
 
-        // --- CHAT HELPERS ---
-        window.hideChatDot = () => document.getElementById('chat-notification-dot').classList.add('hidden');
-        window.closeChatTooltip = () => {
-            document.getElementById('chat-tooltip').classList.add('hidden');
-            sessionStorage.setItem('chatPromptDismissed', 'true');
+  <!-- Scroll to top -->
+  <button id="scrollTopBtn" onclick="window.scrollTo({top: 0, behavior: 'smooth'})" class="fixed bottom-24 right-8 bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 transform translate-y-20 opacity-0 invisible z-50 flex items-center justify-center border border-[#E6D8C5]" aria-label="Scroll to top">
+    <i class="fa-solid fa-arrow-up text-xl"></i>
+  </button>
+
+  <!-- Chat -->
+  <div id="chat-container" class="fixed bottom-8 right-8 z-50 hidden flex items-center gap-3 flex-row-reverse group">
+    <a id="chat-btn-link" href="#" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]" aria-label="Open chat">
+      <i class="fa-solid fa-message text-xl"></i>
+      <span id="chat-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border border-[#4A3B32] hidden dot-pulse z-20"></span>
+    </a>
+
+    <div id="chat-tooltip" class="bg-white text-themeText px-3 py-1 rounded-sm shadow-xl border border-[#D6C8B5] text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden relative transition-opacity duration-500 flex items-center">
+      <span id="chat-tooltip-text">Contact Support</span>
+      <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none" aria-label="Close tooltip">&times;</button>
+      <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white transform -translate-y-1/2 rotate-45 border-r border-t border-[#D6C8B5]"></div>
+    </div>
+  </div>
+
+  <!-- ✅ Internal Toast (no external popups) -->
+  <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] hidden">
+    <div id="toast-inner" class="bg-[#2E241E] text-[#E6D8C5] px-5 py-3 rounded-full shadow-2xl border border-black/10 text-xs font-bold uppercase tracking-widest"></div>
+  </div>
+
+  <!-- ✅ Internal Confirm Modal (replaces window.confirm) -->
+  <div id="confirm-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-6">
+      <div class="w-full max-w-sm bg-[#E6D8C5] text-[#2E241E] border border-black/10 rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-6 border-b border-black/10">
+          <h3 id="confirm-title" class="text-lg font-serif font-bold tracking-widest uppercase">Confirm</h3>
+          <p id="confirm-message" class="text-sm text-[#4A3B32] mt-2">Are you sure?</p>
+        </div>
+        <div class="p-4 flex gap-3 justify-end">
+          <button id="confirm-cancel" class="px-4 py-2 rounded-full border border-black/10 font-bold uppercase tracking-widest text-xs hover:bg-black/5 transition">Cancel</button>
+          <button id="confirm-ok" class="px-4 py-2 rounded-full bg-[#2E241E] text-[#E6D8C5] font-bold uppercase tracking-widest text-xs hover:opacity-90 transition">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Components -->
+  <script src="components.js"></script>
+
+  <script type="module">
+    import {
+      auth,
+      onAuthStateChanged,
+      signOut,
+      doc,
+      onSnapshot,
+      db,
+      setDoc,
+      Timestamp,
+      ensureSignedIn
+    } from './firebase-config.js';
+
+    const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
+    let currentUser = null;
+
+    // --- Internal UI helpers (no alert/confirm) ---
+    const toastEl = document.getElementById('toast');
+    const toastInner = document.getElementById('toast-inner');
+    let toastTimer = null;
+
+    function showToast(message) {
+      if (!toastEl || !toastInner) return;
+      toastInner.textContent = message;
+      toastEl.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 2500);
+    }
+
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmTitle = document.getElementById('confirm-title');
+    const confirmMessage = document.getElementById('confirm-message');
+    const confirmOk = document.getElementById('confirm-ok');
+    const confirmCancel = document.getElementById('confirm-cancel');
+
+    function openConfirm({ title = 'Confirm', message = 'Are you sure?' }) {
+      return new Promise((resolve) => {
+        confirmTitle.textContent = title;
+        confirmMessage.textContent = message;
+        confirmModal.classList.remove('hidden');
+
+        const cleanup = () => {
+          confirmModal.classList.add('hidden');
+          confirmOk.removeEventListener('click', onOk);
+          confirmCancel.removeEventListener('click', onCancel);
+          confirmModal.removeEventListener('click', onBackdrop);
+          document.removeEventListener('keydown', onKey);
         };
 
-        // AUTH STATE & CHAT LOGIC
-        onAuthStateChanged(auth, async (user) => {
-            currentUser = user;
-            if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
-            
-            // Chat Logic
-            const chatContainer = document.getElementById('chat-container');
-            const chatTooltip = document.getElementById('chat-tooltip');
-            const chatLink = document.getElementById('chat-btn-link');
-            const chatText = document.getElementById('chat-tooltip-text');
-
-            if (user) {
-                chatLink.href = "chat.html";
-                chatText.innerText = "Need assistance?";
-                
-                // Real-time listener for Admin Reply
-                onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
-                    if(docSnap.exists() && docSnap.data().userUnread) {
-                        document.getElementById('chat-notification-dot').classList.remove('hidden');
-                        chatTooltip.classList.remove('hidden');
-                        chatText.innerText = "New Message";
-                    }
-                });
-            } else {
-                chatLink.href = "login.html";
-                chatText.innerText = "Login to chat";
-            }
-
-            // Show Chat Button logic
-            if (sessionStorage.getItem('sessionChatStarted')) {
-                chatContainer.classList.remove('hidden');
-            } else {
-                setTimeout(() => {
-                    chatContainer.classList.remove('hidden');
-                    chatContainer.classList.add('fade-in');
-                    sessionStorage.setItem('sessionChatStarted', 'true');
-                    if (!sessionStorage.getItem('chatPromptDismissed')) {
-                        chatTooltip.classList.remove('hidden');
-                        setTimeout(() => chatTooltip.classList.add('hidden'), 5000);
-                    }
-                }, 4000);
-            }
-            
-            const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
-            cart.length = 0; 
-            cart.push(...latestCart);
-            updateCartUI();
-        });
-
-        // GLOBAL CART LOGIC
-        const cart = JSON.parse(localStorage.getItem('myCart')) || [];
-        window.updateCartUI = () => {
-            const count = cart.reduce((a,b)=>a+b.qty,0);
-            const badge = document.getElementById('cart-count');
-            if(badge) badge.innerText = count;
-            
-            const con = document.getElementById('cart-items');
-            if(!con) return;
-            
-            con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10 font-serif italic uppercase tracking-widest">Bag is Empty</p>';
-            let t = 0;
-            cart.forEach(i => {
-                const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price; t += finalPrice * i.qty;
-                con.innerHTML += `
-                    <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
-                        <div class="flex gap-3 text-left">
-                            <img src="${i.image}" class="w-16 h-20 object-cover rounded-sm">
-                            <div>
-                                <p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p>
-                                <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
-                                <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
-                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button>
-                                    <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
-                                    <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="text-right flex flex-col justify-between">
-                            <p class="font-bold text-sm">Rs. ${(finalPrice*i.qty).toLocaleString()}</p>
-                            <button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:text-red-700 underline uppercase tracking-wider">Remove</button>
-                        </div>
-                    </div>`;
-            });
-            const total = document.getElementById('cart-total');
-            if(total) total.innerText = 'Rs. ' + t.toLocaleString();
-        }
-
-        window.changeQty = (uid, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        window.toggleCart = () => { 
-            const sb = document.getElementById('cart-sidebar'); const ov = document.getElementById('overlay');
-            if (sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); updateCartUI(); } 
-            else { sb.classList.add('translate-x-full'); ov.classList.add('hidden'); } 
-        }
-        window.removeItem = (uid) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
-        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
-
-        // ✅ IMPORTANT: removed old toggleMobileMenu override (components.js handles it now)
-        window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
-
-        // NEWSLETTER SUBSCRIBE LOGIC
-        const newsletterForm = document.getElementById('newsletter-form');
-        const newsletterEmail = document.getElementById('newsletter-email');
-        const newsletterMsg = document.getElementById('newsletter-message');
-        const newsletterBtn = document.getElementById('newsletter-submit');
-
-        const showNewsletterMessage = (text) => {
-            newsletterMsg.innerText = text;
-            newsletterMsg.classList.remove('hidden');
+        const onOk = () => { cleanup(); resolve(true); };
+        const onCancel = () => { cleanup(); resolve(false); };
+        const onBackdrop = (e) => {
+          if (e.target === confirmModal) { cleanup(); resolve(false); }
+        };
+        const onKey = (e) => {
+          if (e.key === 'Escape') { cleanup(); resolve(false); }
         };
 
-        if (newsletterForm) {
-            newsletterForm.addEventListener('submit', async (e) => {
-                e.preventDefault();
+        confirmOk.addEventListener('click', onOk);
+        confirmCancel.addEventListener('click', onCancel);
+        confirmModal.addEventListener('click', onBackdrop);
+        document.addEventListener('keydown', onKey);
+      });
+    }
 
-                const email = (newsletterEmail?.value || '').trim().toLowerCase();
-                const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+    // Preloader
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      if (!preloader) return;
+      preloader.style.opacity = '0';
+      setTimeout(() => preloader.style.display = 'none', 500);
+    }, { passive: true });
 
-                if (!emailRegex.test(email)) {
-                    showNewsletterMessage("Please enter a valid email.");
-                    return;
-                }
+    // Navbar scroll logic (unchanged behavior, safer guards)
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      if (!nav) return;
 
-                try {
-                    if (newsletterBtn) newsletterBtn.disabled = true;
+      const logo = document.getElementById('nav-logo');
+      const links = document.getElementById('nav-links');
+      const icons = document.getElementById('nav-icons');
+      const cartBadge = document.getElementById('cart-count');
 
-                    // Use email as document ID to prevent duplicates
-                    await setDoc(doc(db, "newsletterSubscribers", email), {
-                        email: email,
-                        subscribedAt: Timestamp.now()
-                    });
+      if (window.scrollY > 50) {
+        nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+        nav.classList.remove('py-6', 'border-transparent');
 
-                    showNewsletterMessage("Subscribed successfully.");
-                    if (newsletterEmail) newsletterEmail.value = "";
-                } catch (err) {
-                    // If already exists, create becomes update -> denied by rules
-                    if (err?.code === "permission-denied") {
-                        showNewsletterMessage("You are already subscribed.");
-                    } else {
-                        showNewsletterMessage("Subscription failed. Try again.");
-                    }
-                    console.error(err);
-                } finally {
-                    if (newsletterBtn) newsletterBtn.disabled = false;
-                }
-            });
+        if (logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
+        if (links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
+        if (icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
+        if (cartBadge) {
+          cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+          cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
         }
+      } else {
+        nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+        nav.classList.add('py-6', 'border-transparent');
 
+        if (logo) logo.classList.replace('text-[#4A3B32]', 'text-white');
+        if (links) links.classList.replace('text-[#4A3B32]', 'text-white/90');
+        if (icons) icons.classList.replace('text-[#4A3B32]', 'text-white');
+        if (cartBadge) {
+          cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
+          cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
+        }
+      }
+
+      const scrollBtn = document.getElementById('scrollTopBtn');
+      if (!scrollBtn) return;
+      if (window.scrollY > 300) scrollBtn.classList.remove('translate-y-20', 'opacity-0', 'invisible');
+      else scrollBtn.classList.add('translate-y-20', 'opacity-0', 'invisible');
+    }, { passive: true });
+
+    // Chat helpers
+    window.hideChatDot = () => document.getElementById('chat-notification-dot')?.classList.add('hidden');
+    window.closeChatTooltip = () => {
+      document.getElementById('chat-tooltip')?.classList.add('hidden');
+      sessionStorage.setItem('chatPromptDismissed', 'true');
+    };
+
+    // AUTH STATE & CHAT LOGIC
+    onAuthStateChanged(auth, async (user) => {
+      // ✅ Ensure guests become anonymous users for wishlist/orders
+      if (!user) user = await ensureSignedIn();
+
+      currentUser = user;
+      window.setupNavbarAuth?.(user, ADMIN_EMAIL);
+
+      const chatContainer = document.getElementById('chat-container');
+      const chatTooltip = document.getElementById('chat-tooltip');
+      const chatLink = document.getElementById('chat-btn-link');
+      const chatText = document.getElementById('chat-tooltip-text');
+
+      if (user) {
+        chatLink.href = "chat.html";
+        chatText.innerText = "Need assistance?";
+
+        onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
+          if (docSnap.exists() && docSnap.data().userUnread) {
+            document.getElementById('chat-notification-dot')?.classList.remove('hidden');
+            chatTooltip?.classList.remove('hidden');
+            chatText.innerText = "New Message";
+          }
+        });
+      } else {
+        // This is unlikely now because we ensureSignedIn, but kept safe
+        chatLink.href = "login.html";
+        chatText.innerText = "Login to chat";
+      }
+
+      if (sessionStorage.getItem('sessionChatStarted')) {
+        chatContainer?.classList.remove('hidden');
+      } else {
+        setTimeout(() => {
+          chatContainer?.classList.remove('hidden');
+          chatContainer?.classList.add('fade-in');
+          sessionStorage.setItem('sessionChatStarted', 'true');
+
+          if (!sessionStorage.getItem('chatPromptDismissed')) {
+            chatTooltip?.classList.remove('hidden');
+            setTimeout(() => chatTooltip?.classList.add('hidden'), 5000);
+          }
+        }, 4000);
+      }
+
+      // Sync cart from local storage
+      const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
+      cart.length = 0;
+      cart.push(...latestCart);
+      updateCartUI();
+    });
+
+    // GLOBAL CART LOGIC
+    const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+
+    window.updateCartUI = () => {
+      const count = cart.reduce((a, b) => a + b.qty, 0);
+      const badge = document.getElementById('cart-count');
+      if (badge) badge.innerText = count;
+
+      const con = document.getElementById('cart-items');
+      if (!con) return;
+
+      con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10 font-serif italic uppercase tracking-widest">Bag is Empty</p>';
+
+      let t = 0;
+      cart.forEach(i => {
+        const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price;
+        t += finalPrice * i.qty;
+
+        con.innerHTML += `
+          <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
+            <div class="flex gap-3 text-left">
+              <img src="${i.image}" class="w-16 h-20 object-cover rounded-sm" loading="lazy" decoding="async" alt="${i.name}">
+              <div>
+                <p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p>
+                <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
+                <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
+                  <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500" aria-label="Decrease quantity">-</button>
+                  <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+                  <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500" aria-label="Increase quantity">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="text-right flex flex-col justify-between">
+              <p class="font-bold text-sm">Rs. ${(finalPrice * i.qty).toLocaleString()}</p>
+              <button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:text-red-700 underline uppercase tracking-wider">Remove</button>
+            </div>
+          </div>`;
+      });
+
+      const total = document.getElementById('cart-total');
+      if (total) total.innerText = 'Rs. ' + t.toLocaleString();
+    };
+
+    window.changeQty = (uid, c) => {
+      const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid);
+      if (!i) return;
+      i.qty += c;
+      if (i.qty < 1) i.qty = 1;
+      localStorage.setItem('myCart', JSON.stringify(cart));
+      updateCartUI();
+    };
+
+    window.toggleCart = () => {
+      // ✅ close user dropdown if open (works even if toggleCart defined after components.js)
+      window.closeUserMenu?.();
+
+      const sb = document.getElementById('cart-sidebar');
+      const ov = document.getElementById('overlay');
+      if (!sb || !ov) return;
+
+      if (sb.classList.contains('translate-x-full')) {
+        sb.classList.remove('translate-x-full');
+        ov.classList.remove('hidden');
         updateCartUI();
-    </script>
-    
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 1000, once: true, offset: 50 });</script>
+      } else {
+        sb.classList.add('translate-x-full');
+        ov.classList.add('hidden');
+      }
+    };
+
+    window.removeItem = (uid) => {
+      const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
+      if (x > -1) {
+        cart.splice(x, 1);
+        localStorage.setItem('myCart', JSON.stringify(cart));
+        updateCartUI();
+      }
+    };
+
+    window.checkout = () => {
+      if (!cart.length) {
+        showToast("Your bag is empty.");
+        return;
+      }
+      window.location.href = "checkout.html";
+    };
+
+    // ✅ No window.confirm (internal modal)
+    window.handleLogout = async () => {
+      const ok = await openConfirm({ title: "Sign Out", message: "Do you want to sign out?" });
+      if (!ok) return;
+
+      await signOut(auth);
+      localStorage.removeItem('myCart');
+      showToast("Signed out.");
+      window.location.href = "login.html";
+    };
+
+    // NEWSLETTER SUBSCRIBE LOGIC (still compatible with your create-only rule behavior)
+    const newsletterForm = document.getElementById('newsletter-form');
+    const newsletterEmail = document.getElementById('newsletter-email');
+    const newsletterMsg = document.getElementById('newsletter-message');
+    const newsletterBtn = document.getElementById('newsletter-submit');
+
+    const showNewsletterMessage = (text) => {
+      if (!newsletterMsg) return;
+      newsletterMsg.innerText = text;
+      newsletterMsg.classList.remove('hidden');
+    };
+
+    if (newsletterForm) {
+      newsletterForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const email = (newsletterEmail?.value || '').trim().toLowerCase();
+        const emailRegex = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+
+        if (!emailRegex.test(email)) {
+          showNewsletterMessage("Please enter a valid email.");
+          showToast("Invalid email.");
+          return;
+        }
+
+        try {
+          if (newsletterBtn) newsletterBtn.disabled = true;
+
+          await setDoc(doc(db, "newsletterSubscribers", email), {
+            email: email,
+            subscribedAt: Timestamp.now()
+          });
+
+          showNewsletterMessage("Subscribed successfully.");
+          showToast("Subscribed.");
+          if (newsletterEmail) newsletterEmail.value = "";
+        } catch (err) {
+          if (err?.code === "permission-denied") {
+            showNewsletterMessage("You are already subscribed.");
+            showToast("Already subscribed.");
+          } else {
+            showNewsletterMessage("Subscription failed. Try again.");
+            showToast("Subscription failed.");
+          }
+          console.error(err);
+        } finally {
+          if (newsletterBtn) newsletterBtn.disabled = false;
+        }
+      });
+    }
+
+    updateCartUI();
+  </script>
+
+  <!-- AOS JS (defer) -->
+  <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    // init after AOS loads
+    window.addEventListener('load', () => {
+      if (window.AOS) window.AOS.init({ duration: 1000, once: true, offset: 50 });
+    }, { passive: true });
+  </script>
 </body>
 </html>

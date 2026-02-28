@@ -1,33 +1,36 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { 
-    getAuth, 
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut,
-    sendPasswordResetEmail,
-    updateProfile, 
-    GoogleAuthProvider, 
-    signInWithPopup 
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  sendPasswordResetEmail,
+  updateProfile,
+  GoogleAuthProvider,
+  signInWithPopup,
+  signInAnonymously
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-import { 
-    getFirestore, 
-    collection, 
-    addDoc, 
-    getDocs, 
-    getDoc, 
-    doc, 
-    query, 
-    where, 
-    updateDoc, 
-    deleteDoc,
-    setDoc,
-    orderBy,           // <--- ADDED for Chat
-    onSnapshot,        // <--- ADDED for Realtime Chat
-    serverTimestamp,   // <--- ADDED for Message Time
-    Timestamp          // <--- ADDED for Newsletter
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  getDoc,
+  doc,
+  query,
+  where,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  Timestamp
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
+
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-analytics.js";
 import { getStorage } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
 
 // --- YOUR SPECIFIC KEYS ---
@@ -46,38 +49,72 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const storage = getStorage(app);
-const analytics = getAnalytics(app); 
-const googleProvider = new GoogleAuthProvider();
 
-// Customizing Google Provider for better Mobile Experience
+// Safe Analytics init (prevents crashes on some browsers)
+let analytics = null;
+isSupported().then((yes) => {
+  if (yes) analytics = getAnalytics(app);
+});
+
+// Google Provider
+const googleProvider = new GoogleAuthProvider();
 googleProvider.setCustomParameters({ prompt: 'select_account' });
 
-export { 
-    app,
-    auth, 
-    db, 
-    storage,
-    analytics,
-    createUserWithEmailAndPassword, 
-    signInWithEmailAndPassword, 
-    onAuthStateChanged, 
-    signOut, 
-    sendPasswordResetEmail,
-    updateProfile,
-    signInWithPopup,
-    googleProvider,
-    collection, 
-    addDoc, 
-    getDocs, 
-    getDoc, 
-    doc, 
-    query, 
-    where, 
-    updateDoc, 
-    deleteDoc,
-    setDoc,
-    orderBy,           // <--- EXPORTED
-    onSnapshot,        // <--- EXPORTED
-    serverTimestamp,   // <--- EXPORTED
-    Timestamp          // <--- EXPORTED
+/**
+ * ✅ Ensures there is always an authenticated user.
+ * - If user is logged out, it signs in anonymously (guest).
+ * - Use this before reading/writing wishlist/orders for guests.
+ */
+async function ensureSignedIn() {
+  if (auth.currentUser) return auth.currentUser;
+
+  // Wait a moment for Firebase to restore session if available
+  const existing = await new Promise((resolve) => {
+    const unsub = onAuthStateChanged(auth, (u) => {
+      unsub();
+      resolve(u);
+    });
+  });
+
+  if (existing) return existing;
+
+  // If still no user, sign in anonymously
+  const cred = await signInAnonymously(auth);
+  return cred.user;
+}
+
+export {
+  app,
+  auth,
+  db,
+  storage,
+  analytics,
+
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut,
+  sendPasswordResetEmail,
+  updateProfile,
+  signInWithPopup,
+  signInAnonymously,
+  googleProvider,
+
+  // ✅ New export
+  ensureSignedIn,
+
+  collection,
+  addDoc,
+  getDocs,
+  getDoc,
+  doc,
+  query,
+  where,
+  updateDoc,
+  deleteDoc,
+  setDoc,
+  orderBy,
+  onSnapshot,
+  serverTimestamp,
+  Timestamp
 };

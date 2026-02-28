@@ -1,47 +1,45 @@
 // cart-sync.js
-import { db, doc, getDoc, setDoc, updateDoc } from './firebase-config.js';
+import { db } from './firebase-config.js';
+import { doc, getDoc, setDoc, updateDoc, serverTimestamp } from "firebase/firestore";
 
 // Call this function IMMEDIATELY after a successful login in login.html
 export async function syncCartOnLogin(user) {
-    const localCart = JSON.parse(localStorage.getItem('myCart')) || [];
-    const cartRef = doc(db, "carts", user.uid);
+  const localCartRaw = JSON.parse(localStorage.getItem('myCart'));
+  const localCart = Array.isArray(localCartRaw) ? localCartRaw : [];
 
-    try {
-        const docSnap = await getDoc(cartRef);
+  const cartRef = doc(db, "carts", user.uid);
 
-        if (docSnap.exists()) {
-            // MERGE: User has a DB cart and a Local cart
-            const dbCart = docSnap.data().items || [];
-            
-            // Logic: Create a map of existing items to avoid duplicates
-            const mergedCart = [...dbCart];
-            
-            localCart.forEach(localItem => {
-                const existingIndex = mergedCart.findIndex(dbItem => 
-                    dbItem.id === localItem.id && 
-                    dbItem.selectedSize === localItem.selectedSize &&
-                    dbItem.selectedColor === localItem.selectedColor
-                );
+  try {
+    const docSnap = await getDoc(cartRef);
 
-                if (existingIndex > -1) {
-                    // If item exists, update quantity (Local takes precedence as it's more recent)
-                    mergedCart[existingIndex].qty = localItem.qty; 
-                } else {
-                    mergedCart.push(localItem);
-                }
-            });
+    if (docSnap.exists()) {
+      const dbCart = Array.isArray(docSnap.data().items) ? docSnap.data().items : [];
 
-            // Update DB and LocalStorage with the merged result
-            await updateDoc(cartRef, { items: mergedCart });
-            localStorage.setItem('myCart', JSON.stringify(mergedCart));
+      const mergedCart = [...dbCart];
 
+      localCart.forEach(localItem => {
+        const existingIndex = mergedCart.findIndex(dbItem =>
+          dbItem.id === localItem.id &&
+          dbItem.selectedSize === localItem.selectedSize &&
+          dbItem.selectedColor === localItem.selectedColor
+        );
+
+        if (existingIndex > -1) {
+          mergedCart[existingIndex].qty = localItem.qty; // local takes precedence
         } else {
-            // User has no DB cart, create one with local items
-            if (localCart.length > 0) {
-                await setDoc(cartRef, { items: localCart, updatedAt: new Date() });
-            }
+          mergedCart.push(localItem);
         }
-    } catch (error) {
-        console.error("Cart Sync Error:", error);
+      });
+
+      await updateDoc(cartRef, { items: mergedCart, updatedAt: serverTimestamp() });
+      localStorage.setItem('myCart', JSON.stringify(mergedCart));
+
+    } else {
+      if (localCart.length > 0) {
+        await setDoc(cartRef, { items: localCart, updatedAt: serverTimestamp() });
+      }
     }
+  } catch (error) {
+    console.error("Cart Sync Error:", error);
+  }
 }
