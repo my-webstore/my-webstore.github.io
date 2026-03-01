@@ -22,7 +22,7 @@
     </div>
 
     <div class="max-w-4xl w-full space-y-6 mt-10">
-        
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-center border-b border-gray-800 pb-6 gap-4">
             <div>
                 <h1 class="text-3xl font-bold text-white tracking-tight"><i class="fa-solid fa-server mr-3 text-green-500"></i>System Core</h1>
@@ -40,11 +40,11 @@
                     This operation will populate your Firestore <code>products</code> collection with 12 high-quality demo items (Men, Women, Kids) including <strong>Color Variants</strong>, <strong>Stock Levels</strong>, and Media.
                 </p>
             </div>
-            
+
             <button onclick="startSetup()" id="btn-start" disabled class="relative z-10 bg-gray-700 text-gray-400 px-8 py-4 font-bold uppercase tracking-widest transition shadow-lg text-xs rounded-sm flex items-center gap-3 w-full md:w-auto justify-center cursor-not-allowed">
                 <i class="fa-solid fa-lock"></i> Locked
             </button>
-            
+
             <div class="absolute -right-10 -bottom-10 text-9xl text-gray-800 opacity-20 transform rotate-12 pointer-events-none">
                 <i class="fa-solid fa-database"></i>
             </div>
@@ -69,11 +69,86 @@
 
     </div>
 
+    <!-- ✅ Internal Toast -->
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[99999] hidden">
+        <div id="toast-inner" class="bg-gray-900 text-white px-5 py-3 rounded shadow-2xl border border-gray-700 text-xs font-bold uppercase tracking-widest flex items-center gap-2">
+            <i class="fa-solid fa-circle-info"></i> <span></span>
+        </div>
+    </div>
+
+    <!-- ✅ Internal Confirm Modal -->
+    <div id="confirm-modal" class="fixed inset-0 z-[99999] hidden">
+        <div class="absolute inset-0 bg-black/60 backdrop-blur-sm"></div>
+        <div class="absolute inset-0 flex items-center justify-center p-6">
+            <div class="w-full max-w-md bg-gray-950 border border-gray-800 rounded-sm shadow-2xl overflow-hidden">
+                <div class="p-6 border-b border-gray-800">
+                    <h3 class="text-white font-bold text-lg tracking-tight flex items-center gap-3">
+                        <i class="fa-solid fa-triangle-exclamation text-yellow-500"></i>
+                        <span id="confirm-title">Warning</span>
+                    </h3>
+                    <p id="confirm-message" class="text-xs text-gray-400 mt-3 leading-relaxed">
+                        This will inject products into the LIVE database.
+                    </p>
+                </div>
+                <div class="p-4 flex gap-3 justify-end">
+                    <button id="confirm-cancel" class="px-5 py-3 text-xs font-bold uppercase tracking-widest border border-gray-800 hover:border-gray-600 text-gray-300 hover:text-white transition bg-gray-900 rounded">
+                        Cancel
+                    </button>
+                    <button id="confirm-ok" class="px-5 py-3 text-xs font-bold uppercase tracking-widest bg-red-600 hover:bg-red-500 text-white transition rounded">
+                        Continue
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module">
-        import { db, collection, addDoc, auth, onAuthStateChanged } from './firebase-config.js';
+        import { db, collection, addDoc, auth, onAuthStateChanged, serverTimestamp } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         const btn = document.getElementById('btn-start');
+
+        // ✅ Toast
+        const toastEl = document.getElementById('toast');
+        const toastInner = document.querySelector('#toast-inner span');
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toastInner.textContent = msg;
+            toastEl.classList.remove('hidden');
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 2500);
+        }
+
+        // ✅ Confirm Modal
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmTitle = document.getElementById('confirm-title');
+        const confirmMessage = document.getElementById('confirm-message');
+        const confirmOk = document.getElementById('confirm-ok');
+        const confirmCancel = document.getElementById('confirm-cancel');
+
+        function openConfirm({ title, message }) {
+            return new Promise((resolve) => {
+                confirmTitle.textContent = title || "Warning";
+                confirmMessage.textContent = message || "Continue?";
+                confirmModal.classList.remove('hidden');
+
+                const cleanup = () => {
+                    confirmModal.classList.add('hidden');
+                    confirmOk.removeEventListener('click', onOk);
+                    confirmCancel.removeEventListener('click', onCancel);
+                    document.removeEventListener('keydown', onKey);
+                };
+
+                const onOk = () => { cleanup(); resolve(true); };
+                const onCancel = () => { cleanup(); resolve(false); };
+                const onKey = (e) => { if (e.key === 'Escape') { cleanup(); resolve(false); } };
+
+                confirmOk.addEventListener('click', onOk);
+                confirmCancel.addEventListener('click', onCancel);
+                document.addEventListener('keydown', onKey);
+            });
+        }
 
         // 1. STRICT AUTH CHECK
         onAuthStateChanged(auth, (user) => {
@@ -88,13 +163,13 @@
                 // PASS
                 log(`> Access Granted. Identity: ${user.email}`, "text-blue-400");
                 log(`> Write Access: ENABLED`, "text-green-500");
-                
+
                 // Enable UI
                 btn.disabled = false;
                 btn.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
                 btn.classList.add('bg-green-600', 'hover:bg-green-500', 'text-white', 'cursor-pointer');
                 btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Execute Sequence';
-                
+
                 document.getElementById('status-text').innerText = "Ready";
                 document.getElementById('status-text').className = "text-green-500 font-bold";
             }
@@ -255,46 +330,50 @@
         window.startSetup = async () => {
             // DOUBLE CHECK SECURITY IN FUNCTION CONTEXT
             if (!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
-                alert("Security Violation: Action Logged.");
+                showToast("Security Violation: Action Logged.");
                 window.location.href = "index.html";
                 return;
             }
 
-            if(!confirm("⚠️ Warning: This will inject 12 products into the LIVE database. Continue?")) return;
+            const ok = await openConfirm({
+                title: "Live Database Warning",
+                message: "⚠️ Warning: This will inject 12 products into the LIVE database. Continue?"
+            });
+            if (!ok) return;
 
             btn.disabled = true;
             btn.classList.remove('bg-green-600', 'hover:bg-green-500');
             btn.classList.add('bg-gray-700', 'cursor-not-allowed');
             btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Injecting...';
-            
+
             log("> Initiating batch upload protocol...", "text-yellow-400");
-            
+
             let successCount = 0;
 
             for (const product of sampleProducts) {
                 try {
-                    const randomStock = Math.floor(Math.random() * 20) + 5; 
+                    const randomStock = Math.floor(Math.random() * 20) + 5;
 
                     const finalData = {
                         ...product,
                         serialNumber: 'BRD-' + Math.floor(100000 + Math.random() * 900000),
-                        createdAt: new Date(),
+                        createdAt: serverTimestamp(),
                         media: [{ type: 'image', url: product.image }],
                         stock: randomStock,
                         description: `Premium quality ${product.name.toLowerCase()} designed for style and comfort. Handcrafted with attention to detail.`
                     };
 
                     log(`> Processing: ${product.name}...`);
-                    
+
                     // Artificial Delay for effect
-                    await new Promise(r => setTimeout(r, 100)); 
-                    
+                    await new Promise(r => setTimeout(r, 100));
+
                     // THIS WRITE WILL FAIL IF FIREBASE RULES ARE SET AND USER IS NOT ADMIN
                     await addDoc(collection(db, "products"), finalData);
-                    
+
                     log(`  [200 OK] Data Synced.`, "text-green-500 ml-4");
                     successCount++;
-                    
+
                 } catch (error) {
                     log(`  [403 FORBIDDEN] Database Rejected Write: ${error.code}`, "text-red-500 ml-4 font-bold");
                     console.error(error);
@@ -305,13 +384,15 @@
             if (successCount === sampleProducts.length) {
                 log(`> SUCCESS. ${successCount} Records Created.`, "text-white font-bold");
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
+                showToast("Success: Products injected");
             } else {
                 log(`> COMPLETED WITH ERRORS.`, "text-red-400 font-bold");
                 btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Failed';
                 btn.classList.remove('bg-gray-700');
                 btn.classList.add('bg-red-900', 'text-red-200');
+                showToast("Completed with errors");
             }
-            
+
             // Add Navigation Link
             const linkBox = document.createElement('div');
             linkBox.className = "mt-4 p-4 bg-gray-800 border border-gray-700 rounded text-center";

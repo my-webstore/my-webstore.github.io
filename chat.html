@@ -7,48 +7,41 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+
     <script>
-        tailwind.config = { 
-            theme: { 
-                extend: { 
-                    colors: { 
-                        themeBg: '#E6D8C5', 
-                        themeText: '#4A3B32', 
-                        themeSub: '#7A6B63', 
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        themeBg: '#E6D8C5',
+                        themeText: '#4A3B32',
+                        themeSub: '#7A6B63',
                         themeBtn: '#4A3B32',
                         themeLight: '#F5EBE0'
                     },
-                    boxShadow: {
-                        'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
-                    }
-                } 
-            } 
+                    boxShadow: { 'glass': '0 8px 32px 0 rgba(31, 38, 135, 0.07)' }
+                }
+            }
         }
     </script>
-    
+
     <style>
-        /* Updated Professional Background */
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            /* Soft, luxurious radial gradient consistent with brand colors */
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
             background: radial-gradient(circle at center top, #FDFBF9 0%, #F2E8D9 60%, #E6D8C5 100%);
-            overflow: hidden; 
+            overflow: hidden;
         }
         .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Custom Scrollbar */
+
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(74, 59, 50, 0.2); border-radius: 10px; }
 
-        /* --- Bubble Tails Logic --- */
-        .msg-bubble { position: relative; max-width: 80%; padding: 12px 16px; font-size: 0.95rem; line-height: 1.5; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        
-        /* User Bubble */
-        .msg-user { 
-            background: #4A3B32; 
-            color: #FFFFFF; 
+        /* Bubble */
+        .msg-bubble { position: relative; max-width: 80%; padding: 12px 16px; font-size: 0.95rem; line-height: 1.5; box-shadow: 0 2px 4px rgba(0,0,0,0.05); word-wrap: break-word; }
+        .msg-user {
+            background: #4A3B32;
+            color: #FFFFFF;
             border-radius: 18px 18px 0 18px;
             margin-left: auto;
         }
@@ -57,10 +50,9 @@
             background: #4A3B32; border-bottom-left-radius: 16px; clip-path: polygon(0 0, 0% 100%, 100% 100%);
         }
 
-        /* Admin Bubble */
-        .msg-admin { 
-            background: #FFFFFF; 
-            color: #4A3B32; 
+        .msg-admin {
+            background: #FFFFFF;
+            color: #4A3B32;
             border-radius: 18px 18px 18px 0;
             margin-right: auto;
             border: 1px solid rgba(230, 216, 197, 0.3);
@@ -68,10 +60,9 @@
         .msg-admin::after {
             content: ""; position: absolute; bottom: 0; left: -8px; width: 12px; height: 20px;
             background: #FFFFFF; border-bottom-right-radius: 16px; clip-path: polygon(100% 0, 100% 100%, 0% 100%);
-            border-bottom: 1px solid rgba(230, 216, 197, 0.3); /* Subtle border for admin tail */
+            border-bottom: 1px solid rgba(230, 216, 197, 0.3);
         }
 
-        /* Glass Input */
         .glass-bar {
             background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(20px);
@@ -79,16 +70,42 @@
             border-top: 1px solid rgba(255, 255, 255, 0.5);
         }
 
-        /* Animations */
-        @keyframes messagePop {
-            0% { transform: scale(0.9); opacity: 0; }
-            100% { transform: scale(1); opacity: 1; }
+        @keyframes messagePop { 0% { transform: scale(0.9); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .animate-pop { animation: messagePop 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+
+        /* Small toast */
+        .toast {
+            position: fixed;
+            left: 50%;
+            transform: translateX(-50%);
+            bottom: 92px;
+            z-index: 60;
+            background: rgba(255,255,255,0.9);
+            border: 1px solid rgba(230,216,197,0.7);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            padding: 10px 14px;
+            border-radius: 999px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 0.18em;
+            text-transform: uppercase;
+            color: #4A3B32;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity .25s ease, transform .25s ease;
         }
-        .animate-pop { animation: messagePop 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards; }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px); }
     </style>
 </head>
+
 <body class="h-screen flex flex-col relative">
 
+    <!-- Status Overlay -->
     <div id="status-overlay" class="fixed inset-0 bg-[#F3F0EB] z-50 flex justify-center items-center transition-opacity duration-700">
         <div id="loading-state" class="text-center">
             <div class="relative w-20 h-20 mx-auto mb-6">
@@ -112,6 +129,7 @@
         </div>
     </div>
 
+    <!-- Header -->
     <header class="absolute top-0 w-full bg-white/80 backdrop-blur-lg border-b border-white/40 px-6 py-4 flex justify-between items-center shadow-sm z-30">
         <div class="flex items-center gap-4">
             <button onclick="smartBack()" class="w-10 h-10 flex items-center justify-center rounded-full bg-[#F5EBE0] text-[#4A3B32] hover:bg-[#E6D8C5] transition duration-300">
@@ -123,12 +141,12 @@
                     <i class="fa-solid fa-certificate text-yellow-500 text-[10px]"></i>
                 </div>
                 <div class="flex items-center gap-1.5">
-                    <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                    <p class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Online Now</p>
+                    <span id="online-dot" class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+                    <p id="online-text" class="text-[9px] text-gray-500 uppercase tracking-widest font-bold">Online Now</p>
                 </div>
             </div>
         </div>
-        
+
         <div class="flex items-center gap-3">
             <div class="relative">
                 <img src="https://ui-avatars.com/api/?name=Brand+Support&background=4A3B32&color=E6D8C5&size=128" alt="Support" class="w-10 h-10 rounded-full object-cover shadow-md border-2 border-white">
@@ -137,8 +155,8 @@
         </div>
     </header>
 
+    <!-- Chat -->
     <div id="chat-box" class="flex-1 overflow-y-auto pt-24 pb-32 px-4 md:px-6 flex flex-col space-y-6 custom-scrollbar relative z-10 scroll-smooth">
-        
         <div class="flex items-center justify-center my-4 opacity-0 animate-fade-in-up" style="animation-delay: 0.5s; animation-fill-mode: forwards;">
             <span class="bg-[#E6D8C5]/50 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest text-[#7A6B63] shadow-sm">Today</span>
         </div>
@@ -148,23 +166,25 @@
                 <i class="fa-solid fa-lock text-[9px] mr-1 text-[#4A3B32]"></i> Messages are end-to-end encrypted.
             </p>
         </div>
+    </div>
 
-        </div>
-
+    <!-- Input -->
     <div class="absolute bottom-0 w-full z-40">
         <div class="glass-bar px-4 py-4 md:px-6 pb-6 md:pb-8">
             <form id="chat-form" class="flex items-end gap-3 max-w-4xl mx-auto relative">
-                
                 <div class="flex-1 bg-white rounded-2xl border border-[#E6D8C5] shadow-sm focus-within:border-[#4A3B32] focus-within:ring-1 focus-within:ring-[#4A3B32]/20 transition-all flex items-center pr-2">
-                    <input type="text" id="msg-input" 
-                        class="w-full bg-transparent border-none focus:ring-0 text-sm text-[#4A3B32] placeholder-gray-400 px-4 py-3.5 h-12" 
-                        placeholder="Type a message..." 
-                        autocomplete="off">
-                    <button type="button" class="text-gray-400 hover:text-[#4A3B32] p-2 transition">
+                    <input
+                        type="text"
+                        id="msg-input"
+                        class="w-full bg-transparent border-none focus:ring-0 text-sm text-[#4A3B32] placeholder-gray-400 px-4 py-3.5 h-12"
+                        placeholder="Type a message..."
+                        autocomplete="off"
+                    >
+                    <button type="button" class="text-gray-400 hover:text-[#4A3B32] p-2 transition" title="Emoji (coming soon)">
                         <i class="fa-regular fa-face-smile text-lg"></i>
                     </button>
                 </div>
-                
+
                 <button type="submit" id="send-btn" class="bg-[#4A3B32] text-white h-12 w-12 rounded-full hover:bg-black hover:scale-105 active:scale-95 transition-all shadow-lg shadow-[#4A3B32]/30 flex items-center justify-center shrink-0">
                     <i class="fa-solid fa-paper-plane text-sm ml-0.5"></i>
                 </button>
@@ -172,47 +192,197 @@
         </div>
     </div>
 
+    <div id="toast" class="toast">Saved</div>
+
     <script type="module">
+        // Firebase dynamic import (kept compatible with your pattern)
+        let auth, db, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp, onAuthStateChanged, getDocs, updateDoc;
         try {
-            var { auth, db, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp, onAuthStateChanged } = await import('./firebase-config.js');
+            ({ auth, db, collection, addDoc, query, orderBy, onSnapshot, doc, setDoc, serverTimestamp, onAuthStateChanged, getDocs, updateDoc } =
+                await import('./firebase-config.js'));
         } catch (e) {
             console.error("Firebase Config Missing:", e);
         }
 
         let currentUser = null;
+        let unsubMessages = null;
+        let unsubPresence = null;
+
         const chatBox = document.getElementById('chat-box');
         const overlay = document.getElementById('status-overlay');
         const loadingState = document.getElementById('loading-state');
         const deniedState = document.getElementById('denied-state');
         const inputField = document.getElementById('msg-input');
+        const form = document.getElementById('chat-form');
+        const sendBtn = document.getElementById('send-btn');
+        const toast = document.getElementById('toast');
+
+        const onlineDot = document.getElementById('online-dot');
+        const onlineText = document.getElementById('online-text');
 
         window.smartBack = () => {
             window.history.length > 1 ? window.history.back() : window.location.href = 'index.html';
+        };
+
+        // ---- Small helpers ----
+        function showToast(text) {
+            if(!toast) return;
+            toast.textContent = text;
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 1700);
         }
 
-        // Safety Timeout
+        function escapeHTML(str) {
+            return (str || '').replace(/[&<>"']/g, (m) => ({
+                '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#039;'
+            }[m]));
+        }
+
+        function scrollToBottom(behavior = 'smooth') {
+            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior });
+        }
+
+        function setInputEnabled(enabled) {
+            inputField.disabled = !enabled;
+            sendBtn.disabled = !enabled;
+            inputField.classList.toggle('opacity-50', !enabled);
+            sendBtn.classList.toggle('opacity-60', !enabled);
+        }
+
+        function formatTime(ts) {
+            if (!ts) return "";
+            try {
+                const date = ts.toDate();
+                return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            } catch {
+                return "";
+            }
+        }
+
+        function firstName() {
+            const dn = currentUser?.displayName || "";
+            return dn ? dn.split(" ")[0] : "Member";
+        }
+
+        // ---- Safety Timeout (kept) ----
         setTimeout(() => {
             if (overlay.style.opacity !== '0' && deniedState.classList.contains('hidden')) {
-                 loadingState.innerHTML = `<p class="text-xs font-bold text-red-500 uppercase">Connection Error. Refreshing...</p>`;
-                 setTimeout(() => window.location.reload(), 1000);
+                loadingState.innerHTML = `<p class="text-xs font-bold text-red-500 uppercase">Connection Error. Refreshing...</p>`;
+                setTimeout(() => window.location.reload(), 1000);
             }
         }, 8000);
 
+        // ---- Auth gate ----
         if(auth) {
-            onAuthStateChanged(auth, (user) => {
+            onAuthStateChanged(auth, async (user) => {
                 if (user) {
                     currentUser = user;
+
+                    // user opened chat: clear userUnread and set "online" presence on chat doc
+                    await markChatOpenedSafe();
+
                     initChat();
+                    initPresenceWatcher();
+
                     overlay.style.opacity = '0';
                     setTimeout(() => overlay.style.display = 'none', 700);
+
+                    setInputEnabled(true);
+                    setTimeout(() => inputField.focus(), 250);
+
                 } else {
+                    cleanup();
                     loadingState.classList.add('hidden');
                     deniedState.classList.remove('hidden');
-                    setTimeout(() => {
-                        deniedState.classList.remove('scale-95', 'opacity-0');
-                    }, 100);
+                    setTimeout(() => deniedState.classList.remove('scale-95', 'opacity-0'), 100);
+                    setInputEnabled(false);
                 }
             });
+        } else {
+            setInputEnabled(false);
+        }
+
+        function cleanup() {
+            if (unsubMessages) { unsubMessages(); unsubMessages = null; }
+            if (unsubPresence) { unsubPresence(); unsubPresence = null; }
+        }
+
+        async function markChatOpenedSafe() {
+            // Standardize flags:
+            // - adminUnread = admin has unread messages from user
+            // - userUnread  = user has unread messages from admin
+            // Keep legacy `unread` for older admin.html badge logic if it still exists.
+            try {
+                await setDoc(doc(db, "chats", currentUser.uid), {
+                    userUnread: false,
+                    userOnline: true,
+                    userLastSeen: serverTimestamp(),
+                    lastActive: serverTimestamp()
+                }, { merge: true });
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        // ---- Presence (shows in header) ----
+        function initPresenceWatcher() {
+            try {
+                if (unsubPresence) unsubPresence();
+                unsubPresence = onSnapshot(doc(db, "chats", currentUser.uid), (snap) => {
+                    const data = snap.exists() ? snap.data() : null;
+
+                    const rawOnline =
+                        data?.adminOnline ?? data?.supportOnline ?? data?.isSupportOnline ?? data?.onlineAdmin;
+
+                    const adminOnline =
+                        rawOnline === true || rawOnline === 1 || rawOnline === "online" || rawOnline === "ONLINE";
+
+                    // If you don't store admin presence, keep it as Online Now (default)
+                    if (rawOnline === undefined || rawOnline === null) {
+                        onlineDot.classList.remove('bg-gray-400');
+                        onlineDot.classList.add('bg-green-500');
+                        onlineText.textContent = "Online Now";
+                        return;
+                    }
+
+                    onlineDot.classList.remove('bg-green-500', 'bg-gray-400');
+                    if (adminOnline) {
+                        onlineDot.classList.add('bg-green-500');
+                        onlineText.textContent = "Online Now";
+                    } else {
+                        onlineDot.classList.add('bg-gray-400');
+                        onlineText.textContent = "Offline";
+                    }
+                });
+            } catch (e) {
+                // ignore
+            }
+        }
+
+        // ---- Render header + stable intro (prevents duplicates) ----
+        function renderIntro(type = 'today') {
+            const badge = type === 'history' ? 'History' : 'Today';
+            return `
+                <div class="flex items-center justify-center my-4 opacity-60">
+                    <span class="bg-[#E6D8C5]/50 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest text-[#7A6B63] shadow-sm">${badge}</span>
+                </div>
+                <div class="text-center px-10 mb-6">
+                    <p class="text-[10px] text-gray-500 bg-white/60 backdrop-blur-sm inline-block px-4 py-2 rounded-lg shadow-sm">
+                        <i class="fa-solid fa-lock text-[9px] mr-1 text-[#4A3B32]"></i> Messages are end-to-end encrypted.
+                    </p>
+                </div>
+            `;
+        }
+
+        function renderWelcomeCard() {
+            return `
+                ${renderIntro('today')}
+                <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-[#E6D8C5]/50 mx-4 mt-2 animate-fade-in-up">
+                    <h3 class="font-serif font-bold text-lg text-[#4A3B32] mb-2">Welcome to Concierge, ${escapeHTML(firstName())}</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">Our team is ready to assist you with styling advice, order inquiries, or special requests.</p>
+                    <p class="text-[10px] text-gray-400 mt-4 font-bold uppercase tracking-widest">Tip: Share your order ID for faster support.</p>
+                </div>
+            `;
         }
 
         function initChat() {
@@ -220,41 +390,39 @@
                 const chatRef = collection(db, "chats", currentUser.uid, "messages");
                 const q = query(chatRef, orderBy("timestamp", "asc"));
 
-                onSnapshot(q, (snapshot) => {
-                    const messagesHTML = [];
-                    
+                if (unsubMessages) unsubMessages();
+                unsubMessages = onSnapshot(q, async (snapshot) => {
+                    // Clear and re-render (prevents duplicate intros)
+                    chatBox.innerHTML = '';
+
                     if(snapshot.empty) {
-                        chatBox.innerHTML += `
-                            <div class="bg-white/80 backdrop-blur-sm p-6 rounded-2xl shadow-sm border border-[#E6D8C5]/50 mx-4 mt-4 animate-fade-in-up">
-                                <h3 class="font-serif font-bold text-lg text-[#4A3B32] mb-2">Welcome to Concierge, ${currentUser.displayName ? currentUser.displayName.split(' ')[0] : 'Member'}</h3>
-                                <p class="text-sm text-gray-500 leading-relaxed">Our team is ready to assist you with styling advice, order inquiries, or special requests.</p>
-                            </div>
-                        `;
-                    } else {
-                        chatBox.innerHTML = `
-                            <div class="flex items-center justify-center my-4 opacity-60">
-                                <span class="bg-[#E6D8C5]/50 px-3 py-1 rounded-full text-[9px] font-bold uppercase tracking-widest text-[#7A6B63] shadow-sm">History</span>
-                            </div>
-                        `;
-                        snapshot.forEach((doc) => {
-                            renderMessage(doc.data());
-                        });
+                        chatBox.innerHTML = renderWelcomeCard();
+                        scrollToBottom('auto');
+                        return;
                     }
+
+                    chatBox.innerHTML = renderIntro('history');
+
+                    // Render messages
+                    snapshot.forEach((d) => renderMessage(d.id, d.data()));
+
+                    // After rendering: mark admin messages as read (best-effort)
+                    await markAdminMessagesReadFromSnapshot(snapshot);
+
                     scrollToBottom();
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) {
+                console.error(e);
+            }
         }
 
-        function renderMessage(msg) {
+        function renderMessage(id, msg) {
             const div = document.createElement('div');
             const isMe = msg.senderId === currentUser.uid;
-            
-            let timeString = "";
-            if (msg.timestamp) {
-                const date = msg.timestamp.toDate();
-                timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            }
 
+            const timeString = formatTime(msg.timestamp);
+
+            // User ticks: show sent/read for USER messages (based on msg.read, which admin sets when viewing user messages)
             let tickHTML = "";
             if (isMe) {
                 const iconClass = msg.read ? "fa-check-double" : "fa-check";
@@ -262,65 +430,129 @@
             }
 
             div.className = `flex w-full animate-pop mb-1`;
-            
+            div.dataset.mid = id;
+
             div.innerHTML = `
                 <div class="msg-bubble ${isMe ? 'msg-user' : 'msg-admin'}">
-                    <p class="font-medium tracking-wide leading-relaxed">${msg.text}</p>
+                    <p class="font-medium tracking-wide leading-relaxed">${escapeHTML(msg.text)}</p>
                     <div class="flex justify-end items-center mt-1 select-none">
-                        <span class="text-[9px] uppercase tracking-wider font-bold opacity-60">${timeString}</span>
+                        <span class="text-[9px] uppercase tracking-wider font-bold opacity-60">${escapeHTML(timeString)}</span>
                         ${tickHTML}
                     </div>
                 </div>
             `;
-            
+
             chatBox.appendChild(div);
         }
 
-        function scrollToBottom() {
-            chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+        // ---- Mark admin->user messages as read when user has the chat open ----
+        // This makes admin double-tick work in admin-chat.html
+        async function markAdminMessagesReadFromSnapshot(snapshot) {
+            try {
+                if (!snapshot || snapshot.empty) return;
+
+                const toUpdate = [];
+                snapshot.forEach((d) => {
+                    const m = d.data();
+                    const fromAdmin = m.isAdmin === true || m.senderId === "ADMIN";
+                    if (fromAdmin && m.read === false) toUpdate.push(d.id);
+                });
+
+                if (!toUpdate.length) return;
+
+                // best-effort small batch
+                await Promise.all(
+                    toUpdate.slice(0, 25).map((mid) =>
+                        updateDoc(doc(db, "chats", currentUser.uid, "messages", mid), { read: true }).catch(() => {})
+                    )
+                );
+
+                // clear userUnread on chat doc
+                await setDoc(doc(db, "chats", currentUser.uid), { userUnread: false }, { merge: true }).catch(() => {});
+            } catch (e) {
+                // ignore
+            }
         }
 
-        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+        // ---- Send Message ----
+        form.addEventListener('submit', async (e) => {
             e.preventDefault();
+            if(!currentUser) return;
+
             const text = inputField.value.trim();
             if (!text) return;
 
-            inputField.value = ''; 
+            // quick UI feedback
+            inputField.value = '';
             inputField.focus();
             scrollToBottom();
 
-            const btn = document.getElementById('send-btn');
-            btn.style.transform = "scale(0.9)";
-            setTimeout(() => btn.style.transform = "scale(1)", 100);
+            sendBtn.style.transform = "scale(0.9)";
+            setTimeout(() => sendBtn.style.transform = "scale(1)", 100);
 
             try {
+                // Create message (user -> admin)
                 await addDoc(collection(db, "chats", currentUser.uid, "messages"), {
-                    text: text,
+                    text,
                     senderId: currentUser.uid,
                     isAdmin: false,
-                    read: false, 
+                    read: false,
                     timestamp: serverTimestamp()
                 });
 
+                // Update chat doc flags:
+                // adminUnread/unread => admin should see badge
+                // userUnread => false because user is active here
                 await setDoc(doc(db, "chats", currentUser.uid), {
                     userName: currentUser.displayName || currentUser.email,
                     userEmail: currentUser.email,
                     lastMessage: text,
                     lastMessageTime: serverTimestamp(),
                     userId: currentUser.uid,
-                    unread: true 
+
+                    adminUnread: true,  // preferred
+                    unread: true,       // legacy support (if admin.html still uses it)
+                    userUnread: false,
+
+                    userLastSeen: serverTimestamp(),
+                    lastActive: serverTimestamp()
                 }, { merge: true });
 
-            } catch (error) { console.error("Error:", error); }
+                showToast("Sent");
+
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("Failed to send");
+            }
         });
 
-        const style = document.createElement('style');
-        style.innerHTML = `
-            @keyframes fadeInUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-            .animate-fade-in-up { animation: fadeInUp 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        `;
-        document.head.appendChild(style);
+        // ---- UX: Enter sends ----
+        inputField.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                form.requestSubmit();
+            }
+        });
 
+        // ---- When leaving page: set userOnline false + lastSeen ----
+        async function setOfflineSafe() {
+            try {
+                if (!currentUser) return;
+                await setDoc(doc(db, "chats", currentUser.uid), {
+                    userOnline: false,
+                    userLastSeen: serverTimestamp()
+                }, { merge: true });
+            } catch (e) {}
+        }
+
+        window.addEventListener('beforeunload', () => {
+            // Best-effort (fire-and-forget); rules may require auth and can still fail silently.
+            setOfflineSafe();
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') setOfflineSafe();
+            if (document.visibilityState === 'visible') markChatOpenedSafe();
+        });
     </script>
 </body>
 </html>

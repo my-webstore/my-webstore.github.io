@@ -9,16 +9,16 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
+
     <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
-    
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; background-image: radial-gradient(circle at center, transparent 0%, rgba(74, 59, 50, 0.03) 100%); overflow-x: hidden; }
         h1, h2, .font-serif { font-family: 'Playfair Display', serif; }
-        
+
         .success-ring { animation: ringScale 1s ease-out forwards; }
         @keyframes ringScale { 0% { transform: scale(0); opacity: 0; } 50% { opacity: 1; } 100% { transform: scale(1.2); opacity: 0; } }
-        
+
         .check-draw { stroke-dasharray: 100; stroke-dashoffset: 100; animation: drawCheck 0.8s 0.5s ease forwards; }
         @keyframes drawCheck { to { stroke-dashoffset: 0; } }
 
@@ -62,11 +62,11 @@
             <button onclick="window.print()" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-4 font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-white transition text-xs rounded-sm">
                 <i class="fa-solid fa-print mr-2"></i> Print Receipt
             </button>
-            
+
             <button onclick="window.location.href='index.html'" class="block w-full bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-xs rounded-sm">
                 Continue Shopping
             </button>
-            
+
             <a href="orders.html" class="block text-xs font-bold uppercase text-[#7A6B63] hover:text-[#4A3B32] tracking-widest transition pt-2">
                 Track My Order <i class="fa-solid fa-arrow-right ml-1 text-[10px]"></i>
             </a>
@@ -140,48 +140,68 @@
             }
         };
 
+        function getUnitPrice(item) {
+            const dp = Number(item.discountPrice || 0);
+            const p = Number(item.price || 0);
+            return dp > 0 ? dp : p;
+        }
+
         async function fetchOrderData(orderId) {
             try {
                 const docRef = doc(db, "orders", orderId);
                 const docSnap = await getDoc(docRef);
 
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    
-                    // Populate Print Section
-                    document.getElementById('pr-id').innerText = orderId.toUpperCase();
-                    document.getElementById('pr-date').innerText = data.date;
-                    document.getElementById('pr-name').innerText = data.customer.name;
-                    document.getElementById('pr-addr').innerText = data.customer.address;
-                    document.getElementById('pr-method').innerText = data.paymentMethod || 'Paid';
-                    
-                    // Calc Subtotal on the fly if missing
-                    let subtotal = data.subtotal;
-                    if(!subtotal) {
-                        subtotal = data.items.reduce((acc, i) => acc + (i.price * i.qty), 0);
-                    }
+                if (!docSnap.exists()) return;
 
-                    document.getElementById('pr-sub').innerText = `Rs. ${subtotal.toLocaleString()}`;
-                    
-                    // Shipping Logic Re-calc
-                    const shipping = data.totalAmount - subtotal;
-                    document.getElementById('pr-ship').innerText = shipping <= 0 ? "FREE" : `Rs. ${shipping}`;
-                    
-                    document.getElementById('pr-total').innerText = `Rs. ${data.totalAmount.toLocaleString()}`;
+                const data = docSnap.data() || {};
+                const customer = data.customer || {};
 
-                    const itemsHtml = data.items.map(item => `
+                // Print Header
+                document.getElementById('pr-id').innerText = orderId.toUpperCase();
+                document.getElementById('pr-date').innerText = data.date || new Date().toLocaleDateString();
+                document.getElementById('pr-name').innerText = customer.name || "Customer";
+                document.getElementById('pr-addr').innerText = customer.address || (data.address || "—");
+                document.getElementById('pr-method').innerText = data.paymentMethod || 'Paid';
+
+                // Calculate subtotal reliably (discount aware)
+                const items = Array.isArray(data.items) ? data.items : [];
+                let subtotal = Number(data.subtotal || 0);
+
+                if (!subtotal || subtotal <= 0) {
+                    subtotal = items.reduce((acc, i) => acc + (getUnitPrice(i) * Number(i.qty || 0)), 0);
+                }
+
+                const totalAmount = Number(data.totalAmount || 0);
+                const shipping = Math.max(totalAmount - subtotal, 0);
+
+                document.getElementById('pr-sub').innerText = `Rs. ${subtotal.toLocaleString()}`;
+                document.getElementById('pr-ship').innerText = shipping <= 0 ? "FREE" : `Rs. ${shipping.toLocaleString()}`;
+                document.getElementById('pr-total').innerText = `Rs. ${totalAmount.toLocaleString()}`;
+
+                const itemsHtml = items.map(item => {
+                    const unit = getUnitPrice(item);
+                    const qty = Number(item.qty || 0);
+                    const lineTotal = unit * qty;
+
+                    return `
                         <tr class="border-b border-gray-100">
                             <td class="py-4">
-                                <span class="font-bold">${item.name}</span><br>
-                                <span class="text-xs text-gray-500">Size: ${item.selectedSize} | Color: ${item.selectedColor || 'Standard'}</span>
+                                <span class="font-bold">${item.name || 'Item'}</span><br>
+                                <span class="text-xs text-gray-500">
+                                    Size: ${item.selectedSize || '—'} | Color: ${item.selectedColor || 'Standard'}
+                                    ${unit ? ` | Unit: Rs. ${unit.toLocaleString()}` : ''}
+                                </span>
                             </td>
-                            <td class="py-4 text-center">${item.qty}</td>
-                            <td class="py-4 text-right">Rs. ${item.price.toLocaleString()}</td>
+                            <td class="py-4 text-center">${qty}</td>
+                            <td class="py-4 text-right">Rs. ${lineTotal.toLocaleString()}</td>
                         </tr>
-                    `).join('');
-                    document.getElementById('pr-items').innerHTML = itemsHtml;
+                    `;
+                }).join('');
 
-                }
+                document.getElementById('pr-items').innerHTML = itemsHtml || `
+                    <tr><td class="py-4 text-gray-500" colspan="3">No items found.</td></tr>
+                `;
+
             } catch (error) {
                 console.error("Error generating receipt data:", error);
             }
@@ -189,7 +209,7 @@
 
         function triggerConfetti() {
             const colors = ['#4A3B32', '#D6C8B5', '#E6D8C5', '#FFFFFF'];
-            confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors: colors });
+            confetti({ particleCount: 80, spread: 60, origin: { y: 0.6 }, colors });
         }
 
         window.copyID = (btn) => {
@@ -199,9 +219,9 @@
                 icon.className = "fa-solid fa-check text-green-600";
                 setTimeout(() => icon.className = "fa-regular fa-copy", 2000);
             });
-        }
+        };
     </script>
-    
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>

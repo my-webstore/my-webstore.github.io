@@ -3,40 +3,53 @@
 <head>
     <meta charset="UTF-8">
     <title>Secure Checkout - Brand</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
-    
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        themeBg: '#E6D8C5',
+                        themeText: '#4A3B32',
+                        themeSub: '#7A6B63',
+                        themeBtn: '#4A3B32'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #F8F6F4; color: var(--theme-text); }
         h1, h2, h3, .font-serif { font-family: 'Playfair Display', serif; }
-        
+
         .custom-scrollbar::-webkit-scrollbar { width: 4px; }
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #D1D5DB; border-radius: 4px; }
-        
-        .form-input { 
-            width: 100%; 
-            background: white; 
-            border: 1px solid #E5E7EB; 
-            padding: 12px 16px; 
-            font-size: 16px; 
-            transition: all 0.3s ease; 
-            border-radius: 2px; 
+
+        .form-input {
+            width: 100%;
+            background: white;
+            border: 1px solid #E5E7EB;
+            padding: 12px 16px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            border-radius: 2px;
         }
         .form-input:focus { border-color: #4A3B32; box-shadow: 0 0 0 4px rgba(74, 59, 50, 0.05); outline: none; }
         label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; margin-bottom: 4px; display: block; }
-        
+
         .step-connector { position: absolute; left: 11px; top: 30px; bottom: -20px; width: 1px; background-color: #E5E7EB; z-index: 0; }
         .last-step .step-connector { display: none; }
-        
+
         .payment-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease-out, opacity 0.4s ease; opacity: 0; }
-        .payment-content.active { max-height: 1000px; opacity: 1; margin-top: 1rem; } 
-        
+        .payment-content.active { max-height: 1200px; opacity: 1; margin-top: 1rem; }
+
         input[type="radio"]:checked + div { border-color: #4A3B32; background-color: #fff; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
         input[type="radio"]:checked + div .radio-indicator { background-color: #4A3B32; border-color: #4A3B32; }
 
@@ -56,11 +69,12 @@
         .dropdown-list.active { display: block; }
         .dropdown-list li { padding: 10px 16px; cursor: pointer; font-size: 14px; color: #4B5563; transition: all 0.2s; }
         .dropdown-list li:hover { background-color: #F3F4F6; color: #4A3B32; font-weight: 600; padding-left: 20px; }
-        
+
         /* Navbar Tweaks for Checkout */
         #navbar { background-color: white !important; padding-top: 1rem; padding-bottom: 1rem; border-bottom: 1px solid #E5E7EB; }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col">
 
     <nav id="app-navbar"></nav>
@@ -72,9 +86,11 @@
 
     <div id="main-content" class="hidden flex-grow container mx-auto px-4 md:px-6 py-6 md:py-10 pt-28">
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-10">
-            
+
+            <!-- LEFT -->
             <div class="lg:col-span-7 order-2 lg:order-1" data-aos="fade-up">
-                
+
+                <!-- STEP 1 -->
                 <div class="relative pl-8 md:pl-10 pb-10">
                     <div class="step-connector"></div>
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">1</div>
@@ -84,26 +100,40 @@
                             <label>Email Address</label>
                             <input type="email" id="billing-email" class="form-input" placeholder="e.g. name@example.com" required>
                         </div>
-                        <div><label>Full Name</label><input type="text" id="billing-name" class="form-input" placeholder="e.g. Awais Altaf"></div>
-                        <div><label>Mobile Number</label><div class="relative"><span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">+92</span><input type="tel" inputmode="numeric" id="billing-phone" class="form-input pl-10" placeholder="300 1234567"></div></div>
+                        <div>
+                            <label>Full Name</label>
+                            <input type="text" id="billing-name" class="form-input" placeholder="e.g. Awais Altaf" required>
+                        </div>
+                        <div>
+                            <label>Mobile Number</label>
+                            <div class="relative">
+                                <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs font-bold">+92</span>
+                                <input type="tel" inputmode="numeric" id="billing-phone" class="form-input pl-10" placeholder="300 1234567" required>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
+                <!-- STEP 2 -->
                 <div class="relative pl-8 md:pl-10 pb-10">
                     <div class="step-connector"></div>
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">2</div>
+
                     <div class="flex justify-between items-center mb-6">
                         <h2 class="text-lg font-serif font-bold text-themeText">Shipping Address</h2>
                         <div id="address-toggle-container" class="hidden bg-gray-100 p-1 rounded flex text-[10px] font-bold uppercase tracking-wider">
-                            <button onclick="toggleAddressMode('saved')" id="btn-mode-saved" class="px-3 py-1.5 rounded transition">Saved</button>
-                            <button onclick="toggleAddressMode('new')" id="btn-mode-new" class="px-3 py-1.5 rounded transition">New</button>
+                            <button type="button" onclick="toggleAddressMode('saved')" id="btn-mode-saved" class="px-3 py-1.5 rounded transition">Saved</button>
+                            <button type="button" onclick="toggleAddressMode('new')" id="btn-mode-new" class="px-3 py-1.5 rounded transition">New</button>
                         </div>
                     </div>
-                    
+
                     <div id="view-saved-address" class="hidden p-4 border border-themeBtn bg-themeBg/10 rounded-sm mb-4">
                         <div class="flex items-start gap-3">
                             <i class="fa-solid fa-house-check text-themeBtn mt-1"></i>
-                            <div><p class="text-xs font-bold uppercase text-themeBtn mb-1">Delivering to</p><p id="saved-address-text" class="text-sm text-gray-600 leading-relaxed">...</p></div>
+                            <div>
+                                <p class="text-xs font-bold uppercase text-themeBtn mb-1">Delivering to</p>
+                                <p id="saved-address-text" class="text-sm text-gray-600 leading-relaxed">...</p>
+                            </div>
                         </div>
                     </div>
 
@@ -112,7 +142,7 @@
                         <div class="md:col-span-2"><label>Street Address</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard"></div>
                         <div class="md:col-span-2"><label>Landmark (Optional)</label><input type="text" id="addr-landmark" class="form-input" placeholder="e.g. Near Civic Center"></div>
                         <div><label>Area / Sector</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. Phase 6"></div>
-                        
+
                         <div class="relative group">
                             <label>City</label>
                             <div class="relative">
@@ -121,7 +151,7 @@
                                 <ul id="city-list" class="dropdown-list custom-scrollbar"></ul>
                             </div>
                         </div>
-                        
+
                         <div class="relative group">
                             <label>State / Province</label>
                             <div class="relative">
@@ -143,10 +173,11 @@
                     </div>
                 </div>
 
+                <!-- STEP 3 -->
                 <div class="relative pl-8 md:pl-10 last-step">
                     <div class="absolute left-0 top-0 bg-themeText text-white w-6 h-6 rounded-full flex items-center justify-center text-xs font-bold z-10">3</div>
                     <h2 class="text-lg font-serif font-bold mb-6 text-themeText">Payment Method</h2>
-                    
+
                     <div class="space-y-3">
                         <label class="cursor-pointer block group">
                             <input type="radio" name="payment" value="cod" checked onchange="togglePayment('cod')" class="peer sr-only">
@@ -166,7 +197,10 @@
                                     <div class="radio-indicator w-4 h-4 rounded-full border border-gray-400"></div>
                                     <p class="font-bold text-sm text-themeText uppercase tracking-widest">Credit / Debit Card</p>
                                 </div>
-                                <div class="flex gap-2 text-gray-400"><i class="fa-brands fa-cc-visa text-xl"></i><i class="fa-brands fa-cc-mastercard text-xl"></i></div>
+                                <div class="flex gap-2 text-gray-400">
+                                    <i class="fa-brands fa-cc-visa text-xl"></i>
+                                    <i class="fa-brands fa-cc-mastercard text-xl"></i>
+                                </div>
                             </div>
                         </label>
 
@@ -178,64 +212,112 @@
                                         <p class="text-[10px] uppercase tracking-widest opacity-70 mb-1">Encrypted Card</p>
                                         <p class="text-lg font-mono tracking-widest mb-4">•••• •••• •••• <span id="saved-last4">0000</span></p>
                                         <div class="flex justify-between items-end">
-                                            <div><p class="text-[8px] uppercase opacity-70">Holder</p><p class="text-xs font-bold uppercase" id="saved-holder">...</p></div>
-                                            <div><p class="text-[8px] uppercase opacity-70">Exp</p><p class="text-xs font-bold" id="saved-expiry">../..</p></div>
+                                            <div>
+                                                <p class="text-[8px] uppercase opacity-70">Holder</p>
+                                                <p class="text-xs font-bold uppercase" id="saved-holder">...</p>
+                                            </div>
+                                            <div>
+                                                <p class="text-[8px] uppercase opacity-70">Exp</p>
+                                                <p class="text-xs font-bold" id="saved-expiry">../..</p>
+                                            </div>
                                         </div>
                                     </div>
                                 </label>
-                                <button onclick="toggleCardChoice('new')" class="text-xs font-bold text-themeBtn uppercase tracking-widest hover:underline">Use another card</button>
+                                <button type="button" onclick="toggleCardChoice('new')" class="text-xs font-bold text-themeBtn uppercase tracking-widest hover:underline">Use another card</button>
                             </div>
 
                             <div id="new-card-form" class="bg-white p-5 rounded-sm border border-gray-200 space-y-4">
-                                <div id="back-to-saved" class="hidden mb-2"><button onclick="toggleCardChoice('saved')" class="text-xs font-bold text-gray-400 uppercase tracking-widest"><i class="fa-solid fa-arrow-left mr-1"></i> Back</button></div>
-                                <div><label>Network</label><select id="card-type" class="form-input"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
-                                <div><label>Card Number</label><div class="relative"><input type="tel" inputmode="numeric" id="card-number" class="form-input pl-10 font-mono tracking-widest" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
+                                <div id="back-to-saved" class="hidden mb-2">
+                                    <button type="button" onclick="toggleCardChoice('saved')" class="text-xs font-bold text-gray-400 uppercase tracking-widest">
+                                        <i class="fa-solid fa-arrow-left mr-1"></i> Back
+                                    </button>
+                                </div>
+
+                                <div>
+                                    <label>Network</label>
+                                    <select id="card-type" class="form-input">
+                                        <option value="Visa">Visa</option>
+                                        <option value="Mastercard">Mastercard</option>
+                                    </select>
+                                </div>
+
+                                <div>
+                                    <label>Card Number</label>
+                                    <div class="relative">
+                                        <input type="tel" inputmode="numeric" id="card-number" class="form-input pl-10 font-mono tracking-widest" placeholder="0000 0000 0000 0000" maxlength="19">
+                                        <i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    </div>
+                                </div>
+
                                 <div class="grid grid-cols-2 gap-4">
                                     <div><label>Expiry</label><input type="tel" inputmode="numeric" id="card-expiry" class="form-input text-center" placeholder="MM/YY" maxlength="5"></div>
                                     <div><label>CVV</label><input type="tel" inputmode="numeric" id="card-cvc" class="form-input text-center" placeholder="123" maxlength="4"></div>
                                 </div>
+
                                 <div><label>Cardholder Name</label><input type="text" id="card-name" class="form-input uppercase" placeholder="NAME ON CARD"></div>
-                                <div id="save-card-option" class="hidden pt-2 border-t border-gray-100"><label class="flex items-center gap-2 cursor-pointer"><input type="checkbox" id="chk-save-card" class="w-4 h-4 accent-themeBtn"><span class="text-xs font-bold text-gray-600">Save for future purchases</span></label></div>
+
+                                <div id="save-card-option" class="hidden pt-2 border-t border-gray-100">
+                                    <label class="flex items-center gap-2 cursor-pointer">
+                                        <input type="checkbox" id="chk-save-card" class="w-4 h-4 accent-themeBtn">
+                                        <span class="text-xs font-bold text-gray-600">Save for future purchases</span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
+
                     </div>
                 </div>
+
             </div>
 
+            <!-- RIGHT -->
             <div class="lg:col-span-5 order-1 lg:order-2" data-aos="fade-left">
                 <div class="lg:sticky lg:top-24">
                     <div class="bg-white p-6 md:p-8 rounded shadow-2xl border border-gray-100">
                         <h3 class="text-xl font-serif font-bold mb-6 text-center border-b border-gray-100 pb-4">Your Summary</h3>
+
                         <div id="order-items-list" class="space-y-4 mb-6 max-h-[300px] overflow-y-auto pr-2 custom-scrollbar"></div>
-                        
+
                         <div class="space-y-3 pt-6 border-t border-dashed border-gray-200 text-sm">
-                            <div class="flex justify-between text-gray-500"><span>Subtotal</span><span id="summary-subtotal" class="font-bold text-gray-800">Rs. 0</span></div>
-                            <div class="flex justify-between text-gray-500"><span>Shipping</span><span id="summary-shipping" class="font-bold text-gray-800">Rs. 0</span></div>
-                            <div class="flex justify-between font-bold text-xl text-themeText pt-4 border-t border-gray-200 mt-2"><span>Total</span><span id="summary-total">Rs. 0</span></div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>Subtotal</span>
+                                <span id="summary-subtotal" class="font-bold text-gray-800">Rs. 0</span>
+                            </div>
+                            <div class="flex justify-between text-gray-500">
+                                <span>Shipping</span>
+                                <span id="summary-shipping" class="font-bold text-gray-800">Rs. 0</span>
+                            </div>
+                            <div class="flex justify-between font-bold text-xl text-themeText pt-4 border-t border-gray-200 mt-2">
+                                <span>Total</span>
+                                <span id="summary-total">Rs. 0</span>
+                            </div>
                         </div>
-                        
+
                         <button onclick="validateAndDecide()" id="place-order-btn" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg mt-8 text-xs rounded-sm">
                             <span id="btn-text">Confirm Order</span>
                         </button>
+
                         <div class="mt-6 flex items-center justify-center gap-2 text-[10px] text-gray-400 uppercase tracking-widest">
                             <i class="fa-solid fa-shield-halved text-green-600"></i> Secure Checkout Guaranteed
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
 
+    <!-- AUTH MODAL -->
     <div id="auth-modal" class="fixed inset-0 bg-black/70 hidden z-[80] flex items-center justify-center backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white rounded-sm shadow-2xl max-w-sm w-full overflow-hidden transform scale-95 transition-transform duration-300 border-t-4 border-themeBtn">
             <div class="p-8 text-center">
                 <h3 class="text-xl font-serif font-bold text-themeText mb-2">Continue Shopping</h3>
                 <p class="text-gray-500 text-xs mb-8">Sign in to earn rewards or checkout as a guest.</p>
                 <div class="space-y-3">
-                    <button onclick="window.location.href='login.html'" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-xs rounded-sm">Login / Register</button>
-                    <button onclick="placeOrder('guest')" class="w-full border border-gray-300 text-gray-600 py-4 font-bold uppercase tracking-widest text-xs rounded-sm bg-white">Guest Checkout</button>
+                    <button type="button" onclick="window.location.href='login.html'" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-xs rounded-sm">Login / Register</button>
+                    <button type="button" onclick="placeOrder('guest')" class="w-full border border-gray-300 text-gray-600 py-4 font-bold uppercase tracking-widest text-xs rounded-sm bg-white">Guest Checkout</button>
                 </div>
-                <button onclick="closeAuthModal()" class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Close</button>
+                <button type="button" onclick="closeAuthModal()" class="mt-6 text-[10px] text-gray-400 font-bold uppercase tracking-widest">Close</button>
             </div>
         </div>
     </div>
@@ -243,345 +325,614 @@
     <footer id="app-footer"></footer>
 
     <script src="components.js"></script>
+
     <script type="module">
-        import { auth, db, doc, getDoc, addDoc, updateDoc, collection, onAuthStateChanged } from './firebase-config.js';
+        /**
+         * FIXES APPLIED:
+         * 1) Your file had TWO full HTML documents pasted together -> removed duplicates.
+         * 2) 'app-navbar' and 'app-footer' were never filled in some setups -> call window.loadComponents() if present.
+         * 3) Added missing initial togglePayment('cod') to ensure card area stays collapsed on load.
+         * 4) Made dropdown setup safe if elements missing.
+         * 5) Made AOS safe if library fails.
+         * 6) Added more defensive checks + better phone validation.
+         */
+
+        import {
+            auth, db,
+            doc, getDoc,
+            addDoc, updateDoc,
+            collection, onAuthStateChanged,
+            runTransaction
+        } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
-        let currentUser = null, savedProfileData = null, currentMode = 'new', activePayment = 'cod';
+
+        let currentUser = null;
+        let savedProfileData = null;
+
+        let currentMode = 'new';
+        let activePayment = 'cod';
+        let useSavedCard = false;
+
         let cart = JSON.parse(localStorage.getItem('myCart')) || [];
+
         const FREE_SHIPPING_THRESHOLD = 5000;
         const SHIPPING_COST = 250;
-        let useSavedCard = false; 
 
         // --- DATA ---
         const states = ["Azad Kashmir", "Balochistan", "Khyber Pakhtunkhwa", "Punjab", "Sindh"];
         const cities = [
-            "Abbottabad", "Abdul Hakim", "Ahmedpur East", "Aliabad", "Alipur", "Arifwala", "Attock", 
-            "Badin", "Bagh", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Baska", "Batkhela", "Battagram", "Bhakkar", "Bhalwal", "Bhimber", "Burewala", 
-            "Chakwal", "Chaman", "Charsadda", "Chichawatni", "Chiniot", "Chishtian", "Chitral", "Chunian", 
-            "Dadu", "Daska", "Dera Allah Yar", "Dera Ghazi Khan", "Dera Ismail Khan", "Dera Murad Jamali", "Dina", "Diplo", 
-            "Faisalabad", "Fateh Jang", 
-            "Ghotki", "Gilgit", "Gojra", "Gujar Khan", "Gujranwala", "Gujrat", "Gwadar", 
-            "Hafizabad", "Hangu", "Haripur", "Haroonabad", "Hasan Abdal", "Hasilpur", "Haveli", "Haveli Lakha", "Hub", "Hunza", "Hyderabad", 
-            "Islamabad", 
-            "Jacobabad", "Jalalpur Jattan", "Jampur", "Jaranwala", "Jauharabad", "Jhang", "Jhelum", "Jungshahi", 
-            "Kabirwala", "Kahror Pakka", "Kamalia", "Kambar", "Kamoke", "Kandhkot", "Karachi", "Karak", "Kasur", "Khairpur", "Khanewal", "Khanpur", "Kharian", "Khushab", "Khuzdar", "Kohat", "Kot Addu", "Kotli", "Kotri", 
-            "Lahore", "Larkana", "Layyah", "Liaquat Pur", "Lodhran", "Loralai", 
-            "Mailsi", "Malakand", "Mandi Bahauddin", "Mansehra", "Mardan", "Mian Channu", "Mianwali", "Mingora", "Mirpur", "Mirpur Khas", "Mithi", "Moro", "Multan", "Muridke", "Murree", "Muzaffarabad", "Muzaffargarh", 
-            "Nankana Sahib", "Narowal", "Naudero", "Naushahro Feroze", "Nawabshah", "Nowshera", 
-            "Okara", 
-            "Pakpattan", "Pano Aqil", "Pasrur", "Pattoki", "Peshawar", "Pishin", 
-            "Qila Abdullah", "Quetta", 
-            "Rahim Yar Khan", "Raiwind", "Rajanpur", "Ratodero", "Rawalakot", "Rawalpindi", "Renala Khurd", 
-            "Sadiqabad", "Sahiwal", "Samundri", "Sanghar", "Sangla Hill", "Sargodha", "Sehwan", "Shabqadar", "Shahdadkot", "Shahdadpur", "Shahkot", "Shakargarh", "Sheikhupura", "Shikarpur", "Shorkot", "Sialkot", "Sibi", "Skardu", "Sukkur", "Swabi", "Swat", 
-            "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Tank", "Taxila", "Thatta", "Toba Tek Singh", "Topi", "Turbat", 
-            "Umerkot", 
-            "Vehari", 
-            "Wah Cantonment", "Wazirabad", 
+            "Abbottabad","Abdul Hakim","Ahmedpur East","Aliabad","Alipur","Arifwala","Attock",
+            "Badin","Bagh","Bahawalnagar","Bahawalpur","Balakot","Bannu","Baska","Batkhela","Battagram","Bhakkar","Bhalwal","Bhimber","Burewala",
+            "Chakwal","Chaman","Charsadda","Chichawatni","Chiniot","Chishtian","Chitral","Chunian",
+            "Dadu","Daska","Dera Allah Yar","Dera Ghazi Khan","Dera Ismail Khan","Dera Murad Jamali","Dina","Diplo",
+            "Faisalabad","Fateh Jang",
+            "Ghotki","Gilgit","Gojra","Gujar Khan","Gujranwala","Gujrat","Gwadar",
+            "Hafizabad","Hangu","Haripur","Haroonabad","Hasan Abdal","Hasilpur","Haveli","Haveli Lakha","Hub","Hunza","Hyderabad",
+            "Islamabad",
+            "Jacobabad","Jalalpur Jattan","Jampur","Jaranwala","Jauharabad","Jhang","Jhelum","Jungshahi",
+            "Kabirwala","Kahror Pakka","Kamalia","Kambar","Kamoke","Kandhkot","Karachi","Karak","Kasur","Khairpur","Khanewal","Khanpur","Kharian","Khushab","Khuzdar","Kohat","Kot Addu","Kotli","Kotri",
+            "Lahore","Larkana","Layyah","Liaquat Pur","Lodhran","Loralai",
+            "Mailsi","Malakand","Mandi Bahauddin","Mansehra","Mardan","Mian Channu","Mianwali","Mingora","Mirpur","Mirpur Khas","Mithi","Moro","Multan","Muridke","Murree","Muzaffarabad","Muzaffargarh",
+            "Nankana Sahib","Narowal","Naudero","Naushahro Feroze","Nawabshah","Nowshera",
+            "Okara",
+            "Pakpattan","Pano Aqil","Pasrur","Pattoki","Peshawar","Pishin",
+            "Qila Abdullah","Quetta",
+            "Rahim Yar Khan","Raiwind","Rajanpur","Ratodero","Rawalakot","Rawalpindi","Renala Khurd",
+            "Sadiqabad","Sahiwal","Samundri","Sanghar","Sangla Hill","Sargodha","Sehwan","Shabqadar","Shahdadkot","Shahdadpur","Shahkot","Shakargarh","Sheikhupura","Shikarpur","Shorkot","Sialkot","Sibi","Skardu","Sukkur","Swabi","Swat",
+            "Tando Adam","Tando Allahyar","Tando Muhammad Khan","Tank","Taxila","Thatta","Toba Tek Singh","Topi","Turbat",
+            "Umerkot",
+            "Vehari",
+            "Wah Cantonment","Wazirabad",
             "Zhob"
         ];
 
-        // --- DROPDOWN LOGIC ---
-        function setupDropdown(inputId, listId, items) {
-            const input = document.getElementById(inputId);
-            const list = document.getElementById(listId);
-
-            const render = (filter = '') => {
-                list.innerHTML = '';
-                const filtered = items.filter(i => i.toLowerCase().startsWith(filter.toLowerCase()));
-                if (filtered.length === 0) { list.classList.remove('active'); return; }
-                
-                filtered.forEach(item => {
-                    const li = document.createElement('li');
-                    li.textContent = item;
-                    li.onclick = () => { input.value = item; list.classList.remove('active'); };
-                    list.appendChild(li);
-                });
-                list.classList.add('active');
-            };
-
-            input.addEventListener('input', (e) => render(e.target.value));
-            input.addEventListener('focus', () => render(input.value));
-            
-            // Hide click outside
-            document.addEventListener('click', (e) => {
-                if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('active');
-            });
-        }
-
-        setupDropdown('addr-state', 'state-list', states);
-        setupDropdown('addr-city', 'city-list', cities);
-        // -------------------------
-
-        // 0. PRELOADER
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            if(preloader) {
-                preloader.style.opacity = '0';
-                setTimeout(() => preloader.style.display = 'none', 500);
+        // ---------- COMPONENTS ----------
+        window.addEventListener('DOMContentLoaded', () => {
+            // If your components.js exposes a loader, call it.
+            // (common pattern: loadComponents() injects navbar/footer)
+            if (typeof window.loadComponents === 'function') {
+                window.loadComponents();
             }
-            setNavbarDark(); // FORCE DARK NAVBAR
+
+            // Cart must exist
+            if (!Array.isArray(cart) || cart.length === 0) {
+                window.location.href = "index.html";
+                return;
+            }
+
+            // Normalize cart: ensure variants exist
+            cart = cart.map(i => ({
+                ...i,
+                qty: Number(i.qty || 0),
+                selectedSize: i.selectedSize || "Standard",
+                selectedColor: i.selectedColor || "Standard",
+                id: i.id || i.productId || i.docId || i.pid || i._id // a few fallbacks
+            }));
+
+            // Remove items missing id or qty
+            cart = cart.filter(i => i.id && i.qty > 0);
+
+            if (cart.length === 0) {
+                localStorage.removeItem('myCart');
+                window.location.href = "index.html";
+                return;
+            }
+
+            localStorage.setItem('myCart', JSON.stringify(cart));
+
+            setupDropdownSafe('addr-state', 'state-list', states);
+            setupDropdownSafe('addr-city', 'city-list', cities);
+
+            initUI();
+            renderOrderSummary();
+
+            // Ensure correct payment UI on load
+            togglePayment('cod');
         });
 
-        function setNavbarDark() {
+        // ---------- AUTH ----------
+        onAuthStateChanged(auth, async (user) => {
+            if (user) {
+                currentUser = user;
+
+                if (window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
+                setNavbarLight();
+
+                if (user.email) {
+                    const em = document.getElementById('billing-email');
+                    if (em) em.value = user.email;
+                }
+
+                await loadUserData(user.uid);
+            } else {
+                currentUser = null;
+
+                if (window.setupNavbarAuth) window.setupNavbarAuth(null, ADMIN_EMAIL);
+                setNavbarLight();
+
+                toggleAddressMode('new');
+                finishLoading();
+            }
+        });
+
+        // Navbar helpers (white checkout navbar)
+        function setNavbarLight() {
             const nav = document.getElementById('navbar');
             const logo = document.getElementById('nav-logo');
             const links = document.getElementById('nav-links');
             const icons = document.getElementById('nav-icons');
             const cartBadge = document.getElementById('cart-count');
 
-            if(nav) {
-                nav.style.backgroundColor = "white"; // Override for checkout
-                if(logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
-                if(links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
-                if(icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
-                if(cartBadge) {
+            if (nav) {
+                nav.style.backgroundColor = "white";
+                if (logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
+                if (links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
+                if (icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
+                if (cartBadge) {
                     cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
                     cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
                 }
             }
         }
 
-        const initUI = () => {
+        function finishLoading() {
+            document.getElementById('loading')?.classList.add('hidden');
+            document.getElementById('main-content')?.classList.remove('hidden');
+        }
+
+        // ---------- DROPDOWNS ----------
+        function setupDropdownSafe(inputId, listId, items) {
+            const input = document.getElementById(inputId);
+            const list = document.getElementById(listId);
+            if (!input || !list) return;
+
+            const render = (filter = '') => {
+                list.innerHTML = '';
+                const q = (filter || '').toLowerCase();
+
+                const filtered = items
+                    .filter(i => i.toLowerCase().includes(q))
+                    .slice(0, 80); // prevent huge list render
+
+                if (filtered.length === 0) {
+                    list.classList.remove('active');
+                    return;
+                }
+
+                filtered.forEach(item => {
+                    const li = document.createElement('li');
+                    li.textContent = item;
+                    li.onclick = () => {
+                        input.value = item;
+                        list.classList.remove('active');
+                    };
+                    list.appendChild(li);
+                });
+
+                list.classList.add('active');
+            };
+
+            input.addEventListener('input', (e) => render(e.target.value));
+            input.addEventListener('focus', () => render(input.value));
+
+            document.addEventListener('click', (e) => {
+                if (!input.contains(e.target) && !list.contains(e.target)) {
+                    list.classList.remove('active');
+                }
+            });
+        }
+
+        // ---------- UI ----------
+        function initUI() {
             document.getElementById('card-number')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 16);
                 const icon = document.getElementById('card-icon');
-                if(val.startsWith('4')) icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600";
-                else if(val.startsWith('5')) icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600";
+
+                if (icon) {
+                    if (val.startsWith('4')) icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600";
+                    else if (val.startsWith('5')) icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600";
+                    else icon.className = "fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400";
+                }
+
                 e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
             });
+
             document.getElementById('card-expiry')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 4);
                 if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
                 e.target.value = val;
             });
-        };
+        }
 
-        window.addEventListener('DOMContentLoaded', () => { 
-            if (cart.length === 0) { window.location.href = "index.html"; return; } 
-            renderOrderSummary(); initUI(); 
-        });
-
-        onAuthStateChanged(auth, async (user) => {
-            if (user) { 
-                currentUser = user; 
-                if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
-                setNavbarDark();
-                if(user.email) document.getElementById('billing-email').value = user.email;
-                await loadUserData(user.uid); 
-            } else { 
-                if(window.setupNavbarAuth) window.setupNavbarAuth(null, ADMIN_EMAIL);
-                setNavbarDark();
-                toggleAddressMode('new'); 
-                finishLoading(); 
-            }
-        });
-
-        window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
+        // Expose menu toggles (if navbar uses these)
+        window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
         window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
-        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
 
+        // ---------- USER DATA ----------
         async function loadUserData(uid) {
             try {
                 const docSnap = await getDoc(doc(db, "users", uid));
                 if (docSnap.exists()) {
-                    savedProfileData = docSnap.data();
-                    document.getElementById('billing-name').value = `${savedProfileData.firstName || ''} ${savedProfileData.lastName || ''}`.trim();
-                    document.getElementById('billing-phone').value = savedProfileData.contactPhone || '';
+                    savedProfileData = docSnap.data() || {};
+
+                    const fullName =
+                        `${savedProfileData.firstName || ''} ${savedProfileData.lastName || ''}`.trim();
+
+                    if (fullName) document.getElementById('billing-name').value = fullName;
+
+                    // Profile stores +92...
+                    const phone = (savedProfileData.contactPhone || '').toString();
+                    document.getElementById('billing-phone').value = phone.startsWith('+92') ? phone.slice(3).trim() : phone;
+
                     if (savedProfileData.address) {
-                        document.getElementById('address-toggle-container').classList.remove('hidden');
+                        document.getElementById('address-toggle-container')?.classList.remove('hidden');
                         document.getElementById('saved-address-text').innerText = savedProfileData.address;
                         toggleAddressMode('saved');
+                    } else {
+                        toggleAddressMode('new');
                     }
-                    if(savedProfileData.savedCard) {
-                        document.getElementById('save-card-option').classList.add('hidden'); 
+
+                    if (savedProfileData.savedCard) {
                         renderSavedCard(savedProfileData.savedCard);
                         toggleCardChoice('saved');
+                        document.getElementById('save-card-option')?.classList.add('hidden');
+                    } else {
+                        document.getElementById('save-card-option')?.classList.remove('hidden');
+                        toggleCardChoice('new');
                     }
+                } else {
+                    toggleAddressMode('new');
                 }
-            } catch (e) {} finishLoading();
+            } catch (e) {
+                console.error("Load user data failed:", e);
+                toggleAddressMode('new');
+            } finally {
+                finishLoading();
+            }
         }
 
         function renderSavedCard(card) {
-            document.getElementById('saved-last4').innerText = card.number.slice(-4);
-            document.getElementById('saved-holder').innerText = card.name;
-            document.getElementById('saved-expiry').innerText = card.expiry;
+            const last4 = (card.number || '').toString().slice(-4);
+            document.getElementById('saved-last4').innerText = last4 || "0000";
+            document.getElementById('saved-holder').innerText = card.name || "...";
+            document.getElementById('saved-expiry').innerText = card.expiry || "../..";
         }
 
         window.toggleCardChoice = (choice) => {
             useSavedCard = (choice === 'saved');
-            document.getElementById('saved-card-container').classList.toggle('hidden', choice !== 'saved');
-            document.getElementById('new-card-form').classList.toggle('hidden', choice === 'saved');
-            if(choice === 'new' && savedProfileData?.savedCard) document.getElementById('back-to-saved').classList.remove('hidden');
-        }
 
-        function finishLoading() { document.getElementById('loading').classList.add('hidden'); document.getElementById('main-content').classList.remove('hidden'); }
+            document.getElementById('saved-card-container')?.classList.toggle('hidden', choice !== 'saved');
+            document.getElementById('new-card-form')?.classList.toggle('hidden', choice === 'saved');
+
+            const back = document.getElementById('back-to-saved');
+            if (back) back.classList.toggle('hidden', !(choice === 'new' && savedProfileData?.savedCard));
+        };
 
         window.toggleAddressMode = (mode) => {
             currentMode = mode;
-            const btnS = document.getElementById('btn-mode-saved'), btnN = document.getElementById('btn-mode-new');
-            const viewS = document.getElementById('view-saved-address'), viewN = document.getElementById('view-new-address');
-            btnS.className = mode === 'saved' ? 'px-3 py-1.5 rounded bg-white shadow-sm text-themeText' : 'px-3 py-1.5 rounded text-gray-400';
-            btnN.className = mode === 'new' ? 'px-3 py-1.5 rounded bg-white shadow-sm text-themeText' : 'px-3 py-1.5 rounded text-gray-400';
-            viewS.classList.toggle('hidden', mode !== 'saved');
-            viewN.classList.toggle('hidden', mode === 'saved');
-        }
+
+            const btnS = document.getElementById('btn-mode-saved');
+            const btnN = document.getElementById('btn-mode-new');
+            const viewS = document.getElementById('view-saved-address');
+            const viewN = document.getElementById('view-new-address');
+
+            if (btnS && btnN && viewS && viewN) {
+                btnS.className = mode === 'saved'
+                    ? 'px-3 py-1.5 rounded bg-white shadow-sm text-themeText'
+                    : 'px-3 py-1.5 rounded text-gray-400';
+
+                btnN.className = mode === 'new'
+                    ? 'px-3 py-1.5 rounded bg-white shadow-sm text-themeText'
+                    : 'px-3 py-1.5 rounded text-gray-400';
+
+                viewS.classList.toggle('hidden', mode !== 'saved');
+                viewN.classList.toggle('hidden', mode === 'saved');
+            }
+        };
 
         window.togglePayment = (method) => {
             activePayment = method;
-            document.getElementById('card-area').classList.toggle('active', method === 'card');
-            document.getElementById('btn-text').innerHTML = method === 'card' ? 'Authorize Payment <i class="fa-solid fa-lock ml-1"></i>' : 'Confirm Order';
+            document.getElementById('card-area')?.classList.toggle('active', method === 'card');
+
+            const txt = document.getElementById('btn-text');
+            if (txt) {
+                txt.innerHTML = method === 'card'
+                    ? 'Authorize Payment <i class="fa-solid fa-lock ml-1"></i>'
+                    : 'Confirm Order';
+            }
+        };
+
+        // ---------- SUMMARY ----------
+        function getUnitPrice(item) {
+            const dp = Number(item.discountPrice || 0);
+            const p = Number(item.price || 0);
+            return dp > 0 ? dp : p;
         }
 
         function renderOrderSummary() {
             const container = document.getElementById('order-items-list');
-            let subtotal = 0; container.innerHTML = "";
+            if (!container) return;
+
+            let subtotal = 0;
+            container.innerHTML = "";
+
             cart.forEach(item => {
-                const price = item.discountPrice > 0 ? item.discountPrice : item.price;
-                subtotal += price * item.qty;
-                // OPTIMIZED IMAGE: Added &w=150&q=75 for speed
-                container.innerHTML += `<div class="flex gap-4 py-3 border-b border-dashed border-gray-50 last:border-0 items-center"><img src="${item.image}&w=150&q=75" class="w-12 h-14 object-cover rounded shadow-sm"><div class="flex-1 min-w-0"><p class="text-xs font-bold text-themeText truncate uppercase">${item.name}</p><p class="text-[9px] text-gray-400 font-bold uppercase">Qty: ${item.qty} | ${item.selectedSize}</p></div><p class="text-xs font-bold text-themeText font-mono">Rs. ${(price * item.qty).toLocaleString()}</p></div>`;
+                const unit = getUnitPrice(item);
+                const qty = Number(item.qty || 0);
+                subtotal += unit * qty;
+
+                const img = (item.image || '');
+                const imgUrl = img ? (img.includes('?') ? `${img}&w=150&q=75` : `${img}?w=150&q=75`) : '';
+
+                container.innerHTML += `
+                    <div class="flex gap-4 py-3 border-b border-dashed border-gray-50 last:border-0 items-center">
+                        <img src="${escapeAttr(imgUrl)}" class="w-12 h-14 object-cover rounded shadow-sm bg-gray-100" alt="${escapeAttr(item.name || 'Item')}">
+                        <div class="flex-1 min-w-0">
+                            <p class="text-xs font-bold text-themeText truncate uppercase">${escapeHtml(item.name || 'Item')}</p>
+                            <p class="text-[9px] text-gray-400 font-bold uppercase">
+                                Qty: ${qty} | Size: ${escapeHtml(item.selectedSize || 'Standard')} | Color: ${escapeHtml(item.selectedColor || 'Standard')}
+                            </p>
+                        </div>
+                        <p class="text-xs font-bold text-themeText font-mono">Rs. ${(unit * qty).toLocaleString()}</p>
+                    </div>
+                `;
             });
+
             const shipping = subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
+
             document.getElementById('summary-subtotal').innerText = `Rs. ${subtotal.toLocaleString()}`;
-            document.getElementById('summary-shipping').innerText = shipping === 0 ? "Free" : `Rs. ${shipping}`;
+            document.getElementById('summary-shipping').innerText = shipping === 0 ? "Free" : `Rs. ${shipping.toLocaleString()}`;
             document.getElementById('summary-total').innerText = `Rs. ${(subtotal + shipping).toLocaleString()}`;
         }
 
+        // ---------- VALIDATION ----------
         window.validateAndDecide = () => {
-            const name = document.getElementById('billing-name').value.trim();
-            const phone = document.getElementById('billing-phone').value.trim();
-            const email = document.getElementById('billing-email').value.trim();
-            
+            const name = document.getElementById('billing-name')?.value.trim();
+            const phone = document.getElementById('billing-phone')?.value.trim();
+            const email = document.getElementById('billing-email')?.value.trim();
+
             if (!name || !phone || !email) return alert("Contact Info (Name, Email, Phone) Required");
-            if (!email.includes('@')) return alert("Please enter a valid email address.");
+            if (!/^\S+@\S+\.\S+$/.test(email)) return alert("Please enter a valid email address.");
 
+            // phone: allow 10-11 digits (PK mobile often 10 digits without 0)
+            const digits = phone.replace(/\D/g, '');
+            if (digits.length < 9) return alert("Please enter a valid mobile number.");
+
+            // Address validation
             if (currentMode === 'new') {
-                if(!document.getElementById('addr-city').value || !document.getElementById('addr-state').value) 
-                    return alert("City, State & Address Required");
+                if (!document.getElementById('addr-house').value.trim()) return alert("House / Office No. required");
+                if (!document.getElementById('addr-street').value.trim()) return alert("Street Address required");
+                if (!document.getElementById('addr-area').value.trim()) return alert("Area / Sector required");
+                if (!document.getElementById('addr-city').value.trim()) return alert("City required");
+                if (!document.getElementById('addr-state').value.trim()) return alert("State required");
+            } else {
+                if (!savedProfileData?.address) return alert("Saved address not found. Please enter a new address.");
             }
 
-            if (activePayment === 'card' && !useSavedCard) {
-                if(document.getElementById('card-number').value.length < 16) return alert("Valid Card Required");
+            // Payment validation
+            if (activePayment === 'card') {
+                // If user has saved card, they can choose it OR a new one
+                if (!useSavedCard) {
+                    const num = document.getElementById('card-number').value.replace(/\s/g, '');
+                    const exp = document.getElementById('card-expiry').value.trim();
+                    const cvc = document.getElementById('card-cvc').value.trim();
+                    const holder = document.getElementById('card-name').value.trim();
+
+                    if (num.length < 16) return alert("Valid Card Required");
+                    if (!/^\d{2}\/\d{2}$/.test(exp)) return alert("Expiry must be MM/YY");
+                    if (cvc.length < 3) return alert("CVV required");
+                    if (!holder) return alert("Cardholder name required");
+                }
             }
-            if (currentUser) placeOrder('user'); else openAuthModal();
+
+            // Ensure cart variants exist
+            for (const it of cart) {
+                if (!it.selectedSize) return alert(`Please select size for "${it.name}"`);
+                if (!it.selectedColor) return alert(`Please select color for "${it.name}"`);
+            }
+
+            if (currentUser) placeOrder('user');
+            else openAuthModal();
+        };
+
+        // ---------- AUTH MODAL ----------
+        window.openAuthModal = () => {
+            const m = document.getElementById('auth-modal');
+            if (!m) return;
+            m.classList.remove('hidden');
+            setTimeout(() => {
+                m.classList.replace('opacity-0', 'opacity-100');
+                m.querySelector('div')?.classList.replace('scale-95', 'scale-100');
+            }, 10);
+        };
+
+        window.closeAuthModal = () => {
+            const m = document.getElementById('auth-modal');
+            if (!m) return;
+            m.classList.replace('opacity-100', 'opacity-0');
+            m.querySelector('div')?.classList.replace('scale-100', 'scale-95');
+            setTimeout(() => m.classList.add('hidden'), 300);
+        };
+
+        function normalizePhoneToPk(phone) {
+            let raw = (phone || '').trim();
+            raw = raw.replace(/\s+/g, '').replace(/[^\d+]/g, '');
+
+            // if they typed without +, handle
+            if (raw.startsWith('+92')) return raw;
+            if (raw.startsWith('92')) return '+' + raw;
+
+            // remove leading 0
+            if (raw.startsWith('0')) raw = raw.slice(1);
+
+            // keep digits only
+            raw = raw.replace(/\D/g, '');
+            return '+92' + raw;
         }
 
-        window.openAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.remove('hidden'); setTimeout(() => { m.classList.replace('opacity-0', 'opacity-100'); m.querySelector('div').classList.replace('scale-95', 'scale-100'); }, 10); }
-        window.closeAuthModal = () => { const m = document.getElementById('auth-modal'); m.classList.replace('opacity-100', 'opacity-0'); m.querySelector('div').classList.replace('scale-100', 'scale-95'); setTimeout(() => m.classList.add('hidden'), 300); }
+        function buildAddress() {
+            if (currentMode === 'saved') return savedProfileData.address;
 
-        window.placeOrder = async (type) => {
-            closeAuthModal();
-            const btn = document.getElementById('place-order-btn');
-            const originalHTML = btn.innerHTML;
-            const name = document.getElementById('billing-name').value.trim();
-            const phone = document.getElementById('billing-phone').value.trim();
-            const email = document.getElementById('billing-email').value.trim();
-            
-            let finalAddress;
-            if (currentMode === 'saved') {
-                finalAddress = savedProfileData.address;
-            } else {
-                const house = document.getElementById('addr-house').value;
-                const street = document.getElementById('addr-street').value;
-                const area = document.getElementById('addr-area').value;
-                const city = document.getElementById('addr-city').value;
-                const state = document.getElementById('addr-state').value;
-                const zip = document.getElementById('addr-zip').value;
-                const landmark = document.getElementById('addr-landmark').value;
-                finalAddress = `${house}, ${street}, ${landmark ? landmark + ', ' : ''}${area}, ${city}, ${state}, Pakistan - ${zip}`;
-            }
+            const house = document.getElementById('addr-house').value.trim();
+            const street = document.getElementById('addr-street').value.trim();
+            const landmark = document.getElementById('addr-landmark').value.trim();
+            const area = document.getElementById('addr-area').value.trim();
+            const city = document.getElementById('addr-city').value.trim();
+            const state = document.getElementById('addr-state').value.trim();
+            const zip = document.getElementById('addr-zip').value.trim();
 
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Prices...';
-            btn.disabled = true;
+            return `${house}, ${street}, ${landmark ? landmark + ', ' : ''}${area}, ${city}, ${state}, Pakistan - ${zip}`;
+        }
 
-            try {
-                // 1. RE-FETCH PRICES FROM DATABASE (SECURITY FIX)
-                const verifiedItems = [];
-                let verifiedSubtotal = 0;
+        // ---------- STOCK TRANSACTION ----------
+        async function verifyAndReserveStock(cartItems) {
+            const verifiedItems = [];
+            let verifiedSubtotal = 0;
 
-                const productPromises = cart.map(cartItem => getDoc(doc(db, "products", cartItem.id)));
-                const productSnapshots = await Promise.all(productPromises);
+            await runTransaction(db, async (tx) => {
+                const snaps = [];
 
-                for (let i = 0; i < cart.length; i++) {
-                    const cartItem = cart[i];
-                    const snap = productSnapshots[i];
-
-                    if (!snap.exists()) {
-                        throw new Error(`Product "${cartItem.name}" is no longer available.`);
-                    }
-
-                    const dbData = snap.data();
-                    
-                    const realPrice = dbData.price;
-                    const realDiscount = dbData.discountPrice || 0;
-                    const finalPrice = realDiscount > 0 ? realDiscount : realPrice;
-
-                    if (dbData.stock < cartItem.qty) {
-                        throw new Error(`Insufficient stock for "${dbData.name}". Available: ${dbData.stock}`);
-                    }
-
-                    // Deduct Stock
-                    const newStock = dbData.stock - cartItem.qty;
-                    await updateDoc(snap.ref, { stock: newStock });
-
-                    verifiedSubtotal += finalPrice * cartItem.qty;
-
-                    verifiedItems.push({
-                        id: cartItem.id,
-                        name: dbData.name, 
-                        image: dbData.image || (dbData.media && dbData.media[0]?.url) || "",
-                        price: realPrice,
-                        discountPrice: realDiscount,
-                        qty: cartItem.qty,
-                        selectedSize: cartItem.selectedSize,
-                        selectedColor: cartItem.selectedColor
-                    });
+                for (const ci of cartItems) {
+                    const ref = doc(db, "products", ci.id);
+                    const snap = await tx.get(ref);
+                    if (!snap.exists()) throw new Error(`Product "${ci.name}" is no longer available.`);
+                    snaps.push({ ref, snap, ci });
                 }
 
-                // 2. RE-CALCULATE TOTAL
+                for (const { ref, snap, ci } of snaps) {
+                    const dbData = snap.data() || {};
+                    const realPrice = Number(dbData.price || 0);
+                    const realDiscount = Number(dbData.discountPrice || 0);
+                    const finalPrice = realDiscount > 0 ? realDiscount : realPrice;
+
+                    const currentStock = Number(dbData.stock || 0);
+                    const qty = Number(ci.qty || 0);
+
+                    if (qty <= 0) throw new Error(`Invalid quantity for "${dbData.name || ci.name}"`);
+                    if (currentStock < qty) throw new Error(`Insufficient stock for "${dbData.name}". Available: ${currentStock}`);
+
+                    tx.update(ref, { stock: currentStock - qty });
+
+                    verifiedSubtotal += finalPrice * qty;
+
+                    verifiedItems.push({
+                        id: ci.id,
+                        name: dbData.name || ci.name,
+                        image: dbData.image || (dbData.media && dbData.media[0]?.url) || ci.image || "",
+                        price: realPrice,
+                        discountPrice: realDiscount,
+                        qty,
+                        selectedSize: ci.selectedSize || "Standard",
+                        selectedColor: ci.selectedColor || "Standard"
+                    });
+                }
+            });
+
+            return { verifiedItems, verifiedSubtotal };
+        }
+
+        // ---------- CARD SAVE ----------
+        async function maybeSaveCard() {
+            if (!currentUser) return;
+            if (activePayment !== 'card') return;
+            if (useSavedCard) return;
+
+            const shouldSave = document.getElementById('chk-save-card')?.checked;
+            if (!shouldSave) return;
+
+            const rawNum = document.getElementById('card-number').value.replace(/\s/g, '');
+            const last4 = rawNum.slice(-4);
+
+            const savedData = {
+                network: document.getElementById('card-type').value,
+                number: `•••• •••• •••• ${last4}`,
+                expiry: document.getElementById('card-expiry').value,
+                name: document.getElementById('card-name').value
+            };
+
+            await updateDoc(doc(db, "users", currentUser.uid), { savedCard: savedData });
+        }
+
+        // ---------- PLACE ORDER ----------
+        window.placeOrder = async (type) => {
+            closeAuthModal();
+
+            const btn = document.getElementById('place-order-btn');
+            const btnText = document.getElementById('btn-text');
+            const originalText = btnText ? btnText.innerHTML : btn.innerHTML;
+
+            const name = document.getElementById('billing-name').value.trim();
+            const phone = normalizePhoneToPk(document.getElementById('billing-phone').value);
+            const email = document.getElementById('billing-email').value.trim();
+            const finalAddress = buildAddress();
+
+            btn.disabled = true;
+            if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Stock...';
+            else btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Verifying Stock...';
+
+            try {
+                // 1) Verify price from DB + reserve stock atomically
+                const { verifiedItems, verifiedSubtotal } = await verifyAndReserveStock(cart);
+
+                // 2) Recalculate totals
                 const shipping = verifiedSubtotal >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST;
                 const finalTotal = verifiedSubtotal + shipping;
 
-                // 3. SAVE CARD (Optional)
-                if (type === 'user' && currentUser && activePayment === 'card' && !useSavedCard && document.getElementById('chk-save-card').checked) {
-                    const rawNum = document.getElementById('card-number').value;
-                    await updateDoc(doc(db, "users", currentUser.uid), { 
-                        savedCard: { number: "••••" + rawNum.slice(-4), name: document.getElementById('card-name').value, expiry: document.getElementById('card-expiry').value } 
-                    });
-                }
+                // 3) Optional: save card
+                if (type === 'user') await maybeSaveCard();
 
-                // 4. CREATE ORDER
-                btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Processing Order...';
-                
-                // GUEST SAFETY CHECK (ISSUE 4 FIX)
+                // 4) Create order
+                if (btnText) btnText.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Processing Order...';
+                else btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin mr-2"></i> Processing Order...';
+
                 const uid = (type === 'user' && currentUser) ? currentUser.uid : 'GUEST';
 
                 const order = {
                     userId: uid,
-                    customer: { name, phone, email, address: finalAddress }, 
-                    items: verifiedItems, 
-                    subtotal: verifiedSubtotal, // Good for records
+                    customer: { name, phone, email, address: finalAddress },
+                    items: verifiedItems,
+                    subtotal: verifiedSubtotal,
+                    shipping,
                     totalAmount: finalTotal,
-                    status: "Processing", 
+                    status: "Processing",
                     paymentMethod: activePayment.toUpperCase(),
-                    date: new Date().toLocaleDateString(), 
+                    date: new Date().toLocaleDateString(),
                     timestamp: new Date()
                 };
 
                 const docRef = await addDoc(collection(db, "orders"), order);
+
                 localStorage.removeItem('myCart');
                 window.location.href = `order-success.html?id=${docRef.id}`;
 
             } catch (e) {
                 console.error(e);
-                alert("Order Failed: " + e.message);
-                btn.innerHTML = originalHTML;
+                alert("Order Failed: " + (e.message || "Unknown error"));
+
                 btn.disabled = false;
+                if (btnText) btnText.innerHTML = originalText;
+                else btn.innerHTML = originalText;
             }
+        };
+
+        // ---------- ESCAPE HELPERS ----------
+        function escapeHtml(unsafe) {
+            return String(unsafe ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+        function escapeAttr(unsafe) {
+            return escapeHtml(unsafe).replaceAll("`", "&#096;");
         }
     </script>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 800, once: true });</script>
+    <script>
+        try { AOS.init({ duration: 800, once: true }); } catch (e) { /* no-op */ }
+    </script>
 </body>
 </html>

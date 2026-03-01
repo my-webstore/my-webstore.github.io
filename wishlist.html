@@ -281,21 +281,78 @@
 
         // CART LOGIC
         const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+
         function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0);
+            const badge = document.getElementById('cart-count');
+            if (badge) badge.innerText = cart.reduce((a,b)=>a+b.qty,0);
+
             const con = document.getElementById('cart-items');
+            if(!con) return;
+
             con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>';
             let t = 0;
+
             cart.forEach(i => {
-                const price = i.discountPrice > 0 ? i.discountPrice : i.price; t += price * i.qty;
-                con.innerHTML += `<div class="flex justify-between border-b border-[#D6C8B5] pb-2"><div><p class="font-bold text-sm">${i.name}</p><p class="text-xs text-gray-500">Size: ${i.selectedSize}</p><div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white"><button onclick="changeQty('${i.id}-${i.selectedSize}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button><span class="text-xs font-bold w-4 text-center">${i.qty}</span><button onclick="changeQty('${i.id}-${i.selectedSize}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button></div></div><div class="text-right"><p class="font-bold text-sm">Rs. ${(price*i.qty).toLocaleString()}</p><button onclick="removeItem('${i.id}-${i.selectedSize}')" class="text-xs text-red-500 hover:underline">Remove</button></div></div>`;
+                const price = i.discountPrice > 0 ? i.discountPrice : i.price;
+                t += price * i.qty;
+
+                const uid = `${i.id}-${i.selectedSize}-${i.selectedColor}`;
+
+                con.innerHTML += `
+                    <div class="flex justify-between border-b border-[#D6C8B5] pb-2">
+                        <div>
+                            <p class="font-bold text-sm">${i.name}</p>
+                            <p class="text-xs text-gray-500">Size: ${i.selectedSize}</p>
+                            <div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white">
+                                <button onclick="changeQty('${uid}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+                                <button onclick="changeQty('${uid}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-sm">Rs. ${(price*i.qty).toLocaleString()}</p>
+                            <button onclick="removeItem('${uid}')" class="text-xs text-red-500 hover:underline">Remove</button>
+                        </div>
+                    </div>`;
             });
-            document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString();
+
+            const total = document.getElementById('cart-total');
+            if(total) total.innerText = 'Rs. ' + t.toLocaleString();
         }
-        window.changeQty = (id, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}` === id); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        window.toggleCart = () => { const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay'); if(s.classList.contains('translate-x-full')) { s.classList.remove('translate-x-full'); o.classList.remove('hidden'); updateCartUI(); } else { s.classList.add('translate-x-full'); o.classList.add('hidden'); } }
-        window.removeItem = (id) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}` === id); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
+
+        window.changeQty = (uid, c) => {
+            const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid);
+            if(i){
+                i.qty += c;
+                if(i.qty < 1) i.qty = 1;
+                localStorage.setItem('myCart', JSON.stringify(cart));
+                updateCartUI();
+            }
+        }
+
+        window.toggleCart = () => {
+            const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay');
+            if(s.classList.contains('translate-x-full')) {
+                s.classList.remove('translate-x-full');
+                o.classList.remove('hidden');
+                updateCartUI();
+            } else {
+                s.classList.add('translate-x-full');
+                o.classList.add('hidden');
+            }
+        }
+
+        window.removeItem = (uid) => {
+            const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
+            if(x > -1){
+                cart.splice(x,1);
+                localStorage.setItem('myCart', JSON.stringify(cart));
+                updateCartUI();
+            }
+        }
+
         window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
+
         updateCartUI();
     </script>
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>

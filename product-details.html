@@ -1,606 +1,999 @@
 <!DOCTYPE html>
 <html lang="en" class="scroll-smooth">
 <head>
-    <meta charset="UTF-8">
-    <title>Product Details - Brand</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32', themeLight: '#F5EBE0' } } } }</script>
-    
-    <style>
-        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
-        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #E6D8C5; }
-        ::-webkit-scrollbar-thumb { background: #4A3B32; }
+  <meta charset="UTF-8" />
+  <title>Product Details - Brand</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-        .selected-option { background-color: #4A3B32; color: #E6D8C5; border-color: #4A3B32; } 
-        .star-active { color: #D97706; } 
-        .star-inactive { color: #D1D5DB; }
-        
-        /* Loader */
-        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        
-        /* Mobile Menu Fix - Fixed Solid Background */
-        #mobile-menu { 
-            position: fixed;
-            inset: 0;
-            z-index: 9999 !important;
-            background-color: #E6D8C5 !important;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: auto;
+  <!-- Performance preconnects -->
+  <link rel="preconnect" href="https://cdn.tailwindcss.com">
+  <link rel="preconnect" href="https://unpkg.com">
+  <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;0,800;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            themeBg: '#E6D8C5',
+            themeText: '#4A3B32',
+            themeSub: '#7A6B63',
+            themeBtn: '#4A3B32',
+            themeLight: '#F5EBE0'
+          }
         }
-    </style>
+      }
+    }
+  </script>
+
+  <style>
+    :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
+    body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
+    h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; }
+    ::-webkit-scrollbar-track { background: #E6D8C5; }
+    ::-webkit-scrollbar-thumb { background: #4A3B32; }
+
+    .selected-option { background-color: #4A3B32; color: #E6D8C5; border-color: #4A3B32; }
+    .star-active { color: #D97706; }
+    .star-inactive { color: #D1D5DB; }
+
+    /* Loader */
+    .loader-overlay {
+      position: fixed; inset: 0; background: #E6D8C5; z-index: 9999;
+      display: flex; justify-content: center; align-items: center;
+      transition: opacity 0.5s ease;
+    }
+
+    /* Mobile Menu Fix - Fixed Solid Background */
+    #mobile-menu {
+      position: fixed;
+      inset: 0;
+      z-index: 9999 !important;
+      background-color: #E6D8C5 !important;
+      transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+      pointer-events: auto;
+    }
+
+    /* Reduce motion */
+    @media (prefers-reduced-motion: reduce) {
+      [data-aos] { transition: none !important; transform: none !important; }
+    }
+  </style>
 </head>
+
 <body class="bg-themeBg text-themeText flex flex-col min-h-screen">
 
-    <div id="preloader" class="loader-overlay">
-        <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
+  <div id="preloader" class="loader-overlay" aria-hidden="true">
+    <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
+  </div>
+
+  <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6 border-b border-transparent">
+    <div class="container mx-auto px-6">
+      <div class="flex justify-between items-center">
+        <a href="index.html" class="relative z-50">
+          <h1 id="nav-logo" class="text-3xl font-serif font-bold tracking-widest text-white transition-colors duration-300 uppercase">BRAND.</h1>
+        </a>
+
+        <div id="nav-links" class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-white/90 transition-colors duration-300">
+          <a href="men.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Men</a>
+          <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
+          <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
+        </div>
+
+        <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
+          <div id="auth-container">
+            <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
+              <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
+            </a>
+          </div>
+
+          <div onclick="toggleCart()" class="relative cursor-pointer group">
+            <i class="fa-solid fa-bag-shopping text-xl group-hover:scale-110 transition"></i>
+            <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#E6D8C5]">0</span>
+          </div>
+
+          <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none" aria-label="Open menu">
+            <i class="fa-solid fa-bars-staggered"></i>
+          </button>
+        </div>
+      </div>
     </div>
 
-    <nav id="navbar" class="fixed top-0 w-full z-50 transition-all duration-300 py-6 border-b border-transparent">
-        <div class="container mx-auto px-6">
-            <div class="flex justify-between items-center">
-                <a href="index.html" class="relative z-50">
-                    <h1 id="nav-logo" class="text-3xl font-serif font-bold tracking-widest text-white transition-colors duration-300 uppercase">BRAND.</h1>
-                </a>
-                
-                <div id="nav-links" class="hidden md:flex gap-10 text-xs font-bold uppercase tracking-[0.2em] text-white/90 transition-colors duration-300">
-                    <a href="men.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Men</a>
-                    <a href="women.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Women</a>
-                    <a href="kids.html" class="hover:opacity-75 transition-all hover:scale-105 cursor-pointer">Kids</a>
-                </div>
+    <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
+      <div class="flex justify-between items-center mb-12">
+        <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
+        <button onclick="toggleMobileMenu()" class="text-2xl p-2" aria-label="Close menu">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
 
-                <div id="nav-icons" class="flex items-center gap-6 relative z-50 text-white transition-colors duration-300">
-                    <div id="auth-container">
-                        <a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2">
-                            <span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i>
-                        </a>
-                    </div>
+      <div class="flex flex-col space-y-8">
+        <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
+        <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
+        <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
+      </div>
 
-                    <div onclick="toggleCart()" class="relative cursor-pointer group">
-                        <i class="fa-solid fa-bag-shopping text-xl group-hover:scale-110 transition"></i>
-                        <span id="cart-count" class="absolute -top-2 -right-2 bg-themeText text-[#E6D8C5] text-[9px] rounded-full h-4 w-4 flex items-center justify-center font-bold border border-[#E6D8C5]">0</span>
-                    </div>
-                    
-                    <button onclick="toggleMobileMenu()" class="md:hidden text-xl focus:outline-none"><i class="fa-solid fa-bars-staggered"></i></button>
-                </div>
-            </div>
-        </div>
+      <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4"></div>
+    </div>
+  </nav>
 
-        <div id="mobile-menu" class="transform translate-x-full flex flex-col p-8 overflow-y-auto">
-            <div class="flex justify-between items-center mb-12">
-                <h2 class="text-xl font-serif font-bold tracking-widest uppercase">Menu</h2>
-                <button onclick="toggleMobileMenu()" class="text-2xl p-2"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            
-            <div class="flex flex-col space-y-8">
-                <a href="men.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Men</a>
-                <a href="women.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Women</a>
-                <a href="kids.html" class="text-3xl font-serif font-bold hover:text-themeSub transition-colors border-b border-themeText/10 pb-4">Kids</a>
-            </div>
+  <div id="loading" class="fixed inset-0 bg-themeBg z-[40] flex flex-col items-center justify-center hidden">
+    <i class="fa-solid fa-circle-notch fa-spin text-4xl text-themeBtn mb-4"></i>
+    <p class="text-sm font-bold uppercase tracking-widest text-themeSub">Loading Product...</p>
+  </div>
 
-            <div id="mobile-auth-links" class="mt-auto pt-10 flex flex-col space-y-4">
-                </div>
-        </div>
-    </nav>
+  <div id="product-content" class="flex-grow container mx-auto px-6 py-24 max-w-7xl">
 
-    <div id="loading" class="fixed inset-0 bg-themeBg z-[40] flex flex-col items-center justify-center hidden">
-        <i class="fa-solid fa-circle-notch fa-spin text-4xl text-themeBtn mb-4"></i>
-        <p class="text-sm font-bold uppercase tracking-widest text-themeSub">Loading Product...</p>
+    <div class="flex justify-between items-center mb-10 border-b border-[#D6C8B5] pb-4">
+      <button onclick="goBack()" class="flex items-center gap-2 text-xs font-bold uppercase hover:text-themeSub transition">
+        <i class="fa-solid fa-arrow-left"></i> Back
+      </button>
+      <div class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest">
+        Home / <span id="crumb-cat" class="text-themeText">Collection</span> / Product
+      </div>
     </div>
 
-    <div id="product-content" class="flex-grow container mx-auto px-6 py-24 max-w-7xl">
-        
-        <div class="flex justify-between items-center mb-10 border-b border-[#D6C8B5] pb-4">
-            <button onclick="goBack()" class="flex items-center gap-2 text-xs font-bold uppercase hover:text-themeSub transition">
-                <i class="fa-solid fa-arrow-left"></i> Back
-            </button>
-            <div class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest">
-                Home / <span id="crumb-cat" class="text-themeText">Collection</span> / Product
-            </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
+
+      <div data-aos="fade-right" class="relative w-full h-[500px] md:h-[700px] bg-white rounded-sm overflow-hidden group shadow-2xl">
+        <div id="media-display" class="w-full h-full flex items-center justify-center bg-gray-50 transition-opacity duration-500"></div>
+        <button id="prevBtn" onclick="prevMedia()" class="hidden absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all z-10 text-lg" aria-label="Previous media">
+          <i class="fa-solid fa-chevron-left"></i>
+        </button>
+        <button id="nextBtn" onclick="nextMedia()" class="hidden absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all z-10 text-lg" aria-label="Next media">
+          <i class="fa-solid fa-chevron-right"></i>
+        </button>
+        <div id="media-dots" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-10"></div>
+        <div id="sale-badge" class="hidden absolute top-6 left-6 bg-[#4A3B32] text-[#E6D8C5] text-xs font-bold px-4 py-2 uppercase tracking-widest shadow-md z-10">Sale</div>
+      </div>
+
+      <div data-aos="fade-left" class="flex flex-col justify-center">
+        <div class="flex justify-between items-start mb-4">
+          <div>
+            <p id="p-category" class="text-[#7A6B63] uppercase tracking-[0.2em] text-xs font-bold mb-3"></p>
+            <h1 id="p-name" class="text-4xl md:text-6xl font-serif font-bold mb-4 leading-tight text-themeText"></h1>
+            <p class="text-[10px] text-gray-400 font-mono tracking-wide">Ref: <span id="p-serial"></span></p>
+          </div>
+          <button onclick="toggleWishlistDB()" id="wishlist-btn" class="text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2" aria-label="Toggle wishlist">
+            <i class="fa-solid fa-heart"></i>
+          </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-20">
-            
-            <div data-aos="fade-right" class="relative w-full h-[500px] md:h-[700px] bg-white rounded-sm overflow-hidden group shadow-2xl">
-                <div id="media-display" class="w-full h-full flex items-center justify-center bg-gray-50 transition-opacity duration-500"></div>
-                <button id="prevBtn" onclick="prevMedia()" class="hidden absolute left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all z-10 text-lg"><i class="fa-solid fa-chevron-left"></i></button>
-                <button id="nextBtn" onclick="nextMedia()" class="hidden absolute right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white text-themeText w-12 h-12 rounded-full shadow-md flex items-center justify-center transition-all z-10 text-lg"><i class="fa-solid fa-chevron-right"></i></button>
-                <div id="media-dots" class="absolute bottom-6 left-1/2 -translate-x-1/2 flex gap-3 z-10"></div>
-                <div id="sale-badge" class="hidden absolute top-6 left-6 bg-[#4A3B32] text-[#E6D8C5] text-xs font-bold px-4 py-2 uppercase tracking-widest shadow-md z-10">Sale</div>
-            </div>
+        <div id="p-price" class="text-3xl font-bold text-themeText mb-8 border-b border-[#D6C8B5] pb-8 font-serif"></div>
 
-            <div data-aos="fade-left" class="flex flex-col justify-center">
-                <div class="flex justify-between items-start mb-4">
-                    <div>
-                        <p id="p-category" class="text-[#7A6B63] uppercase tracking-[0.2em] text-xs font-bold mb-3"></p>
-                        <h1 id="p-name" class="text-4xl md:text-6xl font-serif font-bold mb-4 leading-tight text-themeText"></h1>
-                        <p class="text-[10px] text-gray-400 font-mono tracking-wide">Ref: <span id="p-serial"></span></p>
-                    </div>
-                    <button onclick="toggleWishlistDB()" id="wishlist-btn" class="text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2"><i class="fa-solid fa-heart"></i></button>
-                </div>
-
-                <div id="p-price" class="text-3xl font-bold text-themeText mb-8 border-b border-[#D6C8B5] pb-8 font-serif"></div>
-
-                <div id="color-section" class="hidden mb-6">
-                    <p class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Select Color</p>
-                    <div id="color-options" class="flex flex-wrap gap-3"></div>
-                    <p id="color-error" class="text-red-600 text-xs font-bold mt-2 hidden animate-pulse"><i class="fa-solid fa-circle-exclamation mr-1"></i> Please select a color!</p>
-                </div>
-
-                <div id="size-section" class="hidden mb-8">
-                    <div class="flex justify-between items-center mb-4">
-                        <p class="font-bold text-xs uppercase tracking-widest text-gray-500">Select Size</p>
-                        <a href="#" class="text-[10px] uppercase font-bold underline text-[#7A6B63] hover:text-themeText">Size Guide</a>
-                    </div>
-                    <div id="size-options" class="flex flex-wrap gap-3"></div>
-                    <p id="size-error" class="text-red-600 text-xs font-bold mt-2 hidden animate-pulse"><i class="fa-solid fa-circle-exclamation mr-1"></i> Please select a size!</p>
-                </div>
-
-                <div class="mb-10">
-                    <p class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Quantity</p>
-                    <div class="flex items-center border border-[#D6C8B5] w-fit rounded-sm bg-white">
-                        <button onclick="updatePageQty(-1)" class="px-6 py-3 hover:bg-gray-100 transition font-bold text-gray-600 text-lg">-</button>
-                        <span id="page-qty" class="px-6 py-3 font-bold text-sm w-12 text-center">1</span>
-                        <button onclick="updatePageQty(1)" class="px-6 py-3 hover:bg-gray-100 transition font-bold text-gray-600 text-lg">+</button>
-                    </div>
-                </div>
-
-                <div class="mb-10">
-                    <h4 class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Description</h4>
-                    <p class="text-[#7A6B63] leading-relaxed text-sm md:text-base font-light">Expertly crafted for the modern individual. This piece combines timeless design with premium materials to ensure lasting comfort and style.</p>
-                </div>
-
-                <div id="stock-warning-container"></div>
-
-                <div id="action-buttons" class="grid grid-cols-2 gap-4 mt-auto">
-                    <button onclick="addToCart(false)" id="add-btn" class="border border-[#4A3B32] text-[#4A3B32] py-4 font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition duration-300 text-xs md:text-sm">
-                        Add to Bag
-                    </button>
-                    <button onclick="addToCart(true)" id="buy-btn" class="bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition duration-300 shadow-lg text-xs md:text-sm">
-                        Buy Now
-                    </button>
-                </div>
-            </div>
+        <div id="color-section" class="hidden mb-6">
+          <p class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Select Color</p>
+          <div id="color-options" class="flex flex-wrap gap-3"></div>
+          <p id="color-error" class="text-red-600 text-xs font-bold mt-2 hidden animate-pulse">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> Please select a color!
+          </p>
         </div>
 
-        <div class="mt-24 border-t border-[#D6C8B5] pt-16">
-            <h3 class="text-3xl font-serif font-bold mb-12 text-center">Customer Reviews</h3>
-            <div class="max-w-3xl mx-auto">
-                
-                <div id="review-form-container" class="bg-white p-8 rounded-sm shadow-md mb-12 border border-[#D6C8B5] hidden">
-                    <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-center text-[#7A6B63]">Rate This Product</h4>
-                    <div class="flex justify-center gap-2 mb-6 text-2xl cursor-pointer" id="star-input">
-                        <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(1)"></i>
-                        <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(2)"></i>
-                        <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(3)"></i>
-                        <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(4)"></i>
-                        <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(5)"></i>
-                    </div>
-                    <textarea id="review-text" class="w-full border border-[#D6C8B5] p-4 text-sm outline-none mb-4 focus:border-[#4A3B32] transition bg-[#F5EBE0]/50" rows="3" placeholder="Share your experience..."></textarea>
-                    <button onclick="submitReview()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition">Submit Review</button>
-                </div>
-
-                <div id="review-message" class="text-center mb-10 p-6 bg-[#F5EBE0]/50 rounded border border-dashed border-[#7A6B63] hidden">
-                    <p class="text-sm font-bold text-[#4A3B32]"></p>
-                </div>
-
-                <div id="reviews-list" class="space-y-6">
-                    <p class="text-center text-[#7A6B63] text-sm animate-pulse">Loading reviews...</p>
-                </div>
-            </div>
+        <div id="size-section" class="hidden mb-8">
+          <div class="flex justify-between items-center mb-4">
+            <p class="font-bold text-xs uppercase tracking-widest text-gray-500">Select Size</p>
+            <a href="#" class="text-[10px] uppercase font-bold underline text-[#7A6B63] hover:text-themeText">Size Guide</a>
+          </div>
+          <div id="size-options" class="flex flex-wrap gap-3"></div>
+          <p id="size-error" class="text-red-600 text-xs font-bold mt-2 hidden animate-pulse">
+            <i class="fa-solid fa-circle-exclamation mr-1"></i> Please select a size!
+          </p>
         </div>
+
+        <div class="mb-10">
+          <p class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Quantity</p>
+          <div class="flex items-center border border-[#D6C8B5] w-fit rounded-sm bg-white">
+            <button onclick="updatePageQty(-1)" class="px-6 py-3 hover:bg-gray-100 transition font-bold text-gray-600 text-lg" aria-label="Decrease quantity">-</button>
+            <span id="page-qty" class="px-6 py-3 font-bold text-sm w-12 text-center">1</span>
+            <button onclick="updatePageQty(1)" class="px-6 py-3 hover:bg-gray-100 transition font-bold text-gray-600 text-lg" aria-label="Increase quantity">+</button>
+          </div>
+        </div>
+
+        <div class="mb-10">
+          <h4 class="font-bold text-xs uppercase tracking-widest text-gray-500 mb-3">Description</h4>
+          <p class="text-[#7A6B63] leading-relaxed text-sm md:text-base font-light">
+            Expertly crafted for the modern individual. This piece combines timeless design with premium materials to ensure lasting comfort and style.
+          </p>
+        </div>
+
+        <div id="stock-warning-container"></div>
+
+        <div id="action-buttons" class="grid grid-cols-2 gap-4 mt-auto">
+          <button onclick="addToCart(false)" id="add-btn" class="border border-[#4A3B32] text-[#4A3B32] py-4 font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition duration-300 text-xs md:text-sm">
+            Add to Bag
+          </button>
+          <button onclick="addToCart(true)" id="buy-btn" class="bg-[#4A3B32] text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition duration-300 shadow-lg text-xs md:text-sm">
+            Buy Now
+          </button>
+        </div>
+      </div>
     </div>
 
-    <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto relative z-20">
-        <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
-            <div class="col-span-1 md:col-span-1">
-                <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
-                <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
-                <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
-                    <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
-                    <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
-                <ul class="space-y-3 text-xs text-[#A89F91]">
-                    <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
-                    <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
-                    <li><a href="#" class="hover:text-white transition">FAQ</a></li>
-                </ul>
-            </div>
-            <div>
-                <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
-                <div class="flex gap-4 text-lg text-white">
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
-                    <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-            <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
-            <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
-                <a href="#" class="hover:text-white transition">Privacy Policy</a>
-                <a href="#" class="hover:text-white transition">Terms of Service</a>
-            </div>
-            <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
-        </div>
-    </footer>
+    <div class="mt-24 border-t border-[#D6C8B5] pt-16">
+      <h3 class="text-3xl font-serif font-bold mb-12 text-center">Customer Reviews</h3>
+      <div class="max-w-3xl mx-auto">
 
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
-        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
-        <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]"><div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div><button onclick="window.location.href='checkout.html'" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22]">Checkout</button></div>
+        <div id="review-form-container" class="bg-white p-8 rounded-sm shadow-md mb-12 border border-[#D6C8B5] hidden">
+          <h4 class="font-bold mb-6 uppercase text-xs tracking-widest text-center text-[#7A6B63]">Rate This Product</h4>
+          <div class="flex justify-center gap-2 mb-6 text-2xl cursor-pointer" id="star-input">
+            <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(1)"></i>
+            <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(2)"></i>
+            <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(3)"></i>
+            <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(4)"></i>
+            <i class="fa-solid fa-star star-inactive hover:text-[#D97706] transition" onclick="setRating(5)"></i>
+          </div>
+          <textarea id="review-text" class="w-full border border-[#D6C8B5] p-4 text-sm outline-none mb-4 focus:border-[#4A3B32] transition bg-[#F5EBE0]/50" rows="3" placeholder="Share your experience..."></textarea>
+          <button id="review-submit-btn" onclick="submitReview()" class="w-full bg-[#4A3B32] text-[#E6D8C5] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition">
+            Submit Review
+          </button>
+        </div>
+
+        <div id="review-message" class="text-center mb-10 p-6 bg-[#F5EBE0]/50 rounded border border-dashed border-[#7A6B63] hidden">
+          <p class="text-sm font-bold text-[#4A3B32]"></p>
+        </div>
+
+        <div id="reviews-list" class="space-y-6">
+          <p class="text-center text-[#7A6B63] text-sm animate-pulse">Loading reviews...</p>
+        </div>
+      </div>
     </div>
-    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
+  </div>
 
-    <script type="module">
-        import { db, auth, doc, getDoc, collection, addDoc, getDocs, query, where, onAuthStateChanged, signOut, deleteDoc } from './firebase-config.js';
+  <footer class="bg-[#2E241E] text-[#E6D8C5] pt-20 pb-10 border-t border-[#4A3B32] mt-auto relative z-20">
+    <div class="container mx-auto px-6 grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+      <div class="col-span-1 md:col-span-1">
+        <h2 class="text-2xl font-serif font-bold tracking-widest mb-6">BRAND.</h2>
+        <p class="text-xs leading-relaxed text-[#A89F91]">Redefining luxury through sustainable practices and timeless design. Established 2025.</p>
+      </div>
+      <div>
+        <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Shop</h4>
+        <ul class="space-y-3 text-xs text-[#A89F91]">
+          <li><a href="men.html" class="hover:text-white hover:underline transition">Men</a></li>
+          <li><a href="women.html" class="hover:text-white hover:underline transition">Women</a></li>
+          <li><a href="kids.html" class="hover:text-white hover:underline transition">Kids</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Support</h4>
+        <ul class="space-y-3 text-xs text-[#A89F91]">
+          <li><a href="orders.html" class="hover:text-white hover:underline transition">Order Status</a></li>
+          <li><a href="#" class="hover:text-white hover:underline transition">Shipping & Returns</a></li>
+          <li><a href="#" class="hover:text-white transition">FAQ</a></li>
+        </ul>
+      </div>
+      <div>
+        <h4 class="font-bold uppercase text-xs tracking-widest mb-6 text-white">Social</h4>
+        <div class="flex gap-4 text-lg text-white">
+          <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
+          <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
+        </div>
+      </div>
+    </div>
+    <div class="container mx-auto px-6 border-t border-[#4A3B32] pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+      <p class="text-[10px] text-[#A89F91]">&copy; 2025 Brand Inc. All rights reserved.</p>
+      <div class="flex gap-4 text-[10px] text-[#A89F91] uppercase font-bold">
+        <a href="#" class="hover:text-white transition">Privacy Policy</a>
+        <a href="#" class="hover:text-white transition">Terms of Service</a>
+      </div>
+      <p class="text-[10px] text-[#A89F91] uppercase font-bold tracking-widest">Maintenance: Optimal Storage 18°C - 24°C</p>
+    </div>
+  </footer>
 
-        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-        let currentProduct = null, selectedSize = null, selectedColor = null, currentRating = 0, currentUser = null;
-        let selectedQty = 1; 
-        let cart = JSON.parse(localStorage.getItem('myCart')) || [];
-        let mediaList = [], currentMediaIndex = 0;
-        let wishlistDocId = null;
+  <!-- Cart Sidebar (z-index fixed so it always appears above content) -->
+  <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[110] flex flex-col border-l border-[#D6C8B5]">
+    <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
+      <h2 class="text-2xl font-serif font-bold">Shopping Bag</h2>
+      <button onclick="toggleCart()" class="text-2xl hover:text-red-500" aria-label="Close cart">&times;</button>
+    </div>
+    <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
+    <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]">
+      <div class="flex justify-between text-xl font-serif font-bold mb-6">
+        <span>Subtotal</span><span id="cart-total">Rs. 0</span>
+      </div>
+      <button onclick="window.location.href='checkout.html'" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22]">Checkout</button>
+    </div>
+  </div>
+  <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-[105] backdrop-blur-sm"></div>
 
-        // 0. PRELOADER & NAVBAR SCROLL
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            preloader.style.opacity = '0';
-            setTimeout(() => preloader.style.display = 'none', 500);
+  <!-- ✅ Internal Toast (no alert) -->
+  <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] hidden">
+    <div id="toast-inner" class="bg-[#2E241E] text-[#E6D8C5] px-5 py-3 rounded-full shadow-2xl border border-black/10 text-xs font-bold uppercase tracking-widest"></div>
+  </div>
+
+  <!-- ✅ Internal Confirm (no confirm) -->
+  <div id="confirm-modal" class="fixed inset-0 z-[9999] hidden">
+    <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+    <div class="absolute inset-0 flex items-center justify-center p-6">
+      <div class="w-full max-w-sm bg-[#E6D8C5] text-[#2E241E] border border-black/10 rounded-2xl shadow-2xl overflow-hidden">
+        <div class="p-6 border-b border-black/10">
+          <h3 id="confirm-title" class="text-lg font-serif font-bold tracking-widest uppercase">Confirm</h3>
+          <p id="confirm-message" class="text-sm text-[#4A3B32] mt-2">Are you sure?</p>
+        </div>
+        <div class="p-4 flex gap-3 justify-end">
+          <button id="confirm-cancel" class="px-4 py-2 rounded-full border border-black/10 font-bold uppercase tracking-widest text-xs hover:bg-black/5 transition">Cancel</button>
+          <button id="confirm-ok" class="px-4 py-2 rounded-full bg-[#2E241E] text-[#E6D8C5] font-bold uppercase tracking-widest text-xs hover:opacity-90 transition">Yes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="module">
+    import {
+      db, auth, doc, getDoc, collection, addDoc, getDocs, query, where,
+      onAuthStateChanged, signOut, deleteDoc, serverTimestamp
+    } from './firebase-config.js';
+
+    const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+
+    let currentProduct = null;
+    let selectedSize = null;
+    let selectedColor = null;
+    let currentRating = 0;
+    let currentUser = null;
+    let selectedQty = 1;
+    let cart = JSON.parse(localStorage.getItem('myCart')) || [];
+    let mediaList = [];
+    let currentMediaIndex = 0;
+    let wishlistDocId = null;
+
+    // ---- Internal UI (toast + confirm) ----
+    const toastEl = document.getElementById('toast');
+    const toastInner = document.getElementById('toast-inner');
+    let toastTimer = null;
+
+    function showToast(message) {
+      if (!toastEl || !toastInner) return;
+      toastInner.textContent = message;
+      toastEl.classList.remove('hidden');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 2500);
+    }
+
+    const confirmModal = document.getElementById('confirm-modal');
+    const confirmTitle = document.getElementById('confirm-title');
+    const confirmMessage = document.getElementById('confirm-message');
+    const confirmOk = document.getElementById('confirm-ok');
+    const confirmCancel = document.getElementById('confirm-cancel');
+
+    function openConfirm({ title = 'Confirm', message = 'Are you sure?' }) {
+      return new Promise((resolve) => {
+        confirmTitle.textContent = title;
+        confirmMessage.textContent = message;
+        confirmModal.classList.remove('hidden');
+
+        const cleanup = () => {
+          confirmModal.classList.add('hidden');
+          confirmOk.removeEventListener('click', onOk);
+          confirmCancel.removeEventListener('click', onCancel);
+          document.removeEventListener('keydown', onKey);
+        };
+
+        const onOk = () => { cleanup(); resolve(true); };
+        const onCancel = () => { cleanup(); resolve(false); };
+        const onKey = (e) => { if (e.key === 'Escape') { cleanup(); resolve(false); } };
+
+        confirmOk.addEventListener('click', onOk);
+        confirmCancel.addEventListener('click', onCancel);
+        document.addEventListener('keydown', onKey);
+      });
+    }
+
+    // 0. PRELOADER & NAVBAR SCROLL
+    window.addEventListener('load', () => {
+      const preloader = document.getElementById('preloader');
+      if (!preloader) return;
+      preloader.style.opacity = '0';
+      setTimeout(() => preloader.style.display = 'none', 500);
+    }, { passive: true });
+
+    window.addEventListener('scroll', () => {
+      const nav = document.getElementById('navbar');
+      const logo = document.getElementById('nav-logo');
+      const links = document.getElementById('nav-links');
+      const icons = document.getElementById('nav-icons');
+      const cartBadge = document.getElementById('cart-count');
+
+      if (window.scrollY > 50) {
+        nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+        nav.classList.remove('py-6', 'border-transparent');
+        logo.classList.replace('text-white', 'text-[#4A3B32]');
+        links.classList.replace('text-white/90', 'text-[#4A3B32]');
+        icons.classList.replace('text-white', 'text-[#4A3B32]');
+        cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+        cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+      } else {
+        nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+        nav.classList.add('py-6', 'border-transparent');
+        logo.classList.replace('text-[#4A3B32]', 'text-white');
+        links.classList.replace('text-[#4A3B32]', 'text-white/90');
+        icons.classList.replace('text-[#4A3B32]', 'text-white');
+        cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
+        cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
+      }
+    }, { passive: true });
+
+    // 1. AUTH STATE & SYNC
+    onAuthStateChanged(auth, async (user) => {
+      currentUser = user;
+      setupNavbar(user);
+
+      const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
+      cart.length = 0;
+      cart.push(...latestCart);
+      updateCartUI();
+
+      if (!productId) {
+        window.location.href = 'index.html';
+        return;
+      }
+
+      if (user) await checkWishlistDB();
+      if (!currentProduct) await init();
+      if (user && currentProduct) checkReviewEligibility();
+      if (!user) showReviewMessage("Please Sign In to write a review.", false);
+    });
+
+    function setupNavbar(u) {
+      const container = document.getElementById('auth-container');
+      const mobileLinks = document.getElementById('mobile-auth-links');
+
+      if (u) {
+        const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
+        const isAdmin = u.email === ADMIN_EMAIL;
+
+        container.innerHTML = `
+          <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
+            Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
+          </button>
+          <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
+            ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
+            <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
+            <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
+            <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
+            <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
+          </div>`;
+
+        mobileLinks.innerHTML = `
+          <div class="flex flex-col gap-4 text-center">
+            <div class="flex items-center justify-center gap-3 mb-2">
+              <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
+              <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
+            </div>
+            ${isAdmin ? `<a href="admin.html" class="text-lg font-bold text-black border-b border-black pb-2">Admin Dashboard</a>` : ''}
+            <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
+          </div>`;
+      } else {
+        container.innerHTML = `<a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2"><span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i></a>`;
+        mobileLinks.innerHTML = `<a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
+      }
+    }
+
+    window.toggleUserMenu = () => document.getElementById('user-dropdown')?.classList.toggle('hidden');
+    window.toggleMobileMenu = () => {
+      const menu = document.getElementById('mobile-menu');
+      if (!menu) return;
+      if (menu.classList.contains('translate-x-full')) menu.classList.remove('translate-x-full');
+      else menu.classList.add('translate-x-full');
+    };
+
+    window.handleLogout = async () => {
+      const ok = await openConfirm({ title: "Sign Out", message: "Do you want to sign out?" });
+      if (!ok) return;
+      await signOut(auth);
+      localStorage.removeItem('myCart');
+      showToast("Signed out.");
+      window.location.href = "login.html";
+    };
+
+    window.goBack = () => {
+      if (window.history.length > 1 && document.referrer.indexOf(window.location.host) !== -1) window.history.back();
+      else window.location.href = 'index.html';
+    };
+
+    // 2. FETCH DATA & RENDER
+    async function init() {
+      document.getElementById('loading').classList.remove('hidden');
+
+      try {
+        const s = await getDoc(doc(db, "products", productId));
+        if (s.exists()) {
+          currentProduct = { id: s.id, ...s.data() };
+          mediaList = (currentProduct.media && currentProduct.media.length > 0)
+            ? currentProduct.media
+            : [{ type: 'image', url: currentProduct.image }];
+
+          render();
+          await loadReviews();
+        } else {
+          document.getElementById('loading').innerHTML = "<p class='text-red-500 font-bold'>Product Not Found</p>";
+        }
+      } catch (e) {
+        console.error(e);
+        document.getElementById('loading').innerHTML = "<p class='text-red-500 font-bold'>Error loading product</p>";
+      }
+    }
+
+    async function checkWishlistDB() {
+      if (!currentUser) return;
+      const qx = query(
+        collection(db, "wishlist"),
+        where("userId", "==", currentUser.uid),
+        where("productId", "==", productId)
+      );
+      const snap = await getDocs(qx);
+      const btn = document.getElementById('wishlist-btn');
+
+      if (!snap.empty) {
+        wishlistDocId = snap.docs[0].id;
+        btn.className = 'text-2xl text-red-500 hover:scale-110 transition p-2';
+      } else {
+        wishlistDocId = null;
+        btn.className = 'text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2';
+      }
+    }
+
+    window.toggleWishlistDB = async () => {
+      if (!currentUser) { window.location.href = "login.html"; return; }
+      if (!currentProduct) return;
+
+      const btn = document.getElementById('wishlist-btn');
+
+      try {
+        if (wishlistDocId) {
+          btn.className = 'text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2';
+          const oldId = wishlistDocId;
+          wishlistDocId = null;
+          await deleteDoc(doc(db, "wishlist", oldId));
+          showToast("Removed from wishlist");
+        } else {
+          btn.className = 'text-2xl text-red-500 hover:scale-110 transition p-2';
+          const ref = await addDoc(collection(db, "wishlist"), {
+            userId: currentUser.uid,
+            productId: currentProduct.id,
+            name: currentProduct.name,
+            price: currentProduct.discountPrice || currentProduct.price,
+            image: currentProduct.image,
+            category: currentProduct.category,
+            createdAt: serverTimestamp()
+          });
+          wishlistDocId = ref.id;
+          showToast("Saved to wishlist");
+        }
+      } catch (e) {
+        console.error(e);
+        showToast("Wishlist failed");
+      }
+    };
+
+    function render() {
+      document.getElementById('loading').classList.add('hidden');
+      document.getElementById('crumb-cat').innerText = currentProduct.category || 'Collection';
+      document.getElementById('p-category').innerText = `${currentProduct.category || 'Collection'} / ${currentProduct.subcategory || ''}`.trim();
+      document.getElementById('p-name').innerText = currentProduct.name || '';
+      document.getElementById('p-serial').innerText = currentProduct.serialNumber || 'N/A';
+
+      const priceEl = document.getElementById('p-price');
+      const saleBadge = document.getElementById('sale-badge');
+
+      if (Number(currentProduct.discountPrice) > 0) {
+        priceEl.innerHTML = `<span class="text-red-600 font-bold mr-3">Rs. ${Number(currentProduct.discountPrice).toLocaleString()}</span><span class="line-through text-gray-400 text-xl">Rs. ${Number(currentProduct.price).toLocaleString()}</span>`;
+        saleBadge.classList.remove('hidden');
+      } else {
+        priceEl.innerText = `Rs. ${Number(currentProduct.price || 0).toLocaleString()}`;
+        saleBadge.classList.add('hidden');
+      }
+
+      // Media
+      showMedia(0);
+      renderDots();
+      toggleArrows();
+
+      // --- STOCK WARNING LOGIC ---
+      const stock = currentProduct.stock !== undefined ? currentProduct.stock : 10;
+      const addBtn = document.getElementById('add-btn');
+      const buyBtn = document.getElementById('buy-btn');
+      const warningBox = document.getElementById('stock-warning-container');
+
+      warningBox.innerHTML = '';
+
+      if (stock <= 0) {
+        addBtn.disabled = true;
+        addBtn.innerText = "Sold Out";
+        addBtn.className = "col-span-2 bg-gray-200 text-gray-400 py-4 font-bold uppercase tracking-widest cursor-not-allowed text-xs";
+        buyBtn.classList.add('hidden');
+      } else {
+        // reset in case user navigates to another product id without reload
+        addBtn.disabled = false;
+        addBtn.innerText = "Add to Bag";
+        addBtn.className = "border border-[#4A3B32] text-[#4A3B32] py-4 font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition duration-300 text-xs md:text-sm";
+        buyBtn.classList.remove('hidden');
+
+        if (stock <= 5) {
+          warningBox.innerHTML = `<p class="text-red-600 text-[10px] font-bold uppercase tracking-widest mb-4 animate-pulse"><i class="fa-solid fa-fire-flame-curved mr-1"></i> Hurry! Only ${stock} units remaining</p>`;
+        }
+      }
+
+      // Clear old options (prevents duplicate buttons on re-render)
+      const colorSec = document.getElementById('color-section');
+      const colorOpt = document.getElementById('color-options');
+      const sizeSec = document.getElementById('size-section');
+      const sizeOpt = document.getElementById('size-options');
+
+      colorOpt.innerHTML = '';
+      sizeOpt.innerHTML = '';
+      selectedColor = null;
+      selectedSize = null;
+
+      // COLOR RENDER
+      if (currentProduct.colors && currentProduct.colors.length > 0) {
+        colorSec.classList.remove('hidden');
+        currentProduct.colors.forEach(c => {
+          const b = document.createElement('button');
+          b.className = "px-4 py-2 border border-[#D6C8B5] font-bold text-xs uppercase hover:border-[#4A3B32] transition bg-white rounded-sm focus:outline-none";
+          b.innerText = c;
+          b.onclick = () => {
+            selectedColor = c;
+            document.querySelectorAll('#color-options button').forEach(x => x.classList.remove('selected-option'));
+            b.classList.add('selected-option');
+            document.getElementById('color-error').classList.add('hidden');
+          };
+          colorOpt.appendChild(b);
+        });
+      } else {
+        colorSec.classList.add('hidden');
+        selectedColor = "Standard";
+      }
+
+      // SIZE RENDER
+      let sizes = [];
+      const sub = (currentProduct.subcategory || "").toLowerCase();
+      if (sub === "cloths" || sub === "clothing") sizes = ['S', 'M', 'L', 'XL'];
+      if (sub === "shoes") sizes = ['39', '40', '41', '42', '43', '44'];
+
+      if (sizes.length) {
+        sizeSec.classList.remove('hidden');
+        sizes.forEach(s => {
+          const b = document.createElement('button');
+          b.className = "w-12 h-12 border border-[#D6C8B5] font-bold text-sm hover:border-[#4A3B32] transition bg-white rounded-sm focus:outline-none";
+          b.innerText = s;
+          b.onclick = () => {
+            selectedSize = s;
+            document.querySelectorAll('#size-options button').forEach(x => x.classList.remove('selected-option'));
+            b.classList.add('selected-option');
+            document.getElementById('size-error').classList.add('hidden');
+          };
+          sizeOpt.appendChild(b);
+        });
+      } else {
+        sizeSec.classList.add('hidden');
+        selectedSize = "One Size";
+      }
+    }
+
+    window.updatePageQty = (change) => {
+      selectedQty += change;
+      if (selectedQty < 1) selectedQty = 1;
+      document.getElementById('page-qty').innerText = selectedQty;
+    };
+
+    window.addToCart = (direct) => {
+      if (!currentProduct) return;
+
+      if (!selectedSize) {
+        document.getElementById('size-error').classList.remove('hidden');
+        return;
+      }
+      if (!selectedColor && currentProduct.colors && currentProduct.colors.length) {
+        document.getElementById('color-error').classList.remove('hidden');
+        return;
+      }
+
+      const finalPrice = Number(currentProduct.discountPrice) > 0 ? Number(currentProduct.discountPrice) : Number(currentProduct.price || 0);
+      const uid = `${currentProduct.id}-${selectedSize}-${selectedColor}`;
+      const ex = cart.find(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
+
+      if (ex) ex.qty += selectedQty;
+      else cart.push({ ...currentProduct, price: finalPrice, selectedSize, selectedColor, qty: selectedQty });
+
+      localStorage.setItem('myCart', JSON.stringify(cart));
+      updateCartUI();
+
+      if (direct) {
+        toggleCart();
+      } else {
+        const btn = document.getElementById('add-btn');
+        const originalText = btn.innerText;
+        btn.innerText = "Added!";
+        setTimeout(() => btn.innerText = originalText, 1200);
+        showToast("Added to bag");
+      }
+    };
+
+    // 3. REVIEW ELIGIBILITY LOGIC
+    async function checkReviewEligibility() {
+      if (!currentUser) {
+        showReviewMessage("Please Sign In to write a review.", false);
+        return;
+      }
+
+      let hasBought = false;
+      try {
+        const ordersSnap = await getDocs(query(collection(db, "orders"), where("userId", "==", currentUser.uid)));
+        ordersSnap.forEach(x => {
+          const items = x.data().items || [];
+          if (items.some(i => i.id === productId)) hasBought = true;
+        });
+      } catch (e) { console.error(e); }
+
+      if (!hasBought) {
+        showReviewMessage("You must purchase this item to leave a review.", false);
+        return;
+      }
+
+      const identity = currentUser.email || currentUser.phoneNumber || "";
+      const myReviewSnap = await getDocs(
+        query(collection(db, "reviews"), where("productId", "==", productId), where("userEmail", "==", identity))
+      );
+
+      if (!myReviewSnap.empty) {
+        showReviewMessage("You have already reviewed this product.", false);
+      } else {
+        document.getElementById('review-form-container').classList.remove('hidden');
+        document.getElementById('review-message').classList.add('hidden');
+      }
+    }
+
+    function showReviewMessage(msg) {
+      const msgBox = document.getElementById('review-message');
+      const formBox = document.getElementById('review-form-container');
+      formBox.classList.add('hidden');
+      msgBox.classList.remove('hidden');
+      msgBox.querySelector('p').innerText = msg;
+    }
+
+    window.submitReview = async () => {
+      if (!currentUser) { showToast("Please sign in"); return; }
+      if (!currentRating) { showToast("Select a star rating"); return; }
+
+      const txt = document.getElementById('review-text').value.trim();
+      if (!txt) { showToast("Write something first"); return; }
+
+      const btn = document.getElementById('review-submit-btn');
+      btn.disabled = true;
+      const old = btn.innerText;
+      btn.innerText = "Submitting...";
+
+      try {
+        await addDoc(collection(db, "reviews"), {
+          productId,
+          userEmail: currentUser.email || currentUser.phoneNumber || "",
+          userName: currentUser.displayName || "Verified Customer",
+          rating: currentRating,
+          text: txt,
+          createdAt: serverTimestamp(),
+          date: new Date().toLocaleDateString()
         });
 
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            const logo = document.getElementById('nav-logo');
-            const links = document.getElementById('nav-links');
-            const icons = document.getElementById('nav-icons');
-            const cartBadge = document.getElementById('cart-count');
+        document.getElementById('review-text').value = '';
+        currentRating = 0;
+        setRating(0);
 
-            if(window.scrollY > 50) {
-                // SOLID BG ON SCROLL
-                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
-                nav.classList.remove('py-6', 'border-transparent');
-                logo.classList.replace('text-white', 'text-[#4A3B32]');
-                links.classList.replace('text-white/90', 'text-[#4A3B32]');
-                icons.classList.replace('text-white', 'text-[#4A3B32]');
-                cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
-                cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
-            } else {
-                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
-                nav.classList.add('py-6', 'border-transparent');
-                logo.classList.replace('text-[#4A3B32]', 'text-white');
-                links.classList.replace('text-[#4A3B32]', 'text-white/90');
-                icons.classList.replace('text-[#4A3B32]', 'text-white');
-                cartBadge.classList.replace('text-white', 'text-[#E6D8C5]');
-                cartBadge.classList.replace('border-[#4A3B32]', 'border-[#E6D8C5]');
-            }
+        await loadReviews();
+        await checkReviewEligibility();
+        showToast("Review submitted");
+      } catch (e) {
+        console.error(e);
+        showToast("Review failed");
+      } finally {
+        btn.disabled = false;
+        btn.innerText = old;
+      }
+    };
+
+    async function loadReviews() {
+      const list = document.getElementById('reviews-list');
+      const snap = await getDocs(query(collection(db, "reviews"), where("productId", "==", productId)));
+
+      list.innerHTML = '';
+      if (snap.empty) {
+        list.innerHTML = '<p class="text-center text-sm text-themeSub italic">No reviews yet.</p>';
+        return;
+      }
+
+      snap.forEach(d => {
+        const r = d.data();
+        let stars = '';
+        const rating = Number(r.rating || 0);
+        for (let i = 0; i < 5; i++) {
+          stars += i < rating
+            ? '<i class="fa-solid fa-star star-active text-[10px]"></i>'
+            : '<i class="fa-solid fa-star star-inactive text-[10px]"></i>';
+        }
+
+        list.innerHTML += `
+          <div class="bg-white p-6 border border-[#D6C8B5] rounded-sm review-card">
+            <div class="flex justify-between mb-2">
+              <div>
+                <span class="font-bold text-xs uppercase tracking-wider block">${(r.userName || 'User')}</span>
+                <span class="text-[9px] text-green-600 font-bold uppercase"><i class="fa-solid fa-check-circle"></i> Verified Purchase</span>
+              </div>
+              <span class="text-xs text-themeSub">${(r.date || '')}</span>
+            </div>
+            <div class="mb-3">${stars}</div>
+            <p class="text-sm italic text-gray-600">"${String(r.text || '').replace(/</g,'&lt;').replace(/>/g,'&gt;')}"</p>
+          </div>`;
+      });
+    }
+
+    window.setRating = (n) => {
+      currentRating = n;
+      document.querySelectorAll('#star-input i').forEach((s, i) => {
+        s.className = i < n ? "fa-solid fa-star star-active" : "fa-solid fa-star star-inactive";
+      });
+    };
+
+    // Cart
+    window.toggleCart = () => {
+      const sb = document.getElementById('cart-sidebar');
+      const ov = document.getElementById('overlay');
+      if (!sb || !ov) return;
+
+      if (sb.classList.contains('translate-x-full')) {
+        sb.classList.remove('translate-x-full');
+        ov.classList.remove('hidden');
+        updateCartUI();
+      } else {
+        sb.classList.add('translate-x-full');
+        ov.classList.add('hidden');
+      }
+    };
+
+    function updateCartCount() {
+      const el = document.getElementById('cart-count');
+      if (!el) return;
+      el.innerText = cart.reduce((a, b) => a + (b.qty || 0), 0);
+    }
+
+    function updateCartUI() {
+      const con = document.getElementById('cart-items');
+      const totalEl = document.getElementById('cart-total');
+      if (!con || !totalEl) return;
+
+      con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>';
+
+      let t = 0;
+      cart.forEach(i => {
+        const finalPrice = Number(i.discountPrice) > 0 ? Number(i.discountPrice) : Number(i.price || 0);
+        t += finalPrice * (i.qty || 0);
+
+        con.innerHTML += `
+          <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
+            <div class="flex gap-3">
+              <img src="${i.image}" class="w-16 h-20 object-cover rounded-sm" loading="lazy" decoding="async" alt="${i.name}">
+              <div>
+                <p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p>
+                <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
+                <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
+                  <button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1">-</button>
+                  <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+                  <button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1">+</button>
+                </div>
+              </div>
+            </div>
+            <div class="text-right flex flex-col justify-between">
+              <p class="font-bold text-sm">Rs. ${(finalPrice * i.qty).toLocaleString()}</p>
+              <button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:underline">Remove</button>
+            </div>
+          </div>`;
+      });
+
+      totalEl.innerText = 'Rs. ' + t.toLocaleString();
+      updateCartCount();
+    }
+
+    window.changeCartQty = (uid, c) => {
+      const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid);
+      if (i) {
+        i.qty = (i.qty || 1) + c;
+        if (i.qty < 1) i.qty = 1;
+        localStorage.setItem('myCart', JSON.stringify(cart));
+        updateCartUI();
+      }
+    };
+
+    window.removeItem = (uid) => {
+      cart = cart.filter(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` !== uid);
+      localStorage.setItem('myCart', JSON.stringify(cart));
+      updateCartUI();
+      showToast("Removed from cart");
+    };
+
+    // Media Gallery
+    window.showMedia = (i) => {
+      currentMediaIndex = i;
+      const d = document.getElementById('media-display');
+      const itm = mediaList[i];
+      d.style.opacity = '0';
+
+      setTimeout(() => {
+        if (itm.type === 'video') {
+          d.innerHTML = `<video src="${itm.url}" controls autoplay muted playsinline class="w-full h-full object-cover"></video>`;
+        } else {
+          d.innerHTML = `<img src="${itm.url}" class="w-full h-full object-cover" loading="lazy" decoding="async" alt="Product media">`;
+        }
+        d.style.opacity = '1';
+        updateDots();
+      }, 200);
+    };
+
+    window.nextMedia = () => {
+      let n = currentMediaIndex + 1;
+      if (n >= mediaList.length) n = 0;
+      showMedia(n);
+    };
+
+    window.prevMedia = () => {
+      let p = currentMediaIndex - 1;
+      if (p < 0) p = mediaList.length - 1;
+      showMedia(p);
+    };
+
+    function toggleArrows() {
+      const p = document.getElementById('prevBtn');
+      const n = document.getElementById('nextBtn');
+      if (mediaList.length > 1) {
+        p.classList.remove('hidden');
+        n.classList.remove('hidden');
+      } else {
+        p.classList.add('hidden');
+        n.classList.add('hidden');
+      }
+    }
+
+    function renderDots() {
+      const d = document.getElementById('media-dots');
+      d.innerHTML = '';
+      if (mediaList.length > 1) {
+        mediaList.forEach((_, i) => {
+          const dot = document.createElement('div');
+          dot.className = `w-2 h-2 rounded-full cursor-pointer transition-all ${i === 0 ? 'bg-[#4A3B32] w-4' : 'bg-gray-400'}`;
+          dot.onclick = () => showMedia(i);
+          dot.id = `dot-${i}`;
+          d.appendChild(dot);
         });
+      }
+    }
 
-        // 1. AUTH STATE & SYNC
-        onAuthStateChanged(auth, async (user) => {
-            currentUser = user;
-            setupNavbar(user);
-            
-            // Sync local cart
-            const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
-            cart.length = 0;
-            cart.push(...latestCart);
-            updateCartCount();
+    function updateDots() {
+      mediaList.forEach((_, i) => {
+        const dot = document.getElementById(`dot-${i}`);
+        if (dot) dot.className = `w-2 h-2 rounded-full cursor-pointer transition-all ${i === currentMediaIndex ? 'bg-[#4A3B32] w-4' : 'bg-gray-400'}`;
+      });
+    }
 
-            if(productId) {
-                if(user) await checkWishlistDB();
-                if(!currentProduct) await init();
-                if(user && currentProduct) checkReviewEligibility();
-            }
-        });
+    // Initial cart UI
+    updateCartUI();
+  </script>
 
-        function setupNavbar(u) {
-            const container = document.getElementById('auth-container');
-            const mobileLinks = document.getElementById('mobile-auth-links');
-
-            if (u) {
-                const name = u.displayName ? u.displayName.split(' ')[0] : 'Member';
-                const isAdmin = u.email === ADMIN_EMAIL;
-                
-                // Desktop
-                container.innerHTML = `
-                    <button onclick="toggleUserMenu()" class="text-xs font-bold uppercase hover:opacity-80 transition flex items-center gap-2 focus:outline-none">
-                        Hi, ${name} <i class="fa-solid fa-chevron-down text-[9px]"></i>
-                    </button>
-                    <div id="user-dropdown" class="absolute right-0 top-full mt-4 w-48 bg-white shadow-xl border border-[#D6C8B5] rounded-sm hidden flex-col z-[60] animate-fade-in-down text-themeText">
-                        ${isAdmin ? `<a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-gray-900 text-white hover:bg-black text-left border-b border-gray-100 transition">Dashboard</a>` : ''}
-                        <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Profile</a>
-                        <a href="wishlist.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition text-[#D97706]"><i class="fa-solid fa-heart mr-1"></i> My Wishlist</a>
-                        <a href="orders.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-gray-50 text-left border-b border-gray-100 transition">My Orders</a>
-                        <button onclick="handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-red-50 text-left text-red-500 transition">Sign Out</button>
-                    </div>`;
-                
-                // Mobile Menu (Clean)
-                mobileLinks.innerHTML = `
-                    <div class="flex flex-col gap-4 text-center">
-                        <div class="flex items-center justify-center gap-3 mb-2">
-                             <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
-                             <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
-                        </div>
-                        ${isAdmin ? `<a href="admin.html" class="text-lg font-bold text-black border-b border-black pb-2">Admin Dashboard</a>` : ''}
-                        <button onclick="handleLogout()" class="text-lg text-red-500 uppercase font-bold tracking-widest pt-4 border-t border-themeText/10">Sign Out</button>
-                    </div>`;
-            } else {
-                container.innerHTML = `<a href="login.html" class="text-xs font-bold uppercase hover:opacity-75 transition flex items-center gap-2"><span id="nav-auth-text" class="hidden md:inline">Sign In</span> <i class="fa-regular fa-user text-lg"></i></a>`;
-                mobileLinks.innerHTML = `<a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center">Sign In</a>`;
-            }
-        }
-
-        window.toggleUserMenu = () => document.getElementById('user-dropdown').classList.toggle('hidden');
-        window.toggleMobileMenu = () => { const menu = document.getElementById('mobile-menu'); if(menu.classList.contains('translate-x-full')) menu.classList.remove('translate-x-full'); else menu.classList.add('translate-x-full'); }
-        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
-
-        window.goBack = () => { if (window.history.length > 1 && document.referrer.indexOf(window.location.host) !== -1) window.history.back(); else window.location.href = 'index.html'; }
-
-        // 2. FETCH DATA & RENDER
-        async function init() {
-            if(!productId) return window.location.href='index.html';
-            try {
-                const s = await getDoc(doc(db, "products", productId));
-                if(s.exists()) { 
-                    currentProduct = {id:s.id, ...s.data()};
-                    mediaList = (currentProduct.media && currentProduct.media.length > 0) ? currentProduct.media : [{ type: 'image', url: currentProduct.image }];
-                    render(); 
-                    loadReviews();
-                } else { 
-                    document.getElementById('loading').innerHTML = "<p class='text-red-500 font-bold'>Product Not Found</p>";
-                }
-            } catch(e) { console.error(e); }
-        }
-
-        async function checkWishlistDB() {
-            if(!currentUser) return;
-            const q = query(collection(db, "wishlist"), where("userId", "==", currentUser.uid), where("productId", "==", productId));
-            const snap = await getDocs(q);
-            const btn = document.getElementById('wishlist-btn');
-            if(!snap.empty) {
-                wishlistDocId = snap.docs[0].id;
-                btn.className = 'text-2xl text-red-500 hover:scale-110 transition p-2';
-            } else {
-                wishlistDocId = null;
-                btn.className = 'text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2';
-            }
-        }
-
-        window.toggleWishlistDB = async () => {
-            if(!currentUser) return window.location.href="login.html";
-            const btn = document.getElementById('wishlist-btn');
-            
-            if(wishlistDocId) {
-                // INSTANT UI CHANGE TO GREY
-                btn.className = 'text-2xl text-gray-300 hover:text-red-500 hover:scale-110 transition p-2';
-                const oldId = wishlistDocId;
-                wishlistDocId = null;
-                await deleteDoc(doc(db, "wishlist", oldId));
-            } else {
-                // INSTANT UI CHANGE TO RED
-                btn.className = 'text-2xl text-red-500 hover:scale-110 transition p-2';
-                const ref = await addDoc(collection(db, "wishlist"), {
-                    userId: currentUser.uid,
-                    productId: currentProduct.id,
-                    name: currentProduct.name,
-                    price: currentProduct.discountPrice || currentProduct.price,
-                    image: currentProduct.image,
-                    category: currentProduct.category
-                });
-                wishlistDocId = ref.id;
-            }
-        }
-
-        function render() {
-            document.getElementById('loading').classList.add('hidden');
-            document.getElementById('crumb-cat').innerText = currentProduct.category;
-            document.getElementById('p-category').innerText = `${currentProduct.category} / ${currentProduct.subcategory}`;
-            document.getElementById('p-name').innerText = currentProduct.name;
-            document.getElementById('p-serial').innerText = currentProduct.serialNumber || 'N/A';
-            
-            if (currentProduct.discountPrice > 0) {
-                document.getElementById('p-price').innerHTML = `<span class="text-red-600 font-bold mr-3">Rs. ${currentProduct.discountPrice.toLocaleString()}</span><span class="line-through text-gray-400 text-xl">Rs. ${currentProduct.price.toLocaleString()}</span>`;
-                document.getElementById('sale-badge').classList.remove('hidden');
-            } else {
-                document.getElementById('p-price').innerText = `Rs. ${currentProduct.price.toLocaleString()}`;
-            }
-            
-            showMedia(0); renderDots(); toggleArrows();
-
-            // --- STOCK WARNING LOGIC ---
-            const stock = currentProduct.stock !== undefined ? currentProduct.stock : 10;
-            const addBtn = document.getElementById('add-btn');
-            const buyBtn = document.getElementById('buy-btn');
-            const warningBox = document.getElementById('stock-warning-container');
-
-            if (stock <= 0) {
-                addBtn.disabled = true;
-                addBtn.innerText = "Sold Out";
-                addBtn.className = "col-span-2 bg-gray-200 text-gray-400 py-4 font-bold uppercase tracking-widest cursor-not-allowed text-xs";
-                buyBtn.classList.add('hidden');
-            } else if (stock <= 5) {
-                warningBox.innerHTML = `<p class="text-red-600 text-[10px] font-bold uppercase tracking-widest mb-4 animate-pulse"><i class="fa-solid fa-fire-flame-curved mr-1"></i> Hurry! Only ${stock} units remaining</p>`;
-            }
-
-            // COLOR RENDER
-            if(currentProduct.colors && currentProduct.colors.length > 0) {
-                const colorSec = document.getElementById('color-section');
-                const colorOpt = document.getElementById('color-options');
-                colorSec.classList.remove('hidden');
-                currentProduct.colors.forEach(c => {
-                    const b = document.createElement('button');
-                    b.className = "px-4 py-2 border border-[#D6C8B5] font-bold text-xs uppercase hover:border-[#4A3B32] transition bg-white rounded-sm focus:outline-none";
-                    b.innerText = c;
-                    b.onclick = () => { selectedColor = c; document.querySelectorAll('#color-options button').forEach(x => x.classList.remove('selected-option')); b.classList.add('selected-option'); document.getElementById('color-error').classList.add('hidden'); };
-                    colorOpt.appendChild(b);
-                });
-            } else { selectedColor = "Standard"; }
-
-            // SIZE RENDER
-            const sec = document.getElementById('size-section'), opt = document.getElementById('size-options');
-            let sz = [];
-            if(currentProduct.subcategory === "Cloths" || currentProduct.subcategory === "Clothing") sz = ['S','M','L','XL'];
-            if(currentProduct.subcategory === "Shoes") sz = ['39','40','41','42','43','44'];
-            
-            if(sz.length) {
-                sec.classList.remove('hidden');
-                sz.forEach(s => {
-                    const b = document.createElement('button');
-                    b.className = "w-12 h-12 border border-[#D6C8B5] font-bold text-sm hover:border-[#4A3B32] transition bg-white rounded-sm focus:outline-none";
-                    b.innerText = s;
-                    b.onclick = () => { selectedSize = s; document.querySelectorAll('#size-options button').forEach(x => x.classList.remove('selected-option')); b.classList.add('selected-option'); document.getElementById('size-error').classList.add('hidden'); };
-                    opt.appendChild(b);
-                });
-            } else selectedSize = "One Size";
-        }
-
-        window.updatePageQty = (change) => { selectedQty += change; if(selectedQty < 1) selectedQty = 1; document.getElementById('page-qty').innerText = selectedQty; }
-
-        window.addToCart = (direct) => {
-            if(!selectedSize) { document.getElementById('size-error').classList.remove('hidden'); return; }
-            if(!selectedColor && currentProduct.colors) { document.getElementById('color-error').classList.remove('hidden'); return; }
-            
-            const finalPrice = currentProduct.discountPrice > 0 ? currentProduct.discountPrice : currentProduct.price;
-            const uid = `${currentProduct.id}-${selectedSize}-${selectedColor}`;
-            const ex = cart.find(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
-            
-            if(ex) ex.qty += selectedQty; 
-            else cart.push({...currentProduct, price: finalPrice, selectedSize, selectedColor, qty: selectedQty});
-            
-            localStorage.setItem('myCart', JSON.stringify(cart));
-            updateCartCount();
-            
-            if(direct) { updateCartUI(); toggleCart(); } else {
-                const btn = document.getElementById('add-btn');
-                const originalText = btn.innerText;
-                btn.innerText = "Added!";
-                setTimeout(()=> btn.innerText = originalText, 1500);
-            }
-        }
-
-        // 3. REVIEW ELIGIBILITY LOGIC
-        async function checkReviewEligibility() {
-            if(!currentUser) {
-                showReviewMessage("Please Sign In to write a review.", false);
-                return;
-            }
-            let hasBought = false;
-            try {
-                const ordersSnap = await getDocs(query(collection(db, "orders"), where("userId", "==", currentUser.uid)));
-                ordersSnap.forEach(doc => {
-                    const items = doc.data().items || [];
-                    if (items.some(i => i.id === productId)) hasBought = true;
-                });
-            } catch(e) { console.error(e); }
-
-            if (!hasBought) {
-                showReviewMessage("You must purchase this item to leave a review.", false);
-                return;
-            }
-
-            const myReviewSnap = await getDocs(query(collection(db, "reviews"), where("productId", "==", productId), where("userEmail", "==", currentUser.email || currentUser.phoneNumber)));
-            
-            if (!myReviewSnap.empty) {
-                showReviewMessage("You have already reviewed this product.", false);
-            } else {
-                document.getElementById('review-form-container').classList.remove('hidden');
-                document.getElementById('review-message').classList.add('hidden');
-            }
-        }
-
-        function showReviewMessage(msg, isForm) {
-            const msgBox = document.getElementById('review-message');
-            const formBox = document.getElementById('review-form-container');
-            if(!isForm) {
-                formBox.classList.add('hidden');
-                msgBox.classList.remove('hidden');
-                msgBox.querySelector('p').innerText = msg;
-            }
-        }
-
-        window.submitReview = async () => {
-            if(!currentRating) return alert("Please select a star rating.");
-            const txt = document.getElementById('review-text').value;
-            if(!txt) return;
-            const btn = event.target;
-            btn.innerText = "Submitting...";
-            
-            await addDoc(collection(db,"reviews"), { 
-                productId: productId, 
-                userEmail: currentUser.email || currentUser.phoneNumber, 
-                userName: currentUser.displayName || "Verified Customer",
-                rating: currentRating, 
-                text: txt, 
-                date: new Date().toLocaleDateString() 
-            });
-            
-            btn.innerText = "Submit Review";
-            document.getElementById('review-text').value = '';
-            loadReviews();
-            checkReviewEligibility();
-        }
-
-        async function loadReviews() {
-            const list = document.getElementById('reviews-list');
-            const snap = await getDocs(query(collection(db,"reviews"), where("productId","==",productId)));
-            list.innerHTML = ''; 
-            if(snap.empty) { list.innerHTML = '<p class="text-center text-sm text-themeSub italic">No reviews yet.</p>'; return; }
-            snap.forEach(d => { 
-                const r = d.data(); 
-                let s = ''; 
-                for(let i=0;i<5;i++) s += i<r.rating ? '<i class="fa-solid fa-star star-active text-[10px]"></i>' : '<i class="fa-solid fa-star star-inactive text-[10px]"></i>'; 
-                list.innerHTML += `
-                <div class="bg-white p-6 border border-[#D6C8B5] rounded-sm review-card">
-                    <div class="flex justify-between mb-2">
-                        <div>
-                            <span class="font-bold text-xs uppercase tracking-wider block">${r.userName || 'User'}</span>
-                            <span class="text-[9px] text-green-600 font-bold uppercase"><i class="fa-solid fa-check-circle"></i> Verified Purchase</span>
-                        </div>
-                        <span class="text-xs text-themeSub">${r.date}</span>
-                    </div>
-                    <div class="mb-3">${s}</div>
-                    <p class="text-sm italic text-gray-600">"${r.text}"</p>
-                </div>`; 
-            });
-        }
-        window.setRating = (n) => { currentRating = n; document.querySelectorAll('#star-input i').forEach((s,i) => s.className = i < n ? "fa-solid fa-star star-active" : "fa-solid fa-star star-inactive"); }
-
-        // Cart & UI Helpers
-        window.toggleCart = () => { const sb = document.getElementById('cart-sidebar'); const ov = document.getElementById('overlay'); if (sb.classList.contains('translate-x-full')) { sb.classList.remove('translate-x-full'); ov.classList.remove('hidden'); updateCartUI(); } else { sb.classList.add('translate-x-full'); ov.classList.add('hidden'); } }
-        function updateCartCount() { document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0); }
-        function updateCartUI() { const con = document.getElementById('cart-items'); con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>'; let t = 0; cart.forEach(i => { const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price; t += finalPrice * i.qty; con.innerHTML += `<div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2"><div class="flex gap-3"><img src="${i.image}" class="w-16 h-20 object-cover rounded-sm"><div><p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p><p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p><div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm"><button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1">-</button><span class="text-xs font-bold w-4 text-center">${i.qty}</span><button onclick="changeCartQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1">+</button></div></div></div><div class="text-right flex flex-col justify-between"><p class="font-bold text-sm">Rs. ${(finalPrice*i.qty).toLocaleString()}</p><button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:underline">Remove</button></div></div>`; }); document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString(); updateCartCount(); }
-        window.changeCartQty = (uid, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        window.removeItem = (uid) => { cart = cart.filter(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` !== uid); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); }
-        
-        // Media Gallery
-        window.showMedia = (i) => { currentMediaIndex = i; const d = document.getElementById('media-display'); const itm = mediaList[i]; d.style.opacity='0'; setTimeout(()=>{ d.innerHTML = itm.type==='video'?`<video src="${itm.url}" controls autoplay muted class="w-full h-full object-cover"></video>`:`<img src="${itm.url}" class="w-full h-full object-cover">`; d.style.opacity='1'; updateDots();},200); }
-        window.nextMedia = () => { let n = currentMediaIndex + 1; if(n >= mediaList.length) n = 0; showMedia(n); }
-        window.prevMedia = () => { let p = currentMediaIndex - 1; if(p < 0) p = mediaList.length - 1; showMedia(p); }
-        function toggleArrows() { const p = document.getElementById('prevBtn'), n = document.getElementById('nextBtn'); if(mediaList.length>1){p.classList.remove('hidden'); n.classList.remove('hidden');}else{p.classList.add('hidden');n.classList.add('hidden')} }
-        function renderDots() { const d = document.getElementById('media-dots'); d.innerHTML=''; if(mediaList.length>1) mediaList.forEach((_,i)=>{ const dot=document.createElement('div'); dot.className=`w-2 h-2 rounded-full cursor-pointer transition-all ${i===0?'bg-[#4A3B32] w-4':'bg-gray-400'}`; dot.onclick=()=>showMedia(i); dot.id=`dot-${i}`; d.appendChild(dot); }); }
-        function updateDots() { mediaList.forEach((_,i)=>{ const dot = document.getElementById(`dot-${i}`); if(dot) dot.className=`w-2 h-2 rounded-full cursor-pointer transition-all ${i===currentMediaIndex?'bg-[#4A3B32] w-4':'bg-gray-400'}`; }); }
-    </script>
-    
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 800, once: true });</script>
+  <!-- AOS (defer) -->
+  <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script>
+    window.addEventListener('load', () => {
+      if (window.AOS) window.AOS.init({ duration: 800, once: true });
+    }, { passive: true });
+  </script>
 </body>
 </html>

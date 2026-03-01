@@ -8,39 +8,39 @@
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+
     <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
-    
+
     <style>
         :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
-        body { 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            background-color: var(--theme-bg); 
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--theme-bg);
             background-image: radial-gradient(circle at center, transparent 0%, rgba(74, 59, 50, 0.03) 100%);
             overflow-x: hidden;
         }
         h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
-        
+
         /* Custom Scrollbar */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #E6D8C5; }
         ::-webkit-scrollbar-thumb { background: #4A3B32; }
 
         /* Professional Inputs */
-        .form-input { 
-            background: rgba(255, 255, 255, 0.5); 
-            border: 1px solid rgba(74, 59, 50, 0.1); 
-            transition: all 0.3s ease; 
+        .form-input {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid rgba(74, 59, 50, 0.1);
+            transition: all 0.3s ease;
             width: 100%;
             padding: 12px;
             border-radius: 2px;
             font-size: 14px;
         }
-        .form-input:focus { 
-            background: #fff; 
-            border-color: var(--theme-text); 
-            box-shadow: 0 0 0 4px rgba(74, 59, 50, 0.05); 
-            outline: none; 
+        .form-input:focus {
+            background: #fff;
+            border-color: var(--theme-text);
+            box-shadow: 0 0 0 4px rgba(74, 59, 50, 0.05);
+            outline: none;
         }
         label { font-size: 0.65rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #9CA3AF; margin-bottom: 4px; display: block; }
 
@@ -65,6 +65,10 @@
         .dropdown-list li { padding: 10px 16px; cursor: pointer; font-size: 14px; color: #4B5563; transition: all 0.2s; }
         .dropdown-list li:hover { background-color: #F3F4F6; color: #4A3B32; font-weight: 600; padding-left: 20px; }
 
+        /* Fade Animation for Chat */
+        .fade-in { animation: fadeIn 0.5s ease-in forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
         /* Pulse for Dot */
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         .dot-pulse { animation: pulse-ring 2s infinite; }
@@ -84,7 +88,7 @@
     </div>
 
     <div id="main-content" class="hidden flex-grow container mx-auto px-6 py-24 pt-32">
-        
+
         <div class="max-w-6xl mx-auto mb-6">
             <button onclick="smartBack()" class="flex items-center gap-2 text-themeSub hover:text-themeText transition text-sm font-bold uppercase tracking-widest group">
                 <i class="fa-solid fa-arrow-left group-hover:-translate-x-1 transition-transform"></i> Back
@@ -92,37 +96,50 @@
         </div>
 
         <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-12 gap-8">
-            
+
             <div data-aos="fade-right" class="lg:col-span-4 space-y-6">
-                
+
                 <div class="bg-white p-8 rounded-sm shadow-xl border border-[#D6C8B5]/50 text-center relative overflow-hidden">
                     <div class="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-themeText/10 to-transparent"></div>
                     <div class="relative inline-block mb-4">
-                        <img id="user-avatar" src="" class="w-24 h-24 rounded-full object-cover avatar-glow bg-gray-100 hidden">
+                        <img id="user-avatar" src="" class="w-24 h-24 rounded-full object-cover avatar-glow bg-gray-100 hidden" alt="User Avatar">
                         <div id="default-avatar" class="w-24 h-24 rounded-full bg-themeBg flex items-center justify-center text-4xl text-themeSub avatar-glow"><i class="fa-solid fa-user"></i></div>
                         <div id="badge-google" class="hidden absolute bottom-0 right-0 bg-white p-1.5 rounded-full shadow-md text-blue-500 text-sm"><i class="fa-brands fa-google"></i></div>
                     </div>
                     <h2 id="display-name" class="font-serif font-bold text-xl text-themeText">Loading...</h2>
                     <p class="text-[10px] uppercase tracking-widest text-themeSub mt-1 font-bold">Valued Member</p>
-                    <div class="mt-6 pt-6 border-t border-gray-100"><p class="text-[10px] text-gray-400 font-mono mb-1">Member ID</p><p id="uid-display" class="text-xs font-bold bg-gray-50 py-1 px-3 rounded inline-block text-gray-500">...</p></div>
+                    <div class="mt-6 pt-6 border-t border-gray-100">
+                        <p class="text-[10px] text-gray-400 font-mono mb-1">Member ID</p>
+                        <p id="uid-display" class="text-xs font-bold bg-gray-50 py-1 px-3 rounded inline-block text-gray-500">...</p>
+                    </div>
                 </div>
 
                 <div class="bg-white rounded-sm shadow-lg border border-[#D6C8B5]/50 overflow-hidden">
                     <a href="orders.html" class="flex items-center justify-between p-5 border-b border-gray-50 hover:bg-gray-50 transition group cursor-pointer">
-                        <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs"><i class="fa-solid fa-box-open"></i></div><span class="text-xs font-bold uppercase tracking-wide text-gray-600 group-hover:text-themeText">My Orders</span></div><i class="fa-solid fa-chevron-right text-xs text-gray-300 group-hover:text-themeText transition"></i>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center text-xs"><i class="fa-solid fa-box-open"></i></div>
+                            <span class="text-xs font-bold uppercase tracking-wide text-gray-600 group-hover:text-themeText">My Orders</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-xs text-gray-300 group-hover:text-themeText transition"></i>
                     </a>
                     <button onclick="handleLogout()" class="w-full flex items-center justify-between p-5 hover:bg-red-50 transition group text-left">
-                        <div class="flex items-center gap-3"><div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xs"><i class="fa-solid fa-power-off"></i></div><span class="text-xs font-bold uppercase tracking-wide text-red-500">Sign Out</span></div>
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-red-50 text-red-500 flex items-center justify-center text-xs"><i class="fa-solid fa-power-off"></i></div>
+                            <span class="text-xs font-bold uppercase tracking-wide text-red-500">Sign Out</span>
+                        </div>
                     </button>
                 </div>
             </div>
 
             <div data-aos="fade-left" class="lg:col-span-8 space-y-8">
-                
+
                 <div class="bg-white p-8 rounded-sm shadow-xl border border-[#D6C8B5]/50 relative">
                     <div class="absolute top-0 left-0 w-1 h-full bg-themeBtn"></div>
                     <div class="flex justify-between items-end mb-8">
-                        <div><h3 class="text-2xl font-serif font-bold text-themeText">Profile Settings</h3><p class="text-xs text-gray-400 mt-1">Update your personal information and delivery address.</p></div>
+                        <div>
+                            <h3 class="text-2xl font-serif font-bold text-themeText">Profile Settings</h3>
+                            <p class="text-xs text-gray-400 mt-1">Update your personal information and delivery address.</p>
+                        </div>
                         <button form="profileForm" type="submit" id="saveBtn" class="bg-themeBtn text-[#E6D8C5] px-6 py-2 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg text-[10px] rounded-sm">Save Changes</button>
                     </div>
 
@@ -131,25 +148,28 @@
                             <div><label>First Name</label><input type="text" id="fname" class="form-input" placeholder="John"></div>
                             <div><label>Last Name</label><input type="text" id="lname" class="form-input" placeholder="Doe"></div>
                             <div><label>Email Address</label><input type="text" id="auth-email" class="form-input bg-gray-100 cursor-not-allowed" disabled value="..."></div>
-                            
+
                             <div>
                                 <label>Phone Number</label>
                                 <div class="relative">
                                     <span class="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 font-bold text-sm border-r border-gray-300 pr-2 select-none">+92</span>
-                                    <input type="tel" id="phone" class="form-input pl-14" placeholder="300 1234567">
+                                    <input type="tel" inputmode="numeric" id="phone" class="form-input pl-14" placeholder="300 1234567">
                                 </div>
+                                <p class="text-[10px] text-gray-400 mt-2 font-bold uppercase tracking-widest">Format: 3XX XXXXXXX</p>
                             </div>
                         </div>
 
                         <div class="bg-themeBg/20 p-6 rounded-sm border border-themeBtn/10 mt-4">
-                            <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-themeBtn flex items-center gap-2"><i class="fa-solid fa-map-location-dot"></i> Default Shipping Address</h4>
-                            
+                            <h4 class="text-xs font-bold uppercase tracking-widest mb-4 text-themeBtn flex items-center gap-2">
+                                <i class="fa-solid fa-map-location-dot"></i> Default Shipping Address
+                            </h4>
+
                             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div class="md:col-span-2"><label>House / Flat No.</label><input type="text" id="addr-house" class="form-input" placeholder="e.g. Flat 402, Building A"></div>
                                 <div class="md:col-span-2"><label>Street / Road</label><input type="text" id="addr-street" class="form-input" placeholder="e.g. Main Boulevard"></div>
-                                
+
                                 <div><label>Area / Sector</label><input type="text" id="addr-area" class="form-input" placeholder="e.g. DHA Phase 6"></div>
-                                
+
                                 <div class="relative group">
                                     <label>City</label>
                                     <div class="relative">
@@ -168,7 +188,7 @@
                                     </div>
                                 </div>
 
-                                <div><label>Zip Code</label><input type="tel" id="addr-zip" class="form-input" placeholder="e.g. 54000"></div>
+                                <div><label>Zip Code</label><input type="tel" inputmode="numeric" id="addr-zip" class="form-input" placeholder="e.g. 54000"></div>
 
                                 <div>
                                     <label>Country</label>
@@ -185,11 +205,16 @@
 
                 <div class="bg-white p-8 rounded-sm shadow-xl border border-[#D6C8B5]/50 relative">
                     <div class="absolute top-0 left-0 w-1 h-full bg-themeBtn"></div>
-                    <div class="mb-6"><h3 class="text-xl font-serif font-bold text-themeText">Payment Methods</h3><p class="text-xs text-gray-400 mt-1">Manage your saved cards for faster checkout.</p></div>
+                    <div class="mb-6">
+                        <h3 class="text-xl font-serif font-bold text-themeText">Payment Methods</h3>
+                        <p class="text-xs text-gray-400 mt-1">Manage your saved cards for faster checkout.</p>
+                    </div>
 
                     <div id="saved-card-view" class="hidden">
                         <div class="max-w-sm bg-gradient-to-r from-[#2C2C2C] to-[#4A4A4A] p-6 rounded-md shadow-lg text-white relative overflow-hidden mb-4">
-                            <div class="absolute top-0 right-0 p-4 opacity-20"><i class="fa-brands fa-cc-visa text-6xl"></i></div>
+                            <div class="absolute top-0 right-0 p-4 opacity-20">
+                                <i id="card-brand-icon" class="fa-brands fa-cc-visa text-6xl"></i>
+                            </div>
                             <div class="relative z-10">
                                 <div class="flex justify-between items-start mb-6">
                                     <i class="fa-solid fa-chip text-3xl opacity-80"></i>
@@ -210,21 +235,34 @@
                             <i class="fa-regular fa-credit-card text-2xl text-gray-300 mb-2"></i>
                             <p class="text-xs text-gray-400 font-bold uppercase">No saved card found</p>
                         </div>
-                        
+
                         <button onclick="document.getElementById('new-card-form').classList.toggle('hidden')" class="bg-gray-100 text-themeText px-4 py-2 rounded-sm text-[10px] font-bold uppercase tracking-widest hover:bg-gray-200 transition mb-4">
                             <i class="fa-solid fa-plus mr-1"></i> Add New Card
                         </button>
 
                         <div id="new-card-form" class="hidden bg-gray-50 p-6 rounded-sm border border-gray-200">
                             <form id="cardForm" class="space-y-4">
-                                <div><label>Card Network</label><select id="card-type" class="form-input"><option value="Visa">Visa</option><option value="Mastercard">Mastercard</option></select></div>
-                                <div><label>Card Number</label><div class="relative"><input type="tel" inputmode="numeric" id="card-number" class="form-input pl-10 font-mono font-bold" placeholder="0000 0000 0000 0000" maxlength="19"><i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i></div></div>
+                                <div>
+                                    <label>Card Network</label>
+                                    <select id="card-type" class="form-input">
+                                        <option value="Visa">Visa</option>
+                                        <option value="Mastercard">Mastercard</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label>Card Number</label>
+                                    <div class="relative">
+                                        <input type="tel" inputmode="numeric" id="card-number" class="form-input pl-10 font-mono font-bold" placeholder="0000 0000 0000 0000" maxlength="19">
+                                        <i id="card-icon" class="fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                                    </div>
+                                </div>
                                 <div class="grid grid-cols-2 gap-4">
-                                    <div><label>Expiry Date</label><input type="tel" id="card-expiry" class="form-input text-center" placeholder="MM/YY" maxlength="5"></div>
+                                    <div><label>Expiry Date</label><input type="tel" inputmode="numeric" id="card-expiry" class="form-input text-center" placeholder="MM/YY" maxlength="5"></div>
                                     <div><label>CVC (Not Saved)</label><input type="tel" disabled class="form-input text-center bg-gray-200 cursor-not-allowed" placeholder="***"></div>
                                 </div>
                                 <div><label>Cardholder Name</label><input type="text" id="card-name" class="form-input uppercase" placeholder="AS ON CARD"></div>
                                 <button type="submit" class="w-full bg-themeBtn text-white py-3 font-bold uppercase tracking-widest text-xs rounded-sm hover:bg-[#3A2B22]">Save Card</button>
+                                <p class="text-[10px] text-gray-400 font-bold uppercase tracking-widest text-center">We only store the last 4 digits (masked).</p>
                             </form>
                         </div>
                     </div>
@@ -271,39 +309,36 @@
         // --- DATA ---
         const states = ["Azad Kashmir", "Balochistan", "Khyber Pakhtunkhwa", "Punjab", "Sindh"];
         const cities = [
-            "Abbottabad", "Abdul Hakim", "Ahmedpur East", "Aliabad", "Alipur", "Arifwala", "Attock", 
-            "Badin", "Bagh", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Baska", "Batkhela", "Battagram", "Bhakkar", "Bhalwal", "Bhimber", "Burewala", 
-            "Chakwal", "Chaman", "Charsadda", "Chichawatni", "Chiniot", "Chishtian", "Chitral", "Chunian", 
-            "Dadu", "Daska", "Dera Allah Yar", "Dera Ghazi Khan", "Dera Ismail Khan", "Dera Murad Jamali", "Dina", "Diplo", 
-            "Faisalabad", "Fateh Jang", 
-            "Ghotki", "Gilgit", "Gojra", "Gujar Khan", "Gujranwala", "Gujrat", "Gwadar", 
-            "Hafizabad", "Hangu", "Haripur", "Haroonabad", "Hasan Abdal", "Hasilpur", "Haveli", "Haveli Lakha", "Hub", "Hunza", "Hyderabad", 
-            "Islamabad", 
-            "Jacobabad", "Jalalpur Jattan", "Jampur", "Jaranwala", "Jauharabad", "Jhang", "Jhelum", "Jungshahi", 
-            "Kabirwala", "Kahror Pakka", "Kamalia", "Kambar", "Kamoke", "Kandhkot", "Karachi", "Karak", "Kasur", "Khairpur", "Khanewal", "Khanpur", "Kharian", "Khushab", "Khuzdar", "Kohat", "Kot Addu", "Kotli", "Kotri", 
-            "Lahore", "Larkana", "Layyah", "Liaquat Pur", "Lodhran", "Loralai", 
-            "Mailsi", "Malakand", "Mandi Bahauddin", "Mansehra", "Mardan", "Mian Channu", "Mianwali", "Mingora", "Mirpur", "Mirpur Khas", "Mithi", "Moro", "Multan", "Muridke", "Murree", "Muzaffarabad", "Muzaffargarh", 
-            "Nankana Sahib", "Narowal", "Naudero", "Naushahro Feroze", "Nawabshah", "Nowshera", 
-            "Okara", 
-            "Pakpattan", "Pano Aqil", "Pasrur", "Pattoki", "Peshawar", "Pishin", 
-            "Qila Abdullah", "Quetta", 
-            "Rahim Yar Khan", "Raiwind", "Rajanpur", "Ratodero", "Rawalakot", "Rawalpindi", "Renala Khurd", 
-            "Sadiqabad", "Sahiwal", "Samundri", "Sanghar", "Sangla Hill", "Sargodha", "Sehwan", "Shabqadar", "Shahdadkot", "Shahdadpur", "Shahkot", "Shakargarh", "Sheikhupura", "Shikarpur", "Shorkot", "Sialkot", "Sibi", "Skardu", "Sukkur", "Swabi", "Swat", 
-            "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Tank", "Taxila", "Thatta", "Toba Tek Singh", "Topi", "Turbat", 
-            "Umerkot", 
-            "Vehari", 
-            "Wah Cantonment", "Wazirabad", 
+            "Abbottabad", "Abdul Hakim", "Ahmedpur East", "Aliabad", "Alipur", "Arifwala", "Attock",
+            "Badin", "Bagh", "Bahawalnagar", "Bahawalpur", "Balakot", "Bannu", "Baska", "Batkhela", "Battagram", "Bhakkar", "Bhalwal", "Bhimber", "Burewala",
+            "Chakwal", "Chaman", "Charsadda", "Chichawatni", "Chiniot", "Chishtian", "Chitral", "Chunian",
+            "Dadu", "Daska", "Dera Allah Yar", "Dera Ghazi Khan", "Dera Ismail Khan", "Dera Murad Jamali", "Dina", "Diplo",
+            "Faisalabad", "Fateh Jang",
+            "Ghotki", "Gilgit", "Gojra", "Gujar Khan", "Gujranwala", "Gujrat", "Gwadar",
+            "Hafizabad", "Hangu", "Haripur", "Haroonabad", "Hasan Abdal", "Hasilpur", "Haveli", "Haveli Lakha", "Hub", "Hunza", "Hyderabad",
+            "Islamabad",
+            "Jacobabad", "Jalalpur Jattan", "Jampur", "Jaranwala", "Jauharabad", "Jhang", "Jhelum", "Jungshahi",
+            "Kabirwala", "Kahror Pakka", "Kamalia", "Kambar", "Kamoke", "Kandhkot", "Karachi", "Karak", "Kasur", "Khairpur", "Khanewal", "Khanpur", "Kharian", "Khushab", "Khuzdar", "Kohat", "Kot Addu", "Kotli", "Kotri",
+            "Lahore", "Larkana", "Layyah", "Liaquat Pur", "Lodhran", "Loralai",
+            "Mailsi", "Malakand", "Mandi Bahauddin", "Mansehra", "Mardan", "Mian Channu", "Mianwali", "Mingora", "Mirpur", "Mirpur Khas", "Mithi", "Moro", "Multan", "Muridke", "Murree", "Muzaffargarh",
+            "Nankana Sahib", "Narowal", "Naudero", "Naushahro Feroze", "Nawabshah", "Nowshera",
+            "Okara",
+            "Pakpattan", "Pano Aqil", "Pasrur", "Pattoki", "Peshawar", "Pishin",
+            "Qila Abdullah", "Quetta",
+            "Rahim Yar Khan", "Raiwind", "Rajanpur", "Ratodero", "Rawalakot", "Rawalpindi", "Renala Khurd",
+            "Sadiqabad", "Sahiwal", "Samundri", "Sanghar", "Sangla Hill", "Sargodha", "Sehwan", "Shabqadar", "Shahdadkot", "Shahdadpur", "Shahkot", "Shakargarh", "Sheikhupura", "Shikarpur", "Shorkot", "Sialkot", "Sibi", "Skardu", "Sukkur", "Swabi", "Swat",
+            "Tando Adam", "Tando Allahyar", "Tando Muhammad Khan", "Tank", "Taxila", "Thatta", "Toba Tek Singh", "Topi", "Turbat",
+            "Umerkot",
+            "Vehari",
+            "Wah Cantonment", "Wazirabad",
             "Zhob"
         ];
 
         // --- SMART BACK FUNCTION ---
         window.smartBack = () => {
-            if (window.history.length > 1) {
-                window.history.back();
-            } else {
-                window.location.href = 'index.html';
-            }
-        }
+            if (window.history.length > 1) window.history.back();
+            else window.location.href = 'index.html';
+        };
 
         // --- DROPDOWN LOGIC ---
         function setupDropdown(inputId, listId, items) {
@@ -314,7 +349,7 @@
                 list.innerHTML = '';
                 const filtered = items.filter(i => i.toLowerCase().startsWith(filter.toLowerCase()));
                 if (filtered.length === 0) { list.classList.remove('active'); return; }
-                
+
                 filtered.forEach(item => {
                     const li = document.createElement('li');
                     li.textContent = item;
@@ -333,21 +368,19 @@
 
         setupDropdown('addr-state', 'state-list', states);
         setupDropdown('addr-city', 'city-list', cities);
-        // -------------------------
 
         // 0. PRELOADER & NAVBAR SCROLL
         window.addEventListener('load', () => {
             const preloader = document.getElementById('preloader');
             preloader.style.opacity = '0';
             setTimeout(() => preloader.style.display = 'none', 500);
-            setNavbarDark(); // FORCE DARK NAVBAR ON LOAD
+            setNavbarDark();
         });
 
-        // NAVBAR SCROLL LOGIC (MODIFIED FOR PROFILE TO STAY DARK)
         window.addEventListener('scroll', () => {
             const nav = document.getElementById('navbar');
             if(!nav) return;
-            
+
             if(window.scrollY > 50) {
                 nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.remove('py-6', 'border-transparent');
@@ -355,10 +388,8 @@
                 nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
                 nav.classList.add('py-6', 'border-transparent');
             }
-            // Note: We removed the color swapping logic here so it stays dark.
         });
 
-        // Function to force navbar text to dark brown (since default is white for homepage)
         function setNavbarDark() {
             const nav = document.getElementById('navbar');
             const logo = document.getElementById('nav-logo');
@@ -377,72 +408,196 @@
             }
         }
 
+        // --- Masks / Helpers ---
         const initInputMasks = () => {
             document.getElementById('card-number')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 16);
                 const icon = document.getElementById('card-icon');
-                if(val.startsWith('4')) { icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600 text-lg"; document.getElementById('card-type').value = "Visa"; }
-                else if(val.startsWith('5')) { icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600 text-lg"; document.getElementById('card-type').value = "Mastercard"; }
+                const type = document.getElementById('card-type');
+
+                if(val.startsWith('4')) { icon.className = "fa-brands fa-cc-visa absolute left-3 top-1/2 -translate-y-1/2 text-blue-600 text-lg"; type.value = "Visa"; }
+                else if(val.startsWith('5')) { icon.className = "fa-brands fa-cc-mastercard absolute left-3 top-1/2 -translate-y-1/2 text-red-600 text-lg"; type.value = "Mastercard"; }
+                else { icon.className = "fa-regular fa-credit-card absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"; }
+
                 e.target.value = val.replace(/(.{4})/g, '$1 ').trim();
             });
+
             document.getElementById('card-expiry')?.addEventListener('input', (e) => {
                 let val = e.target.value.replace(/\D/g, '').substring(0, 4);
                 if (val.length >= 2) val = val.substring(0, 2) + '/' + val.substring(2);
                 e.target.value = val;
             });
+
+            document.getElementById('phone')?.addEventListener('input', (e) => {
+                e.target.value = e.target.value.replace(/\D/g, '').substring(0, 10);
+            });
         };
 
+        function normalizePkPhoneToE164(localPhone) {
+            let raw = (localPhone || '').trim().replace(/\s+/g,'');
+            raw = raw.replace(/\D/g,'');
+            if(raw.startsWith('0')) raw = raw.slice(1);
+            // Expect 10 digits like 3xx...
+            return '+92' + raw;
+        }
+
+        function validatePkLocalPhone(localPhone) {
+            const raw = (localPhone || '').trim().replace(/\D/g,'');
+            const ten = raw.startsWith('0') ? raw.slice(1) : raw;
+            return /^3\d{9}$/.test(ten);
+        }
+
+        function maskToLast4(anyNumberString) {
+            const digits = (anyNumberString || '').toString().replace(/\D/g,'');
+            const last4 = digits.slice(-4);
+            if(!last4) return '•••• •••• •••• 0000';
+            return `•••• •••• •••• ${last4}`;
+        }
+
+        function setCardBrandIcon(network) {
+            const el = document.getElementById('card-brand-icon');
+            const n = (network || '').toLowerCase();
+            if(!el) return;
+            if(n.includes('master')) el.className = "fa-brands fa-cc-mastercard text-6xl";
+            else if(n.includes('visa')) el.className = "fa-brands fa-cc-visa text-6xl";
+            else el.className = "fa-regular fa-credit-card text-6xl";
+        }
+
         // --- CHAT HELPERS ---
-        window.hideChatDot = () => document.getElementById('chat-notification-dot').classList.add('hidden');
+        window.hideChatDot = () => document.getElementById('chat-notification-dot')?.classList.add('hidden');
         window.closeChatTooltip = () => {
-            document.getElementById('chat-tooltip').classList.add('hidden');
+            document.getElementById('chat-tooltip')?.classList.add('hidden');
             sessionStorage.setItem('chatPromptDismissed', 'true');
         };
 
+        // CART (IN-MEMORY) - keyed as id-size-color
+        const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+
+        function updateCartUI() {
+            const badge = document.getElementById('cart-count');
+            if (badge) badge.innerText = cart.reduce((a,b)=>a+(Number(b.qty)||0),0);
+
+            const con = document.getElementById('cart-items');
+            if (!con) return;
+
+            con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>';
+
+            let t = 0;
+
+            cart.forEach(i => {
+                const price = (Number(i.discountPrice)||0) > 0 ? Number(i.discountPrice) : Number(i.price||0);
+                const qty = Number(i.qty||0);
+                t += price * qty;
+
+                const uid = `${i.id}-${i.selectedSize || 'Standard'}-${i.selectedColor || 'Standard'}`;
+
+                con.innerHTML += `
+                    <div class="flex justify-between border-b border-[#D6C8B5] pb-2">
+                        <div>
+                            <p class="font-bold text-sm">${i.name || 'Item'}</p>
+                            <p class="text-xs text-gray-500">Size: ${i.selectedSize || 'Standard'} | Color: ${i.selectedColor || 'Standard'}</p>
+                            <div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white">
+                                <button onclick="changeQty('${uid}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button>
+                                <span class="text-xs font-bold w-4 text-center">${qty}</span>
+                                <button onclick="changeQty('${uid}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <p class="font-bold text-sm">Rs. ${(price*qty).toLocaleString()}</p>
+                            <button onclick="removeItem('${uid}')" class="text-xs text-red-500 hover:underline">Remove</button>
+                        </div>
+                    </div>`;
+            });
+
+            const total = document.getElementById('cart-total');
+            if (total) total.innerText = 'Rs. ' + t.toLocaleString();
+        }
+
+        window.changeQty = (uid, c) => {
+            const i = cart.find(x => `${x.id}-${x.selectedSize || 'Standard'}-${x.selectedColor || 'Standard'}` === uid);
+            if(i){
+                i.qty = (Number(i.qty)||1) + c;
+                if(i.qty < 1) i.qty = 1;
+                localStorage.setItem('myCart', JSON.stringify(cart));
+                updateCartUI();
+            }
+        };
+
+        window.toggleCart = () => {
+            const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay');
+            if(!s || !o) return;
+
+            if(s.classList.contains('translate-x-full')) {
+                s.classList.remove('translate-x-full');
+                o.classList.remove('hidden');
+                updateCartUI();
+            } else {
+                s.classList.add('translate-x-full');
+                o.classList.add('hidden');
+            }
+        };
+
+        window.removeItem = (uid) => {
+            const x = cart.findIndex(i => `${i.id}-${i.selectedSize || 'Standard'}-${i.selectedColor || 'Standard'}` === uid);
+            if(x>-1){
+                cart.splice(x,1);
+                localStorage.setItem('myCart', JSON.stringify(cart));
+                updateCartUI();
+            }
+        };
+
+        window.checkout = () => {
+            if(!cart.length) return alert("Your bag is empty.");
+            window.location.href="checkout.html";
+        };
+
+        // --- AUTH ---
         onAuthStateChanged(auth, async (user) => {
             if (user) {
                 currentUser = user;
                 if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
-                setNavbarDark(); // FORCE DARK AGAIN AFTER AUTH UPDATE
+                setNavbarDark();
                 initInputMasks();
                 await loadProfile(user);
-                
+
                 // --- CHAT NOTIFICATION LOGIC ---
                 const chatContainer = document.getElementById('chat-container');
                 const chatTooltip = document.getElementById('chat-tooltip');
                 const chatText = document.getElementById('chat-tooltip-text');
                 const chatLink = document.getElementById('chat-btn-link');
 
-                chatLink.href = "chat.html";
-                chatText.innerText = "Need assistance?";
-                chatContainer.classList.remove('hidden');
+                if(chatLink) chatLink.href = "chat.html";
+                if(chatText) chatText.innerText = "Need assistance?";
+                if(chatContainer) chatContainer.classList.remove('hidden');
 
                 if (sessionStorage.getItem('sessionChatStarted')) {
-                    chatContainer.classList.remove('hidden');
+                    chatContainer?.classList.remove('hidden');
                 } else {
                     setTimeout(() => {
-                        chatContainer.classList.remove('hidden');
-                        chatContainer.classList.add('fade-in');
+                        chatContainer?.classList.remove('hidden');
+                        chatContainer?.classList.add('fade-in');
                         sessionStorage.setItem('sessionChatStarted', 'true');
                         if (!sessionStorage.getItem('chatPromptDismissed')) {
-                            chatTooltip.classList.remove('hidden');
-                            setTimeout(() => chatTooltip.classList.add('hidden'), 5000);
+                            chatTooltip?.classList.remove('hidden');
+                            setTimeout(() => chatTooltip?.classList.add('hidden'), 5000);
                         }
-                    }, 5000); 
+                    }, 5000);
                 }
 
                 onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
                     if(docSnap.exists() && docSnap.data().userUnread) {
-                        document.getElementById('chat-notification-dot').classList.remove('hidden');
-                        chatTooltip.classList.remove('hidden');
-                        chatText.innerText = "New Message";
+                        document.getElementById('chat-notification-dot')?.classList.remove('hidden');
+                        chatTooltip?.classList.remove('hidden');
+                        if(chatText) chatText.innerText = "New Message";
                     }
                 });
-                
+
+                // Sync cart from local storage to memory
                 const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
                 cart.length = 0;
                 cart.push(...latestCart);
                 updateCartUI();
+
             } else {
                 window.location.href = "login.html";
             }
@@ -450,31 +605,46 @@
 
         window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
         window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
-        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
+        window.handleLogout = async () => {
+            if(confirm("Sign out?")) {
+                await signOut(auth);
+                localStorage.removeItem('myCart');
+                window.location.href = "login.html";
+            }
+        }
 
+        // --- Profile Load ---
         async function loadProfile(user) {
             try {
                 document.getElementById('auth-email').value = user.email || user.phoneNumber || "N/A";
                 document.getElementById('uid-display').innerText = user.uid.slice(0, 12) + "...";
 
                 if(user.photoURL) {
-                    const img = document.getElementById('user-avatar'); img.src = user.photoURL; img.classList.remove('hidden');
+                    const img = document.getElementById('user-avatar');
+                    img.src = user.photoURL;
+                    img.classList.remove('hidden');
                     document.getElementById('default-avatar').classList.add('hidden');
                     document.getElementById('badge-google').classList.remove('hidden');
                 }
 
                 const docSnap = await getDoc(doc(db, "users", user.uid));
-                
+
                 if (docSnap.exists()) {
                     const data = docSnap.data();
+
                     document.getElementById('fname').value = data.firstName || "";
                     document.getElementById('lname').value = data.lastName || "";
-                    
+
+                    // Phone stored as +92...
                     let phone = data.contactPhone || user.phoneNumber || "";
-                    if(phone.startsWith('+92')) phone = phone.slice(3).trim();
-                    if(phone.startsWith('92')) phone = phone.slice(2).trim();
+                    phone = phone.toString().replace(/\s+/g,'');
+                    if(phone.startsWith('+92')) phone = phone.slice(3);
+                    else if(phone.startsWith('92')) phone = phone.slice(2);
+                    if(phone.startsWith('0')) phone = phone.slice(1);
+                    phone = phone.replace(/\D/g,'').substring(0,10);
                     document.getElementById('phone').value = phone;
 
+                    // Address details
                     if(data.addressDetails) {
                         document.getElementById('addr-house').value = data.addressDetails.house || "";
                         document.getElementById('addr-street').value = data.addressDetails.street || "";
@@ -483,106 +653,156 @@
                         document.getElementById('addr-state').value = data.addressDetails.state || "";
                         document.getElementById('addr-zip').value = data.addressDetails.zip || "";
                     } else if (data.address) {
-                        document.getElementById('addr-street').value = data.address; 
+                        // Legacy field fallback
+                        document.getElementById('addr-street').value = data.address;
                     }
 
+                    // Saved card: normalize + display
                     if(data.savedCard) {
+                        const sc = data.savedCard;
+
+                        const network = sc.network || sc.type || 'Visa';
+                        const numberMasked = sc.number ? maskToLast4(sc.number) : maskToLast4(sc.last4 || '');
+
                         document.getElementById('saved-card-view').classList.remove('hidden');
                         document.getElementById('add-card-view').classList.add('hidden');
-                        document.getElementById('card-number-display').innerText = data.savedCard.number;
-                        document.getElementById('card-name-display').innerText = data.savedCard.name;
-                        document.getElementById('card-expiry-display').innerText = data.savedCard.expiry;
-                        document.getElementById('card-network-display').innerText = data.savedCard.network;
+
+                        document.getElementById('card-number-display').innerText = numberMasked;
+                        document.getElementById('card-name-display').innerText = sc.name || "...";
+                        document.getElementById('card-expiry-display').innerText = sc.expiry || "../..";
+                        document.getElementById('card-network-display').innerText = (network || 'Visa').toUpperCase();
+
+                        setCardBrandIcon(network);
+                    } else {
+                        document.getElementById('saved-card-view').classList.add('hidden');
+                        document.getElementById('add-card-view').classList.remove('hidden');
                     }
 
-                    const fullName = (data.firstName && data.lastName) ? `${data.firstName} ${data.lastName}` : (user.displayName || "Valued Customer");
+                    const fullName =
+                        (data.firstName || data.lastName)
+                            ? `${data.firstName || ''} ${data.lastName || ''}`.trim()
+                            : (user.displayName || "Valued Customer");
+
                     document.getElementById('display-name').innerText = fullName;
+                } else {
+                    // No user doc yet
+                    document.getElementById('display-name').innerText = user.displayName || "Valued Customer";
                 }
+
                 document.getElementById('loading').classList.add('hidden');
                 document.getElementById('main-content').classList.remove('hidden');
-            } catch (error) { console.error("Profile Error:", error); }
+
+            } catch (error) {
+                console.error("Profile Error:", error);
+                alert("Failed to load profile.");
+            }
         }
 
+        // --- Save Profile ---
         document.getElementById('profileForm').addEventListener('submit', async (e) => {
             e.preventDefault();
+
             const btn = document.getElementById('saveBtn');
             const status = document.getElementById('save-status');
-            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...'; btn.disabled = true;
+            const originalText = btn.innerText;
+
+            btn.innerHTML = '<i class="fa-solid fa-circle-notch fa-spin"></i> Saving...';
+            btn.disabled = true;
 
             try {
-                const addrObj = {
-                    house: document.getElementById('addr-house').value,
-                    street: document.getElementById('addr-street').value,
-                    area: document.getElementById('addr-area').value,
-                    city: document.getElementById('addr-city').value,
-                    state: document.getElementById('addr-state').value,
-                    zip: document.getElementById('addr-zip').value
-                };
-                const fullAddress = `${addrObj.house}, ${addrObj.street}, ${addrObj.area}, ${addrObj.city}, ${addrObj.state}, Pakistan - ${addrObj.zip}`;
+                const firstName = document.getElementById('fname').value.trim();
+                const lastName = document.getElementById('lname').value.trim();
 
-                let rawPhone = document.getElementById('phone').value.trim();
-                if(rawPhone.startsWith('0')) rawPhone = rawPhone.slice(1); 
-                const finalPhone = "+92" + rawPhone;
+                const localPhone = document.getElementById('phone').value.trim();
+                if(localPhone && !validatePkLocalPhone(localPhone)) {
+                    alert("Please enter a valid phone number: 3XX XXXXXXX");
+                    btn.innerText = originalText;
+                    btn.disabled = false;
+                    return;
+                }
+
+                const addrObj = {
+                    house: document.getElementById('addr-house').value.trim(),
+                    street: document.getElementById('addr-street').value.trim(),
+                    area: document.getElementById('addr-area').value.trim(),
+                    city: document.getElementById('addr-city').value.trim(),
+                    state: document.getElementById('addr-state').value.trim(),
+                    zip: document.getElementById('addr-zip').value.trim()
+                };
+
+                const fullAddress = `${addrObj.house}, ${addrObj.street}, ${addrObj.area}, ${addrObj.city}, ${addrObj.state}, Pakistan - ${addrObj.zip}`.replace(/\s+/g,' ').trim();
 
                 const updates = {
-                    firstName: document.getElementById('fname').value,
-                    lastName: document.getElementById('lname').value,
-                    contactPhone: finalPhone,
-                    address: fullAddress, 
-                    addressDetails: addrObj 
+                    firstName,
+                    lastName,
+                    contactPhone: localPhone ? normalizePkPhoneToE164(localPhone) : '',
+                    address: fullAddress,
+                    addressDetails: addrObj
                 };
 
                 await updateDoc(doc(db, "users", currentUser.uid), updates);
-                document.getElementById('display-name').innerText = `${updates.firstName} ${updates.lastName}`;
+
+                document.getElementById('display-name').innerText =
+                    (firstName || lastName) ? `${firstName} ${lastName}`.trim() : "Valued Customer";
+
                 status.innerHTML = '<span class="text-green-600 bg-green-50 px-3 py-1 rounded border border-green-100"><i class="fa-solid fa-check"></i> Changes Saved</span>';
-                status.classList.remove('opacity-0'); setTimeout(() => status.classList.add('opacity-0'), 3000);
-            } catch (error) { console.error(error); alert("Failed to save changes."); } 
-            finally { btn.innerText = "Save Changes"; btn.disabled = false; }
+                status.classList.remove('opacity-0');
+                setTimeout(() => status.classList.add('opacity-0'), 3000);
+
+            } catch (error) {
+                console.error(error);
+                alert("Failed to save changes.");
+            } finally {
+                btn.innerText = "Save Changes";
+                btn.disabled = false;
+            }
         });
 
+        // --- Save Card (consistent schema with checkout.html) ---
         document.getElementById('cardForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const rawNum = document.getElementById('card-number').value;
+
+            const rawNum = document.getElementById('card-number').value.replace(/\s/g,'');
             if(rawNum.length < 16) { alert("Invalid Card Number"); return; }
+
+            const expiry = document.getElementById('card-expiry').value.trim();
+            if(!/^\d{2}\/\d{2}$/.test(expiry)) { alert("Invalid Expiry (MM/YY)"); return; }
+
+            const holder = document.getElementById('card-name').value.trim();
+            if(!holder) { alert("Cardholder name required"); return; }
+
+            const last4 = rawNum.slice(-4);
 
             const savedData = {
                 network: document.getElementById('card-type').value,
-                number: "•••• •••• •••• " + rawNum.slice(-4),
-                expiry: document.getElementById('card-expiry').value,
-                name: document.getElementById('card-name').value
+                number: `•••• •••• •••• ${last4}`,
+                expiry,
+                name: holder
             };
 
             try {
                 await updateDoc(doc(db, "users", currentUser.uid), { savedCard: savedData });
                 alert("Card Saved!");
                 window.location.reload();
-            } catch(e) { console.error(e); alert("Failed to save card."); }
+            } catch(e) {
+                console.error(e);
+                alert("Failed to save card.");
+            }
         });
 
         window.deleteCard = async () => {
             if(confirm("Remove this card?")) {
-                await updateDoc(doc(db, "users", currentUser.uid), { savedCard: null }); 
-                window.location.reload();
+                try {
+                    await updateDoc(doc(db, "users", currentUser.uid), { savedCard: null });
+                    window.location.reload();
+                } catch(e) {
+                    console.error(e);
+                    alert("Failed to remove card.");
+                }
             }
-        }
-
-        const cart = JSON.parse(localStorage.getItem('myCart')) || [];
-        function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.reduce((a,b)=>a+b.qty,0);
-            const con = document.getElementById('cart-items');
-            con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>';
-            let t = 0;
-            cart.forEach(i => {
-                const price = i.discountPrice > 0 ? i.discountPrice : i.price; t += price * i.qty;
-                con.innerHTML += `<div class="flex justify-between border-b border-[#D6C8B5] pb-2"><div><p class="font-bold text-sm">${i.name}</p><p class="text-xs text-gray-500">Size: ${i.selectedSize}</p><div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white"><button onclick="changeQty('${i.id}-${i.selectedSize}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button><span class="text-xs font-bold w-4 text-center">${i.qty}</span><button onclick="changeQty('${i.id}-${i.selectedSize}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button></div></div><div class="text-right"><p class="font-bold text-sm">Rs. ${(price*i.qty).toLocaleString()}</p><button onclick="removeItem('${i.id}-${i.selectedSize}')" class="text-xs text-red-500 hover:underline">Remove</button></div></div>`;
-            });
-            document.getElementById('cart-total').innerText = 'Rs. ' + t.toLocaleString();
-        }
-        window.changeQty = (id, c) => { const i = cart.find(x => `${x.id}-${x.selectedSize}` === id); if(i){ i.qty+=c; if(i.qty<1) i.qty=1; localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        window.toggleCart = () => { const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay'); if(s.classList.contains('translate-x-full')) { s.classList.remove('translate-x-full'); o.classList.remove('hidden'); updateCartUI(); } else { s.classList.add('translate-x-full'); o.classList.add('hidden'); } }
-        window.removeItem = (id) => { const x = cart.findIndex(i => `${i.id}-${i.selectedSize}` === id); if(x>-1){ cart.splice(x,1); localStorage.setItem('myCart', JSON.stringify(cart)); updateCartUI(); } }
-        window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
+        };
     </script>
+
     <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>AOS.init({ duration: 800, once: true });</script>
 </body>

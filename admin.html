@@ -3,17 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Dashboard - Brand</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
-    
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        themeBg: '#E6D8C5',
+                        themeText: '#4A3B32',
+                        themeSub: '#7A6B63',
+                        themeBtn: '#4A3B32'
+                    }
+                }
+            }
+        }
+    </script>
+
     <style>
         body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
         h1, h2, h3 { font-family: 'Playfair Display', serif; }
-        .sidebar-link { transition: all 0.3s; opacity: 0.8; }
+        .sidebar-link { transition: all 0.3s; opacity: 0.85; }
         .sidebar-link:hover { opacity: 1; background-color: rgba(255,255,255,0.1); }
 
         /* Custom Dropdown Arrow */
@@ -44,82 +57,136 @@
         .tag-chip button { margin-left: 0.5rem; color: #9CA3AF; transition: color 0.2s; }
         .tag-chip button:hover { color: #EF4444; }
 
-        /* Loader Overlay */
-        .loader-overlay { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.3s ease; }
+        /* Loader Overlay (updated to match your admin-chat aesthetic) */
+        .loader-overlay {
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center top, #FDFBF9 0%, #F2E8D9 60%, #E6D8C5 100%);
+            z-index: 9999;
+            display: flex; justify-content: center; align-items: center;
+            transition: opacity 0.45s ease;
+        }
 
         /* Mobile Responsive Table */
         @media (max-width: 768px) {
             .admin-table-header { display: none; }
-            .admin-row { display: flex; flex-direction: column; padding: 1rem; margin-bottom: 1rem; background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05); }
-            .admin-cell { display: flex; justify-content: space-between; align-items: center; padding: 0.5rem 0; border: none; width: 100%; text-align: right; }
-            .admin-cell::before { content: attr(data-label); font-weight: 700; text-transform: uppercase; font-size: 0.65rem; color: #9ca3af; text-align: left; }
-            .admin-cell:first-child { border-bottom: 1px solid #f3f4f6; margin-bottom: 0.5rem; padding-bottom: 1rem; flex-direction: row; justify-content: flex-start; gap: 1rem; text-align: left; }
-            .admin-cell:first-child::before { display: none; } 
+            .admin-row {
+                display: flex; flex-direction: column;
+                padding: 1rem; margin-bottom: 1rem;
+                background: white; border-radius: 0.75rem;
+                border: 1px solid #e5e7eb;
+                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            }
+            .admin-cell {
+                display: flex; justify-content: space-between; align-items: center;
+                padding: 0.5rem 0; border: none; width: 100%; text-align: right;
+            }
+            .admin-cell::before {
+                content: attr(data-label);
+                font-weight: 700;
+                text-transform: uppercase;
+                font-size: 0.65rem;
+                color: #9ca3af;
+                text-align: left;
+            }
+            .admin-cell:first-child {
+                border-bottom: 1px solid #f3f4f6;
+                margin-bottom: 0.5rem;
+                padding-bottom: 1rem;
+                flex-direction: row;
+                justify-content: flex-start;
+                gap: 1rem;
+                text-align: left;
+            }
+            .admin-cell:first-child::before { display: none; }
         }
     </style>
 </head>
+
 <body class="bg-gray-100 text-gray-800 min-h-screen flex flex-col">
 
+    <!-- AUTH OVERLAY -->
     <div id="security-overlay" class="loader-overlay">
-        
         <div id="state-loading" class="text-center">
-            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
-            <p id="loading-msg" class="text-xs font-bold uppercase tracking-widest mb-4">Verifying Admin Privileges...</p>
+            <div class="relative w-20 h-20 mx-auto mb-6">
+                <div class="absolute inset-0 border-[3px] border-[#D6C8B5] rounded-full opacity-30"></div>
+                <div class="absolute inset-0 border-[3px] border-[#4A3B32] border-t-transparent rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="font-serif font-bold text-2xl text-[#4A3B32]">B.</span>
+                </div>
+            </div>
+            <p id="loading-msg" class="text-xs font-bold uppercase tracking-widest mb-4 text-[#4A3B32]">Verifying Admin Privileges...</p>
+            <button onclick="forceReset()" id="panic-btn" class="hidden mt-3 text-[10px] text-red-600 underline uppercase font-bold tracking-widest hover:text-red-800">Stuck? Reset</button>
         </div>
 
-        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
-            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
+        <div id="state-login" class="hidden bg-white p-8 rounded-2xl shadow-2xl border border-gray-200 w-[92vw] max-w-sm text-center transform scale-95 opacity-0 transition-all duration-500">
+            <h2 class="text-xl font-bold text-themeText mb-2 font-serif">Admin Login</h2>
             <p class="text-xs text-gray-500 mb-6">Please authenticate to access the dashboard.</p>
+
             <form id="quick-login-form" class="space-y-4">
-                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
-                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
-                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Dashboard</button>
+                <input type="email" id="admin-email" class="w-full border border-gray-300 p-3 rounded-xl text-sm" placeholder="Email" value="mr.awaisaltaf@gmail.com" readonly>
+                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-3 rounded-xl text-sm" placeholder="Password" required>
+                <button type="submit" class="w-full bg-themeBtn text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition shadow-lg">
+                    Unlock Dashboard
+                </button>
             </form>
-            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
+            <p id="login-error" class="text-red-500 text-xs mt-3 hidden font-bold"></p>
         </div>
 
-        <div id="state-denied" class="hidden text-center">
+        <div id="state-denied" class="hidden bg-white p-8 rounded-2xl shadow-2xl border border-gray-200 w-[92vw] max-w-sm text-center transform scale-95 opacity-0 transition-all duration-500">
             <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
-            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
-            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
-            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
+            <h2 class="text-xl font-bold text-red-600 mb-2 font-serif">ACCESS DENIED</h2>
+            <p class="text-xs text-gray-500 mb-6 leading-relaxed">
+                You are logged in as <span id="current-user-email" class="font-bold text-black"></span>,<br>
+                but this account is not an Admin.
+            </p>
+            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                Switch Account
+            </button>
         </div>
     </div>
 
+    <!-- HEADER -->
     <header class="bg-[#1a1a1a] text-white py-4 px-4 md:px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
         <div class="flex items-center gap-4">
-            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">BRAND <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded ml-1">ADMIN</span></h1>
+            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">
+                BRAND
+                <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded ml-1">ADMIN</span>
+            </h1>
         </div>
+
         <div class="flex items-center gap-3 md:gap-4 text-xs font-bold uppercase tracking-wider">
             <span id="admin-user-display" class="text-gray-500 normal-case hidden lg:inline">...</span>
 
             <a href="newsletter.html" class="sidebar-link px-3 py-2 rounded flex items-center gap-2 relative bg-gray-800/50 border border-gray-700 hover:bg-gray-700 text-white transition">
                 <i class="fa-solid fa-user-group"></i> <span class="hidden md:inline">Subscribers</span>
             </a>
-            
+
             <a href="admin-chat.html" class="sidebar-link px-3 py-2 rounded flex items-center gap-2 relative bg-gray-800/50 border border-gray-700 hover:bg-gray-700 text-white transition">
                 <i class="fa-solid fa-comments"></i> <span class="hidden md:inline">Inbox</span>
+                <!-- ✅ UPDATED: uses adminUnread (preferred) + legacy unread fallback -->
                 <span id="badge-chat" class="hidden w-2 h-2 bg-blue-500 rounded-full absolute top-1 right-1 animate-pulse border border-[#1a1a1a]"></span>
             </a>
 
-            <a href="admin-orders.html" class="sidebar-link px-3 py-2 rounded flex items-center gap-2 relative bg-gray-800/50 border border-gray-700">
+            <a href="admin-orders.html" class="sidebar-link px-3 py-2 rounded flex items-center gap-2 relative bg-gray-800/50 border border-gray-700 hover:bg-gray-700 text-white transition">
                 <i class="fa-solid fa-box-open"></i> <span class="hidden md:inline">Orders</span>
                 <span id="badge-orders" class="hidden w-2 h-2 bg-red-500 rounded-full absolute top-1 right-1 animate-pulse border border-[#1a1a1a]"></span>
             </a>
-            
+
             <button onclick="handleLogout()" class="text-red-400 hover:text-red-300 transition flex items-center gap-2 ml-2">
                 <i class="fa-solid fa-right-from-bracket text-lg"></i> <span class="hidden md:inline">Logout</span>
             </button>
         </div>
     </header>
 
+    <!-- MAIN -->
     <div class="container mx-auto px-4 md:px-6 py-10 flex-grow">
-        
+
         <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
             <div>
                 <h2 class="text-3xl font-serif font-bold text-[#4A3B32]">Product Inventory</h2>
                 <p class="text-gray-500 text-sm mt-1">Catalog and stock management</p>
             </div>
+
             <button onclick="openModal()" class="w-full md:w-auto bg-[#4A3B32] text-[#E6D8C5] px-8 py-4 md:py-3 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-xl text-xs rounded-sm flex items-center justify-center gap-2">
                 <i class="fa-solid fa-plus"></i> Add New Product
             </button>
@@ -165,9 +232,10 @@
         </div>
     </div>
 
+    <!-- PRODUCT MODAL -->
     <div id="product-modal" class="fixed inset-0 bg-black/60 hidden z-[70] flex items-center justify-center backdrop-blur-sm px-2 md:px-4 opacity-0 transition-opacity duration-300">
         <div class="bg-white w-full max-w-4xl rounded-lg shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[95vh]">
-            
+
             <div class="bg-[#4A3B32] text-[#E6D8C5] px-6 md:px-8 py-5 flex justify-between items-center">
                 <h3 id="modal-title" class="font-bold uppercase tracking-widest text-base md:text-lg">Product Manager</h3>
                 <button onclick="closeModal()" class="hover:text-white transition p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
@@ -175,8 +243,8 @@
 
             <div class="p-6 md:p-8 overflow-y-auto flex-grow bg-gray-50">
                 <form id="productForm" class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <input type="hidden" id="p-id"> 
-                    
+                    <input type="hidden" id="p-id">
+
                     <div class="md:col-span-2">
                         <label class="block text-[10px] font-bold uppercase mb-2 tracking-widest text-gray-500">Product Name</label>
                         <input type="text" id="p-name" class="w-full p-3 bg-white border border-gray-300 rounded focus:border-[#4A3B32] outline-none transition text-sm font-medium" placeholder="e.g. Classic Leather Jacket" required>
@@ -245,8 +313,7 @@
                             <input type="text" id="media-input" class="flex-grow p-2 bg-white border border-gray-300 rounded text-sm" placeholder="https://...">
                             <button type="button" onclick="addMedia()" class="bg-gray-200 px-4 rounded hover:bg-gray-300 text-xs font-bold uppercase">Attach</button>
                         </div>
-                        <div id="media-container" class="space-y-2 max-h-32 overflow-y-auto p-2 border border-gray-200 rounded bg-white">
-                            </div>
+                        <div id="media-container" class="space-y-2 max-h-32 overflow-y-auto p-2 border border-gray-200 rounded bg-white"></div>
                     </div>
 
                     <div class="grid grid-cols-2 gap-4 md:col-span-2">
@@ -286,11 +353,25 @@
     </div>
 
     <script type="module">
-        import { db, collection, getDocs, addDoc, doc, updateDoc, deleteDoc, auth, onAuthStateChanged, signOut, query, where, onSnapshot, signInWithEmailAndPassword } from './firebase-config.js';
+        // ✅ Keep consistent with your other pages: safe import with try/catch
+        let db, collection, getDocs, addDoc, doc, updateDoc, deleteDoc,
+            auth, onAuthStateChanged, signOut, query, where, onSnapshot,
+            signInWithEmailAndPassword;
 
-        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com"; 
+        try {
+            ({
+                db, collection, getDocs, addDoc, doc, updateDoc, deleteDoc,
+                auth, onAuthStateChanged, signOut, query, where, onSnapshot,
+                signInWithEmailAndPassword
+            } = await import('./firebase-config.js'));
+        } catch (e) {
+            console.error("Firebase Config Missing:", e);
+            document.getElementById('loading-msg').innerText = "System Error: Missing Config";
+        }
+
+        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let allProducts = [];
-        
+
         // Temp arrays for modal
         let tempColors = [];
         let tempSizes = [];
@@ -302,28 +383,45 @@
         const stateLogin = document.getElementById('state-login');
         const stateDenied = document.getElementById('state-denied');
 
-        // --- AUTH & SECURITY CHECK ---
-        onAuthStateChanged(auth, (user) => {
-            stateLoading.classList.add('hidden'); // Hide loading spinner
-
-            if (user) {
-                if (user.email === ADMIN_EMAIL) {
-                    // SUCCESS: Hide overlay and load app
-                    overlay.style.opacity = '0';
-                    setTimeout(() => overlay.style.display = 'none', 500);
-                    document.getElementById('admin-user-display').innerText = user.email;
-                    loadProducts();
-                    setupNotifications();
-                } else {
-                    // WRONG USER: Show Denied screen
-                    stateDenied.classList.remove('hidden');
-                    document.getElementById('current-user-email').innerText = user.email;
-                }
-            } else {
-                // NO USER: Show Login screen
-                stateLogin.classList.remove('hidden');
+        // ---------- SAFETY TIMEOUT ----------
+        setTimeout(() => {
+            if (overlay.style.opacity !== '0' && stateLogin.classList.contains('hidden') && stateDenied.classList.contains('hidden')) {
+                const btn = document.getElementById('panic-btn');
+                if (btn) btn.classList.remove('hidden');
+                const msg = document.getElementById('loading-msg');
+                if (msg) msg.innerText = "Connection taking too long...";
             }
-        });
+        }, 8000);
+
+        // --- AUTH & SECURITY CHECK ---
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                stateLoading.classList.add('hidden');
+
+                if (user) {
+                    if (user.email === ADMIN_EMAIL) {
+                        // success
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.style.display = 'none', 500);
+
+                        const adminDisp = document.getElementById('admin-user-display');
+                        if (adminDisp) adminDisp.innerText = user.email;
+
+                        loadProducts();
+                        setupNotifications();
+                    } else {
+                        stateDenied.classList.remove('hidden');
+                        document.getElementById('current-user-email').innerText = user.email;
+
+                        // animate in
+                        setTimeout(() => stateDenied.classList.remove('scale-95', 'opacity-0'), 80);
+                    }
+                } else {
+                    stateLogin.classList.remove('hidden');
+                    setTimeout(() => stateLogin.classList.remove('scale-95', 'opacity-0'), 80);
+                }
+            });
+        }
 
         // --- QUICK LOGIN LOGIC ---
         document.getElementById('quick-login-form').addEventListener('submit', async (e) => {
@@ -331,10 +429,9 @@
             const pass = document.getElementById('admin-pass').value;
             const errBox = document.getElementById('login-error');
             errBox.classList.add('hidden');
-            
+
             try {
                 await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
-                // On success, the onAuthStateChanged listener will handle the UI update
             } catch (error) {
                 errBox.innerText = "Login Failed: " + error.message;
                 errBox.classList.remove('hidden');
@@ -343,48 +440,56 @@
 
         // --- FORCE RESET ---
         window.forceReset = async () => {
-            if(auth) await signOut(auth);
+            try { if (auth) await signOut(auth); } catch (_) {}
             window.location.reload();
-        }
+        };
 
-        // --- DYNAMIC BADGE LOGIC ---
-        function setupNotifications() {
-            // 1. Unread Messages Listener
-            const chatQ = query(collection(db, "chats"), where("unread", "==", true));
-            onSnapshot(chatQ, (snap) => {
-                const badge = document.getElementById('badge-chat');
-                if(!snap.empty) badge.classList.remove('hidden');
-                else badge.classList.add('hidden');
-            });
-
-            // 2. Pending Orders Listener
-            const orderQ = query(collection(db, "orders"), where("status", "==", "Processing"));
-            onSnapshot(orderQ, (snap) => {
-                const badge = document.getElementById('badge-orders');
-                if(!snap.empty) badge.classList.remove('hidden');
-                else badge.classList.add('hidden');
-            });
-        }
-
+        // --- LOGOUT ---
         window.handleLogout = async () => {
-            if(confirm("Exit Admin Dashboard?")) {
+            if (confirm("Exit Admin Dashboard?")) {
                 await signOut(auth);
                 window.location.href = "login.html";
             }
+        };
+
+        // ✅ UPDATED BADGE LOGIC (adminUnread preferred + legacy fallback)
+        function setupNotifications() {
+            // Chat badge
+            onSnapshot(collection(db, "chats"), (snap) => {
+                const badge = document.getElementById('badge-chat');
+                let hasUnreadForAdmin = false;
+
+                snap.forEach((d) => {
+                    const c = d.data() || {};
+                    if (c.adminUnread === true) hasUnreadForAdmin = true;
+                    if (c.adminUnread !== true && c.unread === true) hasUnreadForAdmin = true;
+                });
+
+                if (hasUnreadForAdmin) badge.classList.remove('hidden');
+                else badge.classList.add('hidden');
+            });
+
+            // Orders badge
+            const orderQ = query(collection(db, "orders"), where("status", "==", "Processing"));
+            onSnapshot(orderQ, (snap) => {
+                const badge = document.getElementById('badge-orders');
+                if (!snap.empty) badge.classList.remove('hidden');
+                else badge.classList.add('hidden');
+            });
         }
 
         async function loadProducts() {
             const tbody = document.getElementById('product-table-body');
             try {
                 const snap = await getDocs(collection(db, "products"));
-                
+
                 allProducts = [];
                 let counts = { Men: 0, Women: 0, Kids: 0 };
 
                 snap.forEach(d => {
                     const data = d.data();
                     allProducts.push({ id: d.id, ...data });
-                    if(counts[data.category] !== undefined) counts[data.category]++;
+                    if (counts[data.category] !== undefined) counts[data.category]++;
                 });
 
                 document.getElementById('stat-total').innerText = allProducts.length;
@@ -404,42 +509,52 @@
             tbody.innerHTML = '';
             allProducts.sort((a,b) => (b.priority || 0) - (a.priority || 0));
 
-            if(allProducts.length === 0) {
+            if (allProducts.length === 0) {
                 tbody.innerHTML = `<tr><td colspan="6" class="p-8 text-center text-gray-400 italic">No products currently listed.</td></tr>`;
                 return;
             }
 
             allProducts.forEach(p => {
-                const priceDisplay = p.discountPrice > 0 
-                    ? `<span class="text-red-600 font-bold mr-1">Rs. ${p.discountPrice.toLocaleString()}</span> <span class="line-through text-gray-400 text-xs">${p.price.toLocaleString()}</span>` 
-                    : `Rs. ${p.price.toLocaleString()}`;
+                const safeName = escapeHtml(p.name || "");
+                const safeSerial = escapeHtml(p.serialNumber || "NO-REF");
+                const safeCat = escapeHtml(p.category || "");
+                const safeSub = escapeHtml(p.subcategory || "");
+                const safeLast = escapeHtml(p.lastMessage || "");
 
-                const visibilityBadge = p.isVisible !== false 
+                const price = Number(p.price || 0);
+                const discount = Number(p.discountPrice || 0);
+
+                const priceDisplay = discount > 0
+                    ? `<span class="text-red-600 font-bold mr-1">Rs. ${discount.toLocaleString()}</span> <span class="line-through text-gray-400 text-xs">${price.toLocaleString()}</span>`
+                    : `Rs. ${price.toLocaleString()}`;
+
+                const visibilityBadge = p.isVisible !== false
                     ? `<span class="bg-green-100 text-green-700 px-2 py-1 rounded text-[10px] uppercase font-bold tracking-wide border border-green-200">Active</span>`
                     : `<span class="bg-gray-100 text-gray-500 px-2 py-1 rounded text-[10px] uppercase font-bold tracking-wide border border-gray-200">Hidden</span>`;
 
-                const stock = p.stock !== undefined ? p.stock : 0;
-                const stockBadge = stock < 5 
+                const stock = Number(p.stock ?? 0);
+                const stockBadge = stock < 5
                     ? `<span class="bg-red-100 text-red-700 px-2 py-1 rounded text-[10px] font-bold border border-red-200">Low: ${stock}</span>`
                     : `<span class="text-gray-600 font-bold">${stock}</span>`;
 
-                const mainImage = (p.media && p.media.length > 0) ? p.media[0].url : (p.image || '');
+                const mainImage = (p.media && p.media.length > 0 && p.media[0]?.url) ? p.media[0].url : (p.image || '');
+                const safeImg = escapeAttr(mainImage);
 
                 tbody.innerHTML += `
                     <tr class="admin-row hover:bg-gray-50 transition group bg-white">
                         <td class="admin-cell p-5 flex items-center gap-4" data-label="Product">
                             <div class="w-12 h-12 rounded bg-gray-100 flex-shrink-0 overflow-hidden border border-gray-200">
-                                <img src="${mainImage}" class="w-full h-full object-cover">
+                                <img src="${safeImg}" class="w-full h-full object-cover" alt="">
                             </div>
                             <div class="text-left">
-                                <p class="font-bold text-gray-800 line-clamp-1">${p.name}</p>
-                                <span class="text-[10px] text-gray-400 font-mono tracking-wide">${p.serialNumber || 'NO-REF'}</span>
+                                <p class="font-bold text-gray-800 line-clamp-1">${safeName}</p>
+                                <span class="text-[10px] text-gray-400 font-mono tracking-wide">${safeSerial}</span>
                             </div>
                         </td>
                         <td class="admin-cell p-5 text-gray-600" data-label="Category">
                             <div class="flex flex-col md:items-start items-end">
-                                <span class="text-xs font-bold uppercase text-[#4A3B32]">${p.category}</span>
-                                <span class="text-[10px] text-gray-400">${p.subcategory}</span>
+                                <span class="text-xs font-bold uppercase text-[#4A3B32]">${safeCat}</span>
+                                <span class="text-[10px] text-gray-400">${safeSub}</span>
                             </div>
                         </td>
                         <td class="admin-cell p-5" data-label="Stock">${stockBadge}</td>
@@ -457,50 +572,54 @@
         }
 
         // --- MODAL & LOGIC HANDLERS ---
-
         window.openModal = () => {
             document.getElementById('productForm').reset();
             document.getElementById('p-id').value = '';
             document.getElementById('modal-title').innerText = "Create New Product";
-            
-            // Clear Tags
+
             tempColors = []; tempSizes = []; tempMedia = [];
             renderTags('colors'); renderTags('sizes'); renderMediaList();
 
             const modal = document.getElementById('product-modal');
             modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.add('scale-100'); }, 10);
-        }
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        };
 
         window.closeModal = () => {
             const modal = document.getElementById('product-modal');
             modal.classList.add('opacity-0');
             modal.querySelector('div').classList.remove('scale-100');
             setTimeout(() => modal.classList.add('hidden'), 300);
-        }
+        };
 
         // --- TAGS SYSTEM (COLORS & SIZES) ---
         window.addColor = () => {
             const val = document.getElementById('color-input').value.trim();
-            if(val && !tempColors.includes(val)) { tempColors.push(val); renderTags('colors'); }
+            if (val && !tempColors.includes(val)) { tempColors.push(val); renderTags('colors'); }
             document.getElementById('color-input').value = '';
-        }
+        };
+
         window.addSize = () => {
             const val = document.getElementById('size-input').value.trim();
-            if(val && !tempSizes.includes(val)) { tempSizes.push(val); renderTags('sizes'); }
+            if (val && !tempSizes.includes(val)) { tempSizes.push(val); renderTags('sizes'); }
             document.getElementById('size-input').value = '';
-        }
+        };
+
         window.removeTag = (type, index) => {
-            if(type === 'colors') tempColors.splice(index, 1);
+            if (type === 'colors') tempColors.splice(index, 1);
             else tempSizes.splice(index, 1);
             renderTags(type);
-        }
+        };
+
         function renderTags(type) {
             const container = document.getElementById(`${type}-container`);
             const arr = type === 'colors' ? tempColors : tempSizes;
             container.innerHTML = arr.map((item, i) => `
                 <div class="tag-chip">
-                    ${item} <button type="button" onclick="removeTag('${type}', ${i})">&times;</button>
+                    ${escapeHtml(item)} <button type="button" onclick="removeTag('${type}', ${i})">&times;</button>
                 </div>
             `).join('');
         }
@@ -508,24 +627,26 @@
         // --- MEDIA SYSTEM ---
         window.addMedia = () => {
             const val = document.getElementById('media-input').value.trim();
-            if(val) {
-                const type = val.endsWith('.mp4') ? 'video' : 'image';
+            if (val) {
+                const type = val.toLowerCase().endsWith('.mp4') ? 'video' : 'image';
                 tempMedia.push({ type, url: val });
                 renderMediaList();
             }
             document.getElementById('media-input').value = '';
-        }
+        };
+
         window.removeMedia = (index) => {
             tempMedia.splice(index, 1);
             renderMediaList();
-        }
+        };
+
         function renderMediaList() {
             const container = document.getElementById('media-container');
             container.innerHTML = tempMedia.map((m, i) => `
                 <div class="flex items-center justify-between bg-gray-50 p-2 rounded border border-gray-200 text-xs">
                     <div class="flex items-center gap-2 truncate">
                         <i class="fa-solid ${m.type === 'video' ? 'fa-video' : 'fa-image'} text-gray-400"></i>
-                        <span class="truncate text-gray-600">${m.url}</span>
+                        <span class="truncate text-gray-600">${escapeHtml(m.url)}</span>
                     </div>
                     <button type="button" onclick="removeMedia(${i})" class="text-red-500 hover:text-red-700"><i class="fa-solid fa-trash"></i></button>
                 </div>
@@ -553,47 +674,49 @@
                 isVisible: document.getElementById('p-visible').value === 'true'
             };
 
-            if(!data.name || !data.price || data.media.length === 0) return alert("Please fill Name, Price, and add at least 1 Media item.");
+            if (!data.name || !data.price || data.media.length === 0) {
+                return alert("Please fill Name, Price, and add at least 1 Media item.");
+            }
 
             btn.innerText = "Processing...";
             btn.disabled = true;
 
             try {
-                if(id) {
+                if (id) {
                     await updateDoc(doc(db, "products", id), data);
                 } else {
                     const serial = 'BRD-' + Math.floor(Math.random() * 900000 + 100000);
                     await addDoc(collection(db, "products"), { ...data, serialNumber: serial, createdAt: new Date() });
                 }
                 closeModal();
-                loadProducts(); 
-            } catch(e) {
+                loadProducts();
+            } catch (e) {
                 alert("Database Error: " + e.message);
             } finally {
                 btn.innerText = "Save Product";
                 btn.disabled = false;
             }
-        }
+        };
 
         window.editProduct = (id) => {
             const p = allProducts.find(x => x.id === id);
-            if(!p) return;
-            
+            if (!p) return;
+
             document.getElementById('p-id').value = p.id;
-            document.getElementById('p-name').value = p.name;
-            document.getElementById('p-price').value = p.price;
-            document.getElementById('p-discount').value = p.discountPrice || 0;
-            document.getElementById('p-stock').value = p.stock || 0;
-            document.getElementById('p-category').value = p.category;
-            document.getElementById('p-subcategory').value = p.subcategory;
+            document.getElementById('p-name').value = p.name || "";
+            document.getElementById('p-price').value = Number(p.price || 0);
+            document.getElementById('p-discount').value = Number(p.discountPrice || 0);
+            document.getElementById('p-stock').value = Number(p.stock || 0);
+            document.getElementById('p-category').value = p.category || "Men";
+            document.getElementById('p-subcategory').value = p.subcategory || "Cloths";
             document.getElementById('p-desc').value = p.description || "";
-            document.getElementById('p-priority').value = p.priority || 50;
+            document.getElementById('p-priority').value = Number(p.priority || 50);
             document.getElementById('p-visible').value = String(p.isVisible !== false);
-            
+
             tempColors = p.colors || [];
             tempSizes = p.sizes || [];
-            
-            if(p.media && p.media.length > 0) {
+
+            if (p.media && p.media.length > 0) {
                 tempMedia = p.media;
             } else if (p.image) {
                 tempMedia = [{ type: 'image', url: p.image }];
@@ -608,16 +731,35 @@
             document.getElementById('modal-title').innerText = "Update Inventory";
             const modal = document.getElementById('product-modal');
             modal.classList.remove('hidden');
-            setTimeout(() => { modal.classList.remove('opacity-0'); modal.querySelector('div').classList.add('scale-100'); }, 10);
-        }
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                modal.querySelector('div').classList.add('scale-100');
+            }, 10);
+        };
 
         window.deleteProduct = async (id) => {
-            if(confirm("Delete this product permanently?")) {
+            if (confirm("Delete this product permanently?")) {
                 try {
                     await deleteDoc(doc(db, "products", id));
                     loadProducts();
-                } catch(e) { alert(e.message); }
+                } catch (e) {
+                    alert(e.message);
+                }
             }
+        };
+
+        // ---------- XSS SAFETY ----------
+        function escapeHtml(unsafe) {
+            return String(unsafe ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+        function escapeAttr(unsafe) {
+            // for attributes like src=""
+            return escapeHtml(unsafe).replaceAll("`", "&#096;");
         }
     </script>
 </body>
