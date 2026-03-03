@@ -413,7 +413,7 @@
 
     // AUTH STATE & CHAT LOGIC
     onAuthStateChanged(auth, async (user) => {
-      // ✅ Ensure guests become anonymous users for wishlist/orders
+      // ✅ Ensure guests become anonymous users for wishlist/orders/chat
       if (!user) user = await ensureSignedIn();
 
       currentUser = user;
@@ -424,6 +424,7 @@
       const chatLink = document.getElementById('chat-btn-link');
       const chatText = document.getElementById('chat-tooltip-text');
 
+      // Always allow chat (guest uses anonymous uid)
       if (user) {
         chatLink.href = "chat.html";
         chatText.innerText = "Need assistance?";
@@ -431,12 +432,14 @@
         onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
           if (docSnap.exists() && docSnap.data().userUnread) {
             document.getElementById('chat-notification-dot')?.classList.remove('hidden');
-            chatTooltip?.classList.remove('hidden');
-            chatText.innerText = "New Message";
+            if (!sessionStorage.getItem('chatPromptDismissed')) {
+              chatTooltip?.classList.remove('hidden');
+              chatText.innerText = "New Message";
+            }
           }
         });
       } else {
-        // This is unlikely now because we ensureSignedIn, but kept safe
+        // Very unlikely now, but safe fallback
         chatLink.href = "login.html";
         chatText.innerText = "Login to chat";
       }
@@ -456,7 +459,7 @@
         }, 4000);
       }
 
-      // Sync cart from local storage
+      // Sync cart from local storage (safely)
       const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
       cart.length = 0;
       cart.push(...latestCart);
@@ -467,7 +470,7 @@
     const cart = JSON.parse(localStorage.getItem('myCart')) || [];
 
     window.updateCartUI = () => {
-      const count = cart.reduce((a, b) => a + b.qty, 0);
+      const count = cart.reduce((a, b) => a + (Number(b.qty) || 0), 0);
       const badge = document.getElementById('cart-count');
       if (badge) badge.innerText = count;
 
@@ -478,8 +481,9 @@
 
       let t = 0;
       cart.forEach(i => {
-        const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price;
-        t += finalPrice * i.qty;
+        const qty = Number(i.qty) || 1;
+        const finalPrice = (Number(i.discountPrice) > 0) ? Number(i.discountPrice) : Number(i.price);
+        t += finalPrice * qty;
 
         con.innerHTML += `
           <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
@@ -490,13 +494,13 @@
                 <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
                 <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
                   <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500" aria-label="Decrease quantity">-</button>
-                  <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+                  <span class="text-xs font-bold w-4 text-center">${qty}</span>
                   <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500" aria-label="Increase quantity">+</button>
                 </div>
               </div>
             </div>
             <div class="text-right flex flex-col justify-between">
-              <p class="font-bold text-sm">Rs. ${(finalPrice * i.qty).toLocaleString()}</p>
+              <p class="font-bold text-sm">Rs. ${(finalPrice * qty).toLocaleString()}</p>
               <button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:text-red-700 underline uppercase tracking-wider">Remove</button>
             </div>
           </div>`;
@@ -509,8 +513,8 @@
     window.changeQty = (uid, c) => {
       const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid);
       if (!i) return;
-      i.qty += c;
-      if (i.qty < 1) i.qty = 1;
+      const nextQty = (Number(i.qty) || 1) + c;
+      i.qty = nextQty < 1 ? 1 : nextQty;
       localStorage.setItem('myCart', JSON.stringify(cart));
       updateCartUI();
     };
@@ -555,8 +559,15 @@
       const ok = await openConfirm({ title: "Sign Out", message: "Do you want to sign out?" });
       if (!ok) return;
 
-      await signOut(auth);
+      try {
+        await signOut(auth);
+      } catch (e) {
+        console.error(e);
+      }
+
+      // Keep cart behavior same as your original
       localStorage.removeItem('myCart');
+
       showToast("Signed out.");
       window.location.href = "login.html";
     };
@@ -598,6 +609,8 @@
           showToast("Subscribed.");
           if (newsletterEmail) newsletterEmail.value = "";
         } catch (err) {
+          // setDoc will fail if already exists AND your rules only allow create.
+          // Treat permission-denied as "already subscribed" for your UX.
           if (err?.code === "permission-denied") {
             showNewsletterMessage("You are already subscribed.");
             showToast("Already subscribed.");

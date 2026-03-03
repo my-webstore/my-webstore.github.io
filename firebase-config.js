@@ -4,15 +4,27 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebas
 
 import {
   getAuth,
+  // Email/Password
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
   sendPasswordResetEmail,
   updateProfile,
+  sendEmailVerification,
+
+  // Session
+  onAuthStateChanged,
+  signOut,
+
+  // Providers
   GoogleAuthProvider,
   signInWithPopup,
+
+  // Anonymous (Guest)
   signInAnonymously,
+
+  // Phone OTP (REAL phone auth – no fake emails)
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
 import {
@@ -31,8 +43,8 @@ import {
   onSnapshot,
   serverTimestamp,
   Timestamp,
-  runTransaction, // ✅ ADDED (needed by checkout.html)
-  increment,      // ✅ OPTIONAL but useful (safe to export)
+  runTransaction,
+  increment,
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
 
 import {
@@ -77,27 +89,45 @@ googleProvider.setCustomParameters({ prompt: "select_account" });
 /**
  * ✅ Ensures there is always an authenticated user.
  * - If user is logged out, it signs in anonymously (guest).
- * - Use this before reading/writing wishlist/orders for guests.
+ * - Use this before reading/writing carts/orders/chats/wishlist for guests.
  */
 async function ensureSignedIn() {
-  if (auth.currentUser) return auth.currentUser;
+  try {
+    // 1) Already available
+    if (auth.currentUser) return auth.currentUser;
 
-  // Wait for Firebase to restore session if available
-  const existing = await new Promise((resolve) => {
-    const unsub = onAuthStateChanged(auth, (u) => {
-      unsub();
-      resolve(u);
+    // 2) Wait for Firebase session restore
+    const existing = await new Promise((resolve) => {
+      const unsub = onAuthStateChanged(auth, (u) => {
+        unsub();
+        resolve(u || null);
+      });
     });
-  });
 
-  if (existing) return existing;
+    if (existing) return existing;
 
-  // If still no user, sign in anonymously
-  const cred = await signInAnonymously(auth);
-  return cred.user;
+    // 3) Still none => sign in anonymously
+    const cred = await signInAnonymously(auth);
+    return cred.user;
+  } catch (err) {
+    console.error("ensureSignedIn() failed:", err);
+    throw err;
+  }
+}
+
+/**
+ * ✅ Helpers (no UI changes, just reusable logic)
+ */
+function isGuest(user) {
+  return !!user && user.isAnonymous === true;
+}
+
+function isEmailUser(user) {
+  return !!user && !!user.email && user.isAnonymous !== true;
 }
 
 export {
+  // Core
   app,
   auth,
   db,
@@ -107,17 +137,27 @@ export {
   // Auth exports
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
-  onAuthStateChanged,
-  signOut,
   sendPasswordResetEmail,
   updateProfile,
-  signInWithPopup,
-  signInAnonymously,
+  sendEmailVerification,
+
+  onAuthStateChanged,
+  signOut,
+
   GoogleAuthProvider,
   googleProvider,
+  signInWithPopup,
 
-  // ✅ Utility export
+  signInAnonymously,
+
+  // ✅ Real Phone OTP exports (no fake emails)
+  RecaptchaVerifier,
+  signInWithPhoneNumber,
+
+  // ✅ Utility exports
   ensureSignedIn,
+  isGuest,
+  isEmailUser,
 
   // Firestore exports
   collection,
@@ -135,9 +175,7 @@ export {
   serverTimestamp,
   Timestamp,
 
-  // ✅ Added for checkout/admin/order flows
+  // Transactions / counters
   runTransaction,
-
-  // ✅ Optional but safe
   increment,
 };

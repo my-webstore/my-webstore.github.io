@@ -1,4 +1,4 @@
-// components.js
+// components.js (UPDATED)
 
 // 1. Navbar HTML (✅ mobile menu button moved to LEFT before BRAND)
 const navbarHTML = `
@@ -181,16 +181,21 @@ if (typeof window.toggleCart === 'function') {
     };
 }
 
-// 5. Shared Logic: Setup Auth UI in Navbar
-// ✅ Always show person icon. Guest can access Orders/Wishlist from dropdown.
-// ✅ Mobile menu panel contains ONLY Sign In/Sign Out (+ Admin dashboard link if user is admin).
+/**
+ * ✅ Auth UI rules (matches your requirements)
+ * - Guest (anonymous): show ONLY Sign In in dropdown (hide Profile + Admin + Sign Out)
+ * - Logged-in user: show Profile + Sign Out
+ * - Admin: show Dashboard only if email matches AND emailVerified === true
+ * - Wishlist + Orders available for BOTH guest + user (because guests can use them via anonymous uid)
+ */
 window.setupNavbarAuth = (user, adminEmail) => {
     const container = document.getElementById('auth-container');
     const mobileLinks = document.getElementById('mobile-auth-links');
     if (!container || !mobileLinks) return;
 
-    const isAdmin = !!(user && user.email && user.email === adminEmail);
     const hasUser = !!user;
+    const isGuest = !!(user && user.isAnonymous === true);
+    const isAdmin = !!(user && user.email && user.email === adminEmail && user.emailVerified === true);
 
     // Desktop Navbar (always person button)
     container.innerHTML = `
@@ -216,7 +221,7 @@ window.setupNavbarAuth = (user, adminEmail) => {
               </a>` : ''
             }
 
-            ${hasUser ? `
+            ${(!isGuest && hasUser) ? `
               <a href="profile.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-black/5 transition border-b border-black/10">
                 My Profile
               </a>` : ''
@@ -230,24 +235,24 @@ window.setupNavbarAuth = (user, adminEmail) => {
               My Orders
             </a>
 
-            ${hasUser ? `
-              <button onclick="window.handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-black/5 text-left transition">
-                Sign Out
-              </button>` : `
+            ${(!hasUser || isGuest) ? `
               <a href="login.html" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-black/5 transition">
                 Sign In
-              </a>`
+              </a>` : `
+              <button onclick="window.handleLogout()" class="block w-full px-5 py-3 text-xs font-bold uppercase hover:bg-black/5 text-left transition">
+                Sign Out
+              </button>`
             }
         </div>
     `;
 
     // Mobile menu panel auth section (ONLY auth)
-    if (hasUser) {
+    if (hasUser && !isGuest) {
         const name = user.displayName ? user.displayName.split(' ')[0] : 'Member';
         mobileLinks.innerHTML = `
             <div class="flex flex-col gap-4 text-center">
                 <div class="flex items-center justify-center gap-3 mb-2">
-                    <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${name[0]}</div>
+                    <div class="w-10 h-10 bg-themeText text-white rounded-full flex items-center justify-center font-bold text-lg uppercase">${(name && name[0]) ? name[0] : 'M'}</div>
                     <p class="text-xl font-bold uppercase tracking-widest">${name}</p>
                 </div>
 
@@ -259,6 +264,7 @@ window.setupNavbarAuth = (user, adminEmail) => {
             </div>
         `;
     } else {
+        // Guest OR not logged in => show Sign In only
         mobileLinks.innerHTML = `
             <a href="login.html" class="w-full bg-themeBtn text-white py-4 font-bold uppercase tracking-widest text-center rounded-full shadow-lg border border-themeText/20 hover:opacity-90 transition px-8">
                 Sign In

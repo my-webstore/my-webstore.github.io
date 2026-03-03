@@ -105,7 +105,6 @@
   <!-- Filters -->
   <section class="container mx-auto px-6 py-12 sticky top-20 z-30 bg-[#E6D8C5]/95 backdrop-blur-sm transition-all" data-aos="fade-up">
     <div class="flex overflow-x-auto filter-scroll pb-4 gap-4 justify-start md:justify-center border-b border-[#D6C8B5] uppercase text-[10px] font-bold tracking-widest min-w-full">
-      <!-- ✅ pass button reference to avoid relying on global event -->
       <button onclick="filterItems(this,'All')" class="filter-btn active-filter px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn whitespace-nowrap">All</button>
       <button onclick="filterItems(this,'Cloths')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn whitespace-nowrap">Clothing</button>
       <button onclick="filterItems(this,'Shoes')" class="filter-btn px-6 py-2 rounded-sm transition hover:bg-themeBtn hover:text-[#E6D8C5] border border-themeBtn bg-transparent text-themeBtn whitespace-nowrap">Shoes</button>
@@ -210,9 +209,23 @@
 
   <script type="module">
     import {
-      db, collection, getDocs, auth, onAuthStateChanged, signOut,
-      query, where, addDoc, deleteDoc, doc, onSnapshot,
-      ensureSignedIn, serverTimestamp
+      db,
+      auth,
+      onAuthStateChanged,
+      signOut,
+
+      // firestore helpers (from your firebase-config.js exports)
+      collection,
+      getDocs,
+      query,
+      where,
+      doc,
+      setDoc,
+      deleteDoc,
+      onSnapshot,
+      serverTimestamp,
+
+      ensureSignedIn
     } from './firebase-config.js';
 
     const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
@@ -221,7 +234,9 @@
     let filter = 'All';
     let cart = JSON.parse(localStorage.getItem('myCart')) || [];
     let currentUser = null;
-    let wishlistMap = new Map();
+
+    // Wishlist tracking: store productIds in a Set for fast lookup
+    let wishlistSet = new Set();
 
     // ---- Internal UI (toast + confirm) ----
     const toastEl = document.getElementById('toast');
@@ -325,7 +340,6 @@
 
     // AUTH + INIT
     onAuthStateChanged(auth, async (user) => {
-      // ✅ ensure anonymous auth exists (for wishlist/cart/guest flows)
       if (!user) user = await ensureSignedIn();
 
       currentUser = user;
@@ -391,20 +405,25 @@
       window.location.href = "login.html";
     };
 
-    // LOAD WISHLIST DATA (only for current uid)
+    // ✅ WISHLIST (UPDATED to user subcollection)
+    // Collection path: /users/{uid}/wishlist/{productId}
     async function loadWishlist() {
       if (!currentUser) return;
       try {
-        const q = query(collection(db, "wishlist"), where("userId", "==", currentUser.uid));
-        const snap = await getDocs(q);
-        wishlistMap.clear();
-        snap.forEach(d => wishlistMap.set(d.data().productId, d.id));
+        const wishCol = collection(db, "users", currentUser.uid, "wishlist");
+        const snap = await getDocs(wishCol);
+        wishlistSet = new Set();
+        snap.forEach(d => {
+          const data = d.data() || {};
+          const pid = data.productId || d.id;
+          if (pid) wishlistSet.add(pid);
+        });
       } catch (e) {
-        console.error("Wishlist error", e);
+        console.error("Wishlist load error", e);
       }
     }
 
-    // FETCH PRODUCTS (✅ query MEN only for better performance)
+    // FETCH PRODUCTS (✅ query MEN only)
     async function init() {
       try {
         const qMen = query(collection(db, "products"), where("category", "==", "Men"));
@@ -413,19 +432,19 @@
         allProds = [];
         snap.forEach(d => {
           const p = d.data();
-          if (p.isVisible !== false) allProds.push({ id: d.id, ...p });
+          if (p && p.isVisible !== false) allProds.push({ id: d.id, ...p });
         });
 
         allProds.sort((a, b) => (b.priority || 0) - (a.priority || 0));
         render();
       } catch (e) {
         console.error(e);
-        document.getElementById('product-grid').innerHTML =
-          '<p class="col-span-full text-center text-red-500">Error loading collection.</p>';
+        const grid = document.getElementById('product-grid');
+        if (grid) grid.innerHTML = '<p class="col-span-full text-center text-red-500">Error loading collection.</p>';
       }
     }
 
-    // Filters (✅ no reliance on global event)
+    // Filters
     window.filterItems = (btn, cat) => {
       filter = cat;
       document.querySelectorAll('.filter-btn').forEach(b => {
@@ -437,13 +456,12 @@
     };
 
     window.sortProducts = (val) => {
-      if (val === 'price-asc') allProds.sort((a, b) => (a.discountPrice || a.price) - (b.discountPrice || b.price));
-      else if (val === 'price-desc') allProds.sort((a, b) => (b.discountPrice || b.price) - (a.discountPrice || a.price));
+      if (val === 'price-asc') allProds.sort((a, b) => (Number(a.discountPrice || a.price) || 0) - (Number(b.discountPrice || b.price) || 0));
+      else if (val === 'price-desc') allProds.sort((a, b) => (Number(b.discountPrice || b.price) || 0) - (Number(a.discountPrice || a.price) || 0));
       else allProds.sort((a, b) => (b.priority || 0) - (a.priority || 0));
       render();
     };
 
-    // Render (✅ single DOM write, lazy images)
     function render() {
       const grid = document.getElementById('product-grid');
       if (!grid) return;
@@ -460,12 +478,15 @@
       let htmlContent = '';
 
       list.forEach((p, index) => {
-        const priceDisplay = (p.discountPrice > 0)
-          ? `<span class="text-red-600 font-bold mr-2">Rs. ${Number(p.discountPrice).toLocaleString()}</span> <span class="line-through text-xs text-gray-400">Rs. ${Number(p.price).toLocaleString()}</span>`
-          : `Rs. ${Number(p.price).toLocaleString()}`;
+        const priceNum = Number(p.price) || 0;
+        const discNum = Number(p.discountPrice) || 0;
+
+        const priceDisplay = (discNum > 0)
+          ? `<span class="text-red-600 font-bold mr-2">Rs. ${discNum.toLocaleString()}</span> <span class="line-through text-xs text-gray-400">Rs. ${priceNum.toLocaleString()}</span>`
+          : `Rs. ${priceNum.toLocaleString()}`;
 
         let stockBadge = '';
-        const currentStock = (p.stock !== undefined) ? p.stock : 10;
+        const currentStock = (p.stock !== undefined) ? Number(p.stock) : 10;
 
         if (currentStock <= 0) {
           stockBadge = `<div class="absolute top-0 right-0 bg-gray-500 text-white text-[8px] font-bold px-3 py-1 z-20 uppercase tracking-widest">Sold Out</div>`;
@@ -473,22 +494,21 @@
           stockBadge = `<div class="absolute top-0 right-0 bg-orange-600 text-white text-[8px] font-bold px-3 py-1 z-20 uppercase tracking-widest animate-pulse">Only ${currentStock} Left</div>`;
         }
 
-        const isFav = wishlistMap.has(p.id);
+        const isFav = wishlistSet.has(p.id);
         const heartIconClass = isFav ? 'fa-solid fa-heart text-red-500' : 'fa-regular fa-heart text-[#4A3B32]';
         const delay = index * 50;
 
         const safeName = String(p.name || '').replace(/'/g, "\\'");
         const safeImg = String(p.image || '');
-        const safeCat = String(p.category || 'Men');
 
         htmlContent += `
           <div data-aos="fade-up" data-aos-delay="${delay}"
             class="group relative bg-white hover:shadow-2xl transition-all duration-500 cursor-pointer overflow-hidden rounded-sm border border-transparent hover:border-[#D6C8B5]">
-            ${p.discountPrice > 0 ? '<div class="absolute top-0 left-0 bg-[#4A3B32] text-[#E6D8C5] text-[9px] font-bold px-3 py-1 z-20 uppercase tracking-widest">Sale</div>' : ''}
+            ${discNum > 0 ? '<div class="absolute top-0 left-0 bg-[#4A3B32] text-[#E6D8C5] text-[9px] font-bold px-3 py-1 z-20 uppercase tracking-widest">Sale</div>' : ''}
             ${stockBadge}
 
             <button
-              onclick="toggleWishlist(this, '${p.id}', '${safeName}', ${Number(p.discountPrice || p.price)}, '${safeImg}', '${safeCat}'); event.stopPropagation();"
+              onclick="toggleWishlist(this, '${p.id}'); event.stopPropagation();"
               class="absolute top-3 right-3 z-30 bg-white/80 rounded-full w-8 h-8 flex items-center justify-center shadow-sm hover:scale-110 transition"
               aria-label="Toggle wishlist">
               <i class="${heartIconClass} text-lg"></i>
@@ -502,7 +522,7 @@
 
               ${currentStock > 0 ? `
                 <button
-                  onclick="openQuickView('${p.id}', '${safeName}', '${p.price}', '${p.discountPrice}', '${safeImg}'); event.stopPropagation();"
+                  onclick="openQuickView('${p.id}', '${safeName}', '${priceNum}', '${discNum}', '${safeImg}'); event.stopPropagation();"
                   class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white text-themeText px-8 py-3 text-[10px] font-bold uppercase tracking-widest opacity-0 translate-y-4 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300 shadow-xl hover:bg-themeBtn hover:text-white w-[80%]">
                   Quick View
                 </button>
@@ -523,46 +543,45 @@
       grid.innerHTML = htmlContent;
     }
 
-    // Wishlist toggle (✅ internal toast, guest-friendly because of ensureSignedIn)
-    window.toggleWishlist = async (btn, id, name, price, img, cat) => {
+    // ✅ WISHLIST TOGGLE (UPDATED to /users/{uid}/wishlist/{productId})
+    window.toggleWishlist = async (btn, productId) => {
       if (!currentUser) {
         showToast("Please try again.");
         return;
       }
 
       const icon = btn.querySelector('i');
-      const isFav = icon.classList.contains('fa-solid');
-      icon.className = isFav ? 'fa-regular fa-heart text-[#4A3B32] text-lg' : 'fa-solid fa-heart text-red-500 text-lg';
+      const isFav = wishlistSet.has(productId);
+
+      // optimistic UI
+      if (icon) icon.className = isFav ? 'fa-regular fa-heart text-[#4A3B32] text-lg' : 'fa-solid fa-heart text-red-500 text-lg';
 
       try {
+        const wishDoc = doc(db, "users", currentUser.uid, "wishlist", productId);
+
         if (isFav) {
-          const docId = wishlistMap.get(id);
-          if (docId) {
-            await deleteDoc(doc(db, "wishlist", docId));
-            wishlistMap.delete(id);
-            showToast("Removed from wishlist");
-          }
+          await deleteDoc(wishDoc);
+          wishlistSet.delete(productId);
+          showToast("Removed from wishlist");
         } else {
-          const ref = await addDoc(collection(db, "wishlist"), {
+          // keep schema EXACTLY as your rules allow
+          await setDoc(wishDoc, {
             userId: currentUser.uid,
-            productId: id,
-            name,
-            price,
-            image: img,
-            category: cat,
+            productId: productId,
             createdAt: serverTimestamp()
           });
-          wishlistMap.set(id, ref.id);
+          wishlistSet.add(productId);
           showToast("Saved to wishlist");
         }
       } catch (e) {
         console.error(e);
-        icon.className = isFav ? 'fa-solid fa-heart text-red-500 text-lg' : 'fa-regular fa-heart text-[#4A3B32] text-lg';
+        // revert UI
+        if (icon) icon.className = isFav ? 'fa-solid fa-heart text-red-500 text-lg' : 'fa-regular fa-heart text-[#4A3B32] text-lg';
         showToast("Wishlist failed");
       }
     };
 
-    // Quick view (✅ close on outside click + ESC)
+    // QUICK VIEW
     window.openQuickView = (id, name, price, discount, image) => {
       const modal = document.getElementById('quick-view-modal');
       const panel = document.getElementById('quick-view-panel');
@@ -606,10 +625,10 @@
       if (e.key === 'Escape') closeQuickView();
     });
 
-    // Cart
+    // CART UI
     window.updateCartUI = () => {
       const badge = document.getElementById('cart-count');
-      if (badge) badge.innerText = cart.reduce((a, b) => a + b.qty, 0);
+      if (badge) badge.innerText = cart.reduce((a, b) => a + (Number(b.qty) || 0), 0);
 
       const con = document.getElementById('cart-items');
       if (!con) return;
@@ -618,8 +637,9 @@
 
       let t = 0;
       cart.forEach(i => {
-        const finalPrice = i.discountPrice > 0 ? i.discountPrice : i.price;
-        t += finalPrice * i.qty;
+        const qty = Number(i.qty) || 1;
+        const finalPrice = (Number(i.discountPrice) > 0) ? Number(i.discountPrice) : Number(i.price);
+        t += finalPrice * qty;
 
         con.innerHTML += `
           <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
@@ -630,13 +650,13 @@
                 <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize}</p>
                 <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
                   <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', -1)" class="text-xs font-bold px-1 hover:text-red-500" aria-label="Decrease quantity">-</button>
-                  <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
+                  <span class="text-xs font-bold w-4 text-center">${qty}</span>
                   <button onclick="changeQty('${i.id}-${i.selectedSize}-${i.selectedColor}', 1)" class="text-xs font-bold px-1 hover:text-green-500" aria-label="Increase quantity">+</button>
                 </div>
               </div>
             </div>
             <div class="text-right flex flex-col justify-between">
-              <p class="font-bold text-sm">Rs. ${(finalPrice * i.qty).toLocaleString()}</p>
+              <p class="font-bold text-sm">Rs. ${(finalPrice * qty).toLocaleString()}</p>
               <button onclick="removeItem('${i.id}-${i.selectedSize}-${i.selectedColor}')" class="text-xs text-red-500 hover:text-red-700 underline uppercase tracking-wider">Remove</button>
             </div>
           </div>
@@ -650,14 +670,15 @@
     window.changeQty = (uid, change) => {
       const item = cart.find(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
       if (!item) return;
-      item.qty += change;
-      if (item.qty < 1) item.qty = 1;
+
+      const nextQty = (Number(item.qty) || 1) + change;
+      item.qty = nextQty < 1 ? 1 : nextQty;
+
       localStorage.setItem('myCart', JSON.stringify(cart));
       updateCartUI();
     };
 
     window.toggleCart = () => {
-      // ✅ close user dropdown if open (components.js should provide this)
       window.closeUserMenu?.();
 
       const sb = document.getElementById('cart-sidebar');
