@@ -39,7 +39,7 @@
         <div class="relative mb-8 flex justify-center items-center">
             <div class="absolute w-24 h-24 rounded-full border-2 border-green-200 success-ring"></div>
             <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center relative z-10">
-                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="w-10 h-10 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
                     <path class="check-draw" stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path>
                 </svg>
             </div>
@@ -52,10 +52,14 @@
             <p class="text-[10px] font-bold uppercase text-[#7A6B63] tracking-widest mb-2">Order Reference</p>
             <div class="flex items-center justify-center gap-3">
                 <p id="order-id" class="text-lg font-mono font-bold text-[#4A3B32] tracking-wider select-all break-all">Processing...</p>
-                <button onclick="copyID(this)" class="text-[#7A6B63] hover:text-[#4A3B32] transition p-1" title="Copy ID">
+                <button onclick="copyID(this)" class="text-[#7A6B63] hover:text-[#4A3B32] transition p-1" title="Copy ID" aria-label="Copy order id">
                     <i class="fa-regular fa-copy"></i>
                 </button>
             </div>
+
+            <p id="order-status" class="mt-3 text-[10px] font-bold uppercase tracking-widest text-gray-400 hidden">
+                Status: <span class="text-[#4A3B32]">—</span>
+            </p>
         </div>
 
         <div class="space-y-4">
@@ -89,6 +93,7 @@
                 <p><strong>Order ID:</strong> <span id="pr-id" class="font-mono"></span></p>
                 <p><strong>Date:</strong> <span id="pr-date"></span></p>
                 <p><strong>Method:</strong> <span id="pr-method"></span></p>
+                <p><strong>Status:</strong> <span id="pr-status"></span></p>
             </div>
         </div>
 
@@ -156,12 +161,21 @@
                 const data = docSnap.data() || {};
                 const customer = data.customer || {};
 
+                // Status
+                const status = data.status || "Processing";
+                const os = document.getElementById('order-status');
+                if (os) {
+                    os.classList.remove('hidden');
+                    os.querySelector('span').innerText = status;
+                }
+
                 // Print Header
                 document.getElementById('pr-id').innerText = orderId.toUpperCase();
                 document.getElementById('pr-date').innerText = data.date || new Date().toLocaleDateString();
                 document.getElementById('pr-name').innerText = customer.name || "Customer";
                 document.getElementById('pr-addr').innerText = customer.address || (data.address || "—");
                 document.getElementById('pr-method').innerText = data.paymentMethod || 'Paid';
+                document.getElementById('pr-status').innerText = status;
 
                 // Calculate subtotal reliably (discount aware)
                 const items = Array.isArray(data.items) ? data.items : [];
@@ -201,6 +215,12 @@
                 document.getElementById('pr-items').innerHTML = itemsHtml || `
                     <tr><td class="py-4 text-gray-500" colspan="3">No items found.</td></tr>
                 `;
+
+                // ✅ Clear cart after confirmed order (safe if user refreshes this page)
+                // Only clear if the order belongs to this checkout flow (heuristic: has items + totalAmount)
+                if (items.length && totalAmount > 0) {
+                    localStorage.removeItem('myCart');
+                }
 
             } catch (error) {
                 console.error("Error generating receipt data:", error);

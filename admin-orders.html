@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>Admin Orders - Brand</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -48,10 +48,13 @@
         }
         .toast-enter { animation: slideIn 0.3s ease-out forwards; }
 
+        /* Updated overlay to match your other admin pages */
         .loader-overlay {
-            position: fixed; inset: 0; background: white; z-index: 9999;
+            position: fixed; inset: 0;
+            background: radial-gradient(circle at center top, #FDFBF9 0%, #F2E8D9 60%, #E6D8C5 100%);
+            z-index: 9999;
             display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.3s ease;
+            transition: opacity 0.45s ease;
         }
 
         @media (max-width: 768px) {
@@ -78,31 +81,46 @@
         }
     </style>
 </head>
+
 <body class="flex flex-col min-h-screen">
 
     <!-- SECURITY OVERLAY -->
     <div id="security-overlay" class="loader-overlay">
         <div id="state-loading" class="text-center">
-            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
-            <p id="sec-loading-msg" class="text-xs font-bold uppercase tracking-widest text-gray-600">Verifying Admin Privileges...</p>
+            <div class="relative w-20 h-20 mx-auto mb-6">
+                <div class="absolute inset-0 border-[3px] border-[#D6C8B5] rounded-full opacity-30"></div>
+                <div class="absolute inset-0 border-[3px] border-[#4A3B32] border-t-transparent rounded-full animate-spin"></div>
+                <div class="absolute inset-0 flex items-center justify-center">
+                    <span class="font-serif font-bold text-2xl text-[#4A3B32]">B.</span>
+                </div>
+            </div>
+            <p id="sec-loading-msg" class="text-xs font-bold uppercase tracking-widest text-[#4A3B32]">Verifying Admin Privileges...</p>
+            <button onclick="forceReset()" id="panic-btn" class="hidden mt-3 text-[10px] text-red-600 underline uppercase font-bold tracking-widest hover:text-red-800">Stuck? Reset</button>
         </div>
 
-        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
-            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
+        <div id="state-login" class="hidden bg-white p-8 rounded-2xl shadow-2xl border border-gray-200 w-[92vw] max-w-sm text-center transform scale-95 opacity-0 transition-all duration-500">
+            <h2 class="text-xl font-bold text-themeText mb-2 font-serif">Admin Login</h2>
             <p class="text-xs text-gray-500 mb-6">Please authenticate to access orders.</p>
             <form id="quick-login-form" class="space-y-4">
-                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" value="mr.awaisaltaf@gmail.com" readonly>
-                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
-                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Access</button>
+                <input type="email" id="admin-email" class="w-full border border-gray-300 p-3 rounded-xl text-sm" value="mr.awaisaltaf@gmail.com" readonly>
+                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-3 rounded-xl text-sm" placeholder="Password" required>
+                <button type="submit" class="w-full bg-themeBtn text-white py-3 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:bg-black transition shadow-lg">
+                    Unlock Access
+                </button>
             </form>
-            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
+            <p id="login-error" class="text-red-500 text-xs mt-3 hidden font-bold"></p>
         </div>
 
-        <div id="state-denied" class="hidden text-center">
+        <div id="state-denied" class="hidden bg-white p-8 rounded-2xl shadow-2xl border border-gray-200 w-[92vw] max-w-sm text-center transform scale-95 opacity-0 transition-all duration-500">
             <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
-            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
-            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
-            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
+            <h2 class="text-xl font-bold text-red-600 mb-2 font-serif">ACCESS DENIED</h2>
+            <p class="text-xs text-gray-500 mb-6 leading-relaxed">
+                You are logged in as <span id="current-user-email" class="font-bold text-black"></span>,<br>
+                but this account is not an Admin.
+            </p>
+            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-3 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-lg">
+                Switch Account
+            </button>
         </div>
     </div>
 
@@ -163,15 +181,32 @@
                     <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
                     <p class="text-xs text-gray-500 mt-1">Real-time tracking and fulfillment updates</p>
                 </div>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <a href="admin.html" class="flex-1 text-center bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-black transition shadow-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-box"></i> Products
-                    </a>
-                    <button onclick="location.reload()" class="flex-1 bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded text-xs font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-rotate-right"></i> Refresh
-                    </button>
+
+                <!-- ✅ NEW: Search + status filter -->
+                <div class="flex flex-col md:flex-row gap-2 w-full md:w-auto">
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <input id="orderSearch" type="text" placeholder="Search order / customer / phone..." class="w-full md:w-72 p-3 bg-white border border-gray-300 rounded text-sm outline-none focus:border-adminAccent">
+                        <select id="statusFilter" class="status-select p-3 bg-white border border-gray-300 rounded text-sm outline-none focus:border-adminAccent w-44">
+                            <option value="All">All Status</option>
+                            <option value="Processing">Processing</option>
+                            <option value="Shipped">Shipped</option>
+                            <option value="Delivered">Delivered</option>
+                            <option value="Cancelled">Cancelled</option>
+                        </select>
+                    </div>
+
+                    <div class="flex gap-2 w-full md:w-auto">
+                        <a href="admin.html" class="flex-1 text-center bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-black transition shadow-sm flex items-center justify-center gap-2">
+                            <i class="fa-solid fa-box"></i> Products
+                        </a>
+                        <button onclick="location.reload()" class="flex-1 bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded text-xs font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
+                            <i class="fa-solid fa-rotate-right"></i> Refresh
+                        </button>
+                    </div>
                 </div>
             </div>
+
+            <p id="page-msg" class="text-xs text-gray-500 px-4 md:px-6 py-3 hidden"></p>
 
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
@@ -257,11 +292,22 @@
     <div id="toast-container" class="fixed bottom-5 right-5 z-[80] flex flex-col gap-2"></div>
 
     <script type="module">
-        import {
-            auth, db, collection, getDocs, doc, updateDoc,
+        // ✅ Make consistent with other pages: safe import via try/catch (prevents white screen if config missing)
+        let auth, db, collection, getDocs, doc, updateDoc,
             onAuthStateChanged, signOut, onSnapshot, query, where,
-            signInWithEmailAndPassword
-        } from './firebase-config.js';
+            signInWithEmailAndPassword;
+
+        try {
+            ({
+                auth, db, collection, getDocs, doc, updateDoc,
+                onAuthStateChanged, signOut, onSnapshot, query, where,
+                signInWithEmailAndPassword
+            } = await import('./firebase-config.js'));
+        } catch (e) {
+            console.error("Firebase Config Missing:", e);
+            const msg = document.getElementById('sec-loading-msg');
+            if (msg) msg.innerText = "System Error: Missing Config";
+        }
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let allOrders = [];
@@ -271,568 +317,47 @@
         const stateLogin = document.getElementById('state-login');
         const stateDenied = document.getElementById('state-denied');
 
+        const orderSearch = document.getElementById('orderSearch');
+        const statusFilter = document.getElementById('statusFilter');
+        const pageMsg = document.getElementById('page-msg');
+
+        // ---------- SAFETY TIMEOUT ----------
+        setTimeout(() => {
+            if (overlay?.style?.opacity !== '0' && stateLogin?.classList?.contains('hidden') && stateDenied?.classList?.contains('hidden')) {
+                const btn = document.getElementById('panic-btn');
+                if (btn) btn.classList.remove('hidden');
+                const msg = document.getElementById('sec-loading-msg');
+                if (msg) msg.innerText = "Connection taking too long...";
+            }
+        }, 8000);
+
         // ADMIN CHECK
-        onAuthStateChanged(auth, (user) => {
-            stateLoading.classList.add('hidden');
+        if (auth) {
+            onAuthStateChanged(auth, (user) => {
+                stateLoading.classList.add('hidden');
 
-            if (user) {
-                if (user.email === ADMIN_EMAIL) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => overlay.style.display = 'none', 500);
-                    loadAdminOrders();
+                if (user) {
+                    if (user.email === ADMIN_EMAIL) {
+                        overlay.style.opacity = '0';
+                        setTimeout(() => overlay.style.display = 'none', 500);
 
-                    // ✅ Updated to match new chat flags (adminUnread preferred + fallback)
-                    watchInboxDot();
-                } else {
-                    stateDenied.classList.remove('hidden');
-                    document.getElementById('current-user-email').innerText = user.email;
-                    setTimeout(() => window.location.replace("index.html"), 2000);
-                }
-            } else {
-                stateLogin.classList.remove('hidden');
-            }
-        });
-
-        // QUICK LOGIN
-        document.getElementById('quick-login-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const pass = document.getElementById('admin-pass').value;
-            const errBox = document.getElementById('login-error');
-            errBox.classList.add('hidden');
-
-            try {
-                await signInWithEmailAndPassword(auth, ADMIN_EMAIL, pass);
-            } catch (error) {
-                errBox.innerText = "Error: " + error.message;
-                errBox.classList.remove('hidden');
-            }
-        });
-
-        window.forceReset = async () => {
-            if (auth) await signOut(auth);
-            window.location.reload();
-        };
-
-        // ✅ UPDATED INBOX DOT LOGIC (supports adminUnread and legacy unread)
-        function watchInboxDot() {
-            onSnapshot(collection(db, "chats"), (snap) => {
-                const dot = document.getElementById('inbox-dot');
-                let hasUnread = false;
-
-                snap.forEach((d) => {
-                    const c = d.data() || {};
-                    if (c.adminUnread === true) hasUnread = true;
-                    if (c.adminUnread !== true && c.unread === true) hasUnread = true; // legacy fallback
-                });
-
-                if (hasUnread) dot.classList.remove('hidden');
-                else dot.classList.add('hidden');
-            });
-        }
-
-        // LOGOUT MODAL
-        window.openLogoutModal = () => {
-            const m = document.getElementById('logout-modal');
-            m.classList.remove('hidden');
-            setTimeout(() => {
-                m.classList.remove('opacity-0');
-                m.querySelector('div').classList.replace('scale-95', 'scale-100');
-            }, 10);
-        };
-
-        window.closeLogoutModal = () => {
-            const m = document.getElementById('logout-modal');
-            m.classList.add('opacity-0');
-            m.querySelector('div').classList.replace('scale-100', 'scale-95');
-            setTimeout(() => m.classList.add('hidden'), 300);
-        };
-
-        window.confirmLogout = async () => {
-            await signOut(auth);
-            window.location.href = "login.html";
-        };
-
-        // TOAST
-        window.showToast = (message, type = 'error') => {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            const colorClass = type === 'success' ? 'bg-green-600' : 'bg-red-600';
-            const icon = type === 'success' ? 'fa-check' : 'fa-triangle-exclamation';
-
-            toast.className = `${colorClass} text-white px-6 py-3 rounded shadow-lg flex items-center gap-3 text-xs font-bold uppercase tracking-wide toast-enter transform transition-all duration-500`;
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
-
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateX(100%)';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        };
-
-        async function loadAdminOrders() {
-            const tbody = document.getElementById('admin-orders-list');
-            const loadingMsg = document.getElementById('loading-msg');
-
-            try {
-                const querySnapshot = await getDocs(collection(db, "orders"));
-
-                allOrders = [];
-                let revenue = 0, pending = 0, cancelled = 0;
-
-                querySnapshot.forEach((d) => {
-                    const data = d.data();
-                    allOrders.push({ id: d.id, ...data });
-
-                    if (data.status !== 'Cancelled') revenue += Number(data.totalAmount || 0);
-                    if (data.status === 'Processing') pending++;
-                    if (data.status === 'Cancelled') cancelled++;
-                });
-
-                document.getElementById('total-revenue').innerText = `Rs. ${revenue.toLocaleString()}`;
-                document.getElementById('total-orders').innerText = allOrders.length;
-                document.getElementById('pending-orders').innerText = pending;
-                document.getElementById('cancelled-orders').innerText = cancelled;
-
-                allOrders.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-                tbody.innerHTML = "";
-
-                if (allOrders.length === 0) {
-                    loadingMsg.innerText = "No orders found in database.";
-                    return;
-                }
-
-                allOrders.forEach(order => {
-                    const customer = order.customer || {};
-                    const items = Array.isArray(order.items) ? order.items : [];
-
-                    const itemsSummary = items.length
-                        ? items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 40) + (items.length > 1 ? '...' : '')
-                        : "No items";
-
-                    const safeTotal = Number(order.totalAmount || 0);
-
-                    const row = `
-                        <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0 group">
-                            <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">
-                                #${order.id.slice(0, 6).toUpperCase()}
-                            </td>
-                            <td class="order-cell p-4" data-label="Customer">
-                                <div class="md:text-left text-right">
-                                    <p class="font-bold text-gray-800 text-sm">${customer.name || 'N/A'}</p>
-                                    <p class="text-[10px] text-gray-400 font-mono">${customer.phone || ''}</p>
-                                </div>
-                            </td>
-                            <td class="order-cell p-4 text-xs text-gray-600" data-label="Items">
-                                ${itemsSummary}
-                            </td>
-                            <td class="order-cell p-4 font-bold text-sm text-adminDark" data-label="Total">
-                                Rs. ${safeTotal.toLocaleString()}
-                            </td>
-                            <td class="order-cell p-4 text-xs text-gray-400 font-mono" data-label="Date">
-                                ${order.date || '—'}
-                            </td>
-                            <td class="order-cell p-4" data-label="Status">
-                                <select onchange="updateStatus('${order.id}', this)" class="status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(order.status)}">
-                                    <option value="Processing" ${order.status==='Processing'?'selected':''}>Processing</option>
-                                    <option value="Shipped" ${order.status==='Shipped'?'selected':''}>Shipped</option>
-                                    <option value="Delivered" ${order.status==='Delivered'?'selected':''}>Delivered</option>
-                                    <option value="Cancelled" ${order.status==='Cancelled'?'selected':''}>Cancelled</option>
-                                </select>
-                            </td>
-                            <td class="order-cell p-4 text-center" data-label="Actions">
-                                <button onclick="viewOrder('${order.id}')" class="w-full md:w-auto bg-white border border-gray-200 text-gray-600 hover:text-adminAccent hover:border-adminAccent px-3 py-1.5 rounded-md transition shadow-sm flex items-center justify-center gap-2 text-[10px] uppercase font-bold" title="View Details">
-                                    <i class="fa-solid fa-eye"></i> <span class="md:hidden">Details</span>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-
-                loadingMsg.classList.add('hidden');
-
-            } catch (e) {
-                console.error(e);
-                loadingMsg.innerHTML = `<i class="fa-solid fa-lock text-3xl mb-2"></i><br>ACCESS DENIED<br>Database rejected connection.`;
-                loadingMsg.className = "text-center py-20 text-red-500 font-bold text-xs uppercase tracking-widest";
-            }
-        }
-
-        function getStatusColor(status) {
-            if (status === 'Processing') return 'bg-yellow-50 text-yellow-700 border-yellow-200';
-            if (status === 'Shipped') return 'bg-blue-50 text-blue-700 border-blue-200';
-            if (status === 'Delivered') return 'bg-green-50 text-green-700 border-green-200';
-            return 'bg-red-50 text-red-700 border-red-200';
-        }
-
-        // UPDATE STATUS
-        window.updateStatus = async (orderId, selectElem) => {
-            const newStatus = selectElem.value;
-            selectElem.classList.add('opacity-50');
-
-            try {
-                await updateDoc(doc(db, "orders", orderId), { status: newStatus });
-                selectElem.className = `status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(newStatus)}`;
-                showToast("Order Updated", "success");
-            } catch(e) {
-                console.error(e);
-                showToast("Update Failed");
-            } finally {
-                selectElem.classList.remove('opacity-50');
-            }
-        };
-
-        // VIEW ORDER
-        window.viewOrder = (id) => {
-            const order = allOrders.find(o => o.id === id);
-            if (!order) return;
-
-            const customer = order.customer || {};
-            const items = Array.isArray(order.items) ? order.items : [];
-
-            document.getElementById('modal-order-id').innerText = `#${order.id.slice(0,8).toUpperCase()}`;
-            document.getElementById('modal-customer-name').innerText = customer.name || 'N/A';
-            document.getElementById('modal-customer-email').innerText = customer.email || 'N/A';
-            document.getElementById('modal-customer-phone').innerText = customer.phone || 'N/A';
-            document.getElementById('modal-shipping-address').innerText = customer.address || 'N/A';
-            document.getElementById('modal-payment-method').innerText = order.paymentMethod || 'N/A';
-            document.getElementById('modal-total-amount').innerText = `Rs. ${Number(order.totalAmount || 0).toLocaleString()}`;
-
-            const itemsList = document.getElementById('modal-items-list');
-            itemsList.innerHTML = items.map(item => {
-                const unit = Number(item.discountPrice || item.price || 0);
-                return `
-                    <div class="flex items-center gap-4 bg-white p-3 rounded border border-gray-100">
-                        <img src="${item.image || ''}" class="w-12 h-16 object-cover rounded bg-gray-50 border border-gray-100" onerror="this.style.display='none'">
-                        <div class="flex-grow">
-                            <p class="text-sm font-bold text-gray-800 line-clamp-1">${item.name || 'Item'}</p>
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Size: ${item.selectedSize || '—'} | Qty: ${item.qty || 1}</p>
-                        </div>
-                        <p class="text-sm font-bold text-gray-700 font-mono">Rs. ${unit.toLocaleString()}</p>
-                    </div>
-                `;
-            }).join('') || `<p class="text-xs text-gray-400">No items found for this order.</p>`;
-
-            const m = document.getElementById('order-modal');
-            m.classList.remove('hidden');
-            setTimeout(() => {
-                m.classList.remove('opacity-0');
-                const card = m.querySelector('div');
-                card.classList.remove('scale-95');
-                card.classList.add('scale-100');
-            }, 10);
-        };
-
-        window.closeModal = () => {
-            const m = document.getElementById('order-modal');
-            m.classList.add('opacity-0');
-            const card = m.querySelector('div');
-            card.classList.remove('scale-100');
-            card.classList.add('scale-95');
-            setTimeout(() => m.classList.add('hidden'), 300);
-        };
-    </script>
-</body>
-</html><!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Admin Orders - Brand</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-
-    <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    colors: {
-                        adminDark: '#111827',
-                        adminAccent: '#4F46E5',
-                        adminSuccess: '#10B981',
-                        adminWarning: '#F59E0B',
-                        adminDanger: '#EF4444',
-                        themeBtn: '#4A3B32',
-                        themeText: '#4A3B32'
+                        loadAdminOrders();
+                        watchInboxDot();
+                    } else {
+                        stateDenied.classList.remove('hidden');
+                        document.getElementById('current-user-email').innerText = user.email;
+                        setTimeout(() => stateDenied.classList.remove('scale-95', 'opacity-0'), 80);
+                        setTimeout(() => window.location.replace("index.html"), 2000);
                     }
-                }
-            }
-        }
-    </script>
-
-    <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #f3f4f6; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
-
-        .status-select {
-            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-            background-position: right 0.5rem center;
-            background-repeat: no-repeat;
-            background-size: 1.2em 1.2em;
-            padding-right: 2rem;
-            -webkit-appearance: none;
-            appearance: none;
-        }
-
-        .scrollbar-hide::-webkit-scrollbar { display: none; }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); opacity: 0; }
-            to { transform: translateX(0); opacity: 1; }
-        }
-        .toast-enter { animation: slideIn 0.3s ease-out forwards; }
-
-        .loader-overlay {
-            position: fixed; inset: 0; background: white; z-index: 9999;
-            display: flex; justify-content: center; align-items: center;
-            transition: opacity 0.3s ease;
-        }
-
-        @media (max-width: 768px) {
-            .order-table-header { display: none; }
-            .order-row {
-                display: flex; flex-direction: column; padding: 1rem; margin-bottom: 0.75rem;
-                background: white; border-radius: 0.5rem; border: 1px solid #e5e7eb;
-                box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            }
-            .order-cell {
-                display: flex; justify-content: space-between; align-items: center;
-                padding: 0.25rem 0; border: none; width: 100%;
-            }
-            .order-cell::before {
-                content: attr(data-label);
-                font-weight: 700; text-transform: uppercase; font-size: 0.6rem;
-                color: #9ca3af; letter-spacing: 0.05em;
-            }
-            .order-cell:last-child {
-                margin-top: 0.75rem; padding-top: 0.75rem;
-                border-top: 1px solid #f3f4f6; justify-content: center;
-            }
-            .status-select { padding-top: 0.4rem; padding-bottom: 0.4rem; font-size: 0.7rem; width: auto; min-width: 110px; }
-        }
-    </style>
-</head>
-<body class="flex flex-col min-h-screen">
-
-    <!-- SECURITY OVERLAY -->
-    <div id="security-overlay" class="loader-overlay">
-        <div id="state-loading" class="text-center">
-            <i class="fa-solid fa-shield-halved text-4xl text-themeBtn mb-4 animate-pulse"></i>
-            <p id="sec-loading-msg" class="text-xs font-bold uppercase tracking-widest text-gray-600">Verifying Admin Privileges...</p>
-        </div>
-
-        <div id="state-login" class="hidden bg-white p-8 rounded shadow-2xl border border-gray-200 w-80 text-center">
-            <h2 class="text-xl font-bold text-themeText mb-2">Admin Login</h2>
-            <p class="text-xs text-gray-500 mb-6">Please authenticate to access orders.</p>
-            <form id="quick-login-form" class="space-y-4">
-                <input type="email" id="admin-email" class="w-full border border-gray-300 p-2 rounded text-sm" value="mr.awaisaltaf@gmail.com" readonly>
-                <input type="password" id="admin-pass" class="w-full border border-gray-300 p-2 rounded text-sm" placeholder="Password" required>
-                <button type="submit" class="w-full bg-themeBtn text-white py-2 rounded font-bold text-xs uppercase tracking-widest hover:bg-black transition">Unlock Access</button>
-            </form>
-            <p id="login-error" class="text-red-500 text-xs mt-3 hidden"></p>
-        </div>
-
-        <div id="state-denied" class="hidden text-center">
-            <i class="fa-solid fa-lock text-4xl text-red-500 mb-4"></i>
-            <h2 class="text-xl font-bold text-red-600 mb-2">ACCESS DENIED</h2>
-            <p class="text-xs text-gray-500 mb-6">You are logged in as <span id="current-user-email" class="font-bold"></span>,<br>but this account is not an Admin.</p>
-            <button onclick="forceReset()" class="bg-gray-800 text-white px-6 py-2 rounded text-xs font-bold uppercase tracking-widest">Switch Account</button>
-        </div>
-    </div>
-
-    <!-- HEADER -->
-    <header class="bg-adminDark text-white py-4 px-4 md:px-8 shadow-lg flex justify-between items-center sticky top-0 z-50">
-        <div class="flex items-center gap-4">
-            <h1 class="text-xl md:text-2xl font-bold tracking-widest text-white">
-                BRAND <span class="text-gray-500 text-[10px] align-top bg-gray-800 px-2 py-0.5 rounded ml-1">ADMIN</span>
-            </h1>
-        </div>
-        <div class="flex items-center gap-2 md:gap-4">
-            <a href="admin.html" class="text-[10px] md:text-xs font-bold uppercase bg-gray-800 border border-gray-700 px-3 py-2 rounded hover:bg-gray-700 text-white transition flex items-center gap-2">
-                <i class="fa-solid fa-gauge-high"></i> <span class="hidden md:inline">Dashboard</span>
-            </a>
-
-            <a href="admin-chat.html" class="relative text-[10px] md:text-xs font-bold uppercase bg-gray-800 border border-gray-700 px-3 py-2 rounded hover:bg-gray-700 text-white transition flex items-center gap-2">
-                <i class="fa-solid fa-comments"></i> <span class="hidden md:inline">Inbox</span>
-                <span id="inbox-dot" class="hidden absolute -top-1 -right-1 w-3 h-3 bg-blue-500 rounded-full border-2 border-adminDark animate-pulse"></span>
-            </a>
-
-            <a href="index.html" target="_blank" class="text-[10px] md:text-xs font-bold uppercase border border-gray-600 px-3 py-2 rounded hover:bg-white hover:text-adminDark transition flex items-center gap-2">
-                <i class="fa-solid fa-store"></i> <span class="hidden md:inline">Store</span>
-            </a>
-
-            <button onclick="openLogoutModal()" class="text-red-400 hover:text-red-300 text-xs font-bold uppercase transition flex items-center gap-2 ml-2">
-                <i class="fa-solid fa-right-from-bracket text-lg"></i>
-            </button>
-        </div>
-    </header>
-
-    <!-- CONTENT -->
-    <div class="flex-grow container mx-auto px-4 md:px-6 py-8">
-
-        <!-- STATS -->
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-6 mb-8">
-            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminSuccess">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Revenue</p>
-                <p id="total-revenue" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">Rs. 0</p>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminAccent">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total Orders</p>
-                <p id="total-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminWarning">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pending</p>
-                <p id="pending-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
-            </div>
-            <div class="bg-white p-4 rounded-lg shadow-sm border-l-4 border-adminDanger">
-                <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Cancelled</p>
-                <p id="cancelled-orders" class="text-lg md:text-2xl font-bold text-gray-800 mt-1">0</p>
-            </div>
-        </div>
-
-        <!-- TABLE -->
-        <div class="bg-white rounded-lg shadow-md overflow-hidden border border-gray-200">
-            <div class="p-4 md:p-6 border-b border-gray-100 flex flex-col md:flex-row justify-between items-start md:items-center bg-gray-50/50 gap-4">
-                <div>
-                    <h2 class="text-xl font-bold text-gray-800">Order Management</h2>
-                    <p class="text-xs text-gray-500 mt-1">Real-time tracking and fulfillment updates</p>
-                </div>
-                <div class="flex gap-2 w-full md:w-auto">
-                    <a href="admin.html" class="flex-1 text-center bg-gray-800 text-white px-4 py-2 rounded text-xs font-bold hover:bg-black transition shadow-sm flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-box"></i> Products
-                    </a>
-                    <button onclick="location.reload()" class="flex-1 bg-white border border-gray-300 text-gray-600 px-4 py-2 rounded text-xs font-bold hover:bg-gray-50 transition flex items-center justify-center gap-2 shadow-sm">
-                        <i class="fa-solid fa-rotate-right"></i> Refresh
-                    </button>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <table class="w-full text-left border-collapse">
-                    <thead class="order-table-header bg-gray-100 text-gray-500 text-xs uppercase tracking-wider">
-                        <tr>
-                            <th class="p-4 font-bold border-b border-gray-200">Order ID</th>
-                            <th class="p-4 font-bold border-b border-gray-200">Customer</th>
-                            <th class="p-4 font-bold border-b border-gray-200">Items</th>
-                            <th class="p-4 font-bold border-b border-gray-200">Total</th>
-                            <th class="p-4 font-bold border-b border-gray-200">Date</th>
-                            <th class="p-4 font-bold border-b border-gray-200">Status</th>
-                            <th class="p-4 font-bold border-b border-gray-200 text-center">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="admin-orders-list" class="text-sm text-gray-700 divide-y divide-gray-100 bg-white"></tbody>
-                </table>
-            </div>
-
-            <p id="loading-msg" class="text-center py-12 text-gray-400 animate-pulse font-mono text-xs">Connecting to database...</p>
-        </div>
-    </div>
-
-    <!-- ORDER MODAL -->
-    <div id="order-modal" class="fixed inset-0 bg-black/60 z-[60] hidden flex items-center justify-center backdrop-blur-sm p-4 opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-2xl w-full max-w-2xl overflow-hidden transform scale-95 transition-transform duration-300 flex flex-col max-h-[90vh]">
-            <div class="bg-gray-50 px-6 py-4 border-b border-gray-200 flex justify-between items-center">
-                <h3 class="font-bold text-lg text-gray-800">Order <span id="modal-order-id" class="text-adminAccent font-mono text-sm ml-1">#ID</span></h3>
-                <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 transition p-2"><i class="fa-solid fa-xmark text-xl"></i></button>
-            </div>
-
-            <div class="p-6 overflow-y-auto scrollbar-hide space-y-6">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6 bg-gray-50/50 p-4 rounded border border-gray-100">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-wider">Customer Info</p>
-                        <p id="modal-customer-name" class="font-bold text-gray-800 text-base">Name</p>
-                        <p id="modal-customer-email" class="text-xs text-gray-500 mt-1">Email</p>
-                        <p id="modal-customer-phone" class="text-xs text-gray-500 mt-1">Phone</p>
-                    </div>
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-gray-400 mb-2 tracking-wider">Shipping Address</p>
-                        <p id="modal-shipping-address" class="text-sm text-gray-600 leading-relaxed">Address...</p>
-                    </div>
-                </div>
-
-                <div>
-                    <p class="text-[10px] uppercase font-bold text-gray-400 mb-3 tracking-wider">Order Manifest</p>
-                    <div id="modal-items-list" class="space-y-3"></div>
-                </div>
-
-                <div class="flex justify-between items-center bg-gray-50 p-4 rounded border border-gray-100 mt-4">
-                    <div>
-                        <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Payment Method</p>
-                        <p id="modal-payment-method" class="font-bold text-gray-800 text-sm mt-1">Method</p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[10px] uppercase font-bold text-gray-400 tracking-wider">Grand Total</p>
-                        <p id="modal-total-amount" class="font-bold text-xl text-adminAccent mt-1">Rs. 0</p>
-                    </div>
-                </div>
-            </div>
-
-            <div class="bg-gray-50 px-6 py-4 border-t border-gray-200 text-right">
-                <button onclick="closeModal()" class="w-full md:w-auto bg-white border border-gray-300 text-gray-700 px-6 py-2 rounded text-xs font-bold uppercase hover:bg-gray-50 transition shadow-sm">Close View</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- LOGOUT MODAL -->
-    <div id="logout-modal" class="fixed inset-0 bg-black/60 z-[70] hidden flex items-center justify-center backdrop-blur-sm opacity-0 transition-opacity duration-300">
-        <div class="bg-white rounded-lg shadow-2xl p-6 w-80 text-center transform scale-95 transition-transform duration-300">
-            <div class="w-12 h-12 rounded-full bg-red-50 flex items-center justify-center mx-auto mb-4 text-red-500 text-xl">
-                <i class="fa-solid fa-arrow-right-from-bracket"></i>
-            </div>
-            <h3 class="font-serif font-bold text-lg text-gray-800 mb-2">Sign Out?</h3>
-            <p class="text-xs text-gray-500 mb-6 leading-relaxed">You will be returned to the login screen.</p>
-            <div class="flex gap-3">
-                <button onclick="closeLogoutModal()" class="flex-1 px-4 py-2 border border-gray-300 rounded text-xs font-bold uppercase text-gray-600 hover:bg-gray-50 transition">Cancel</button>
-                <button onclick="confirmLogout()" class="flex-1 px-4 py-2 bg-red-600 text-white rounded text-xs font-bold uppercase hover:bg-red-700 transition shadow-md">Sign Out</button>
-            </div>
-        </div>
-    </div>
-
-    <div id="toast-container" class="fixed bottom-5 right-5 z-[80] flex flex-col gap-2"></div>
-
-    <script type="module">
-        import {
-            auth, db, collection, getDocs, doc, updateDoc,
-            onAuthStateChanged, signOut, onSnapshot, query, where,
-            signInWithEmailAndPassword
-        } from './firebase-config.js';
-
-        const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
-        let allOrders = [];
-
-        const overlay = document.getElementById('security-overlay');
-        const stateLoading = document.getElementById('state-loading');
-        const stateLogin = document.getElementById('state-login');
-        const stateDenied = document.getElementById('state-denied');
-
-        // ADMIN CHECK
-        onAuthStateChanged(auth, (user) => {
-            stateLoading.classList.add('hidden');
-
-            if (user) {
-                if (user.email === ADMIN_EMAIL) {
-                    overlay.style.opacity = '0';
-                    setTimeout(() => overlay.style.display = 'none', 500);
-                    loadAdminOrders();
-
-                    // ✅ Updated to match new chat flags (adminUnread preferred + fallback)
-                    watchInboxDot();
                 } else {
-                    stateDenied.classList.remove('hidden');
-                    document.getElementById('current-user-email').innerText = user.email;
-                    setTimeout(() => window.location.replace("index.html"), 2000);
+                    stateLogin.classList.remove('hidden');
+                    setTimeout(() => stateLogin.classList.remove('scale-95', 'opacity-0'), 80);
                 }
-            } else {
-                stateLogin.classList.remove('hidden');
-            }
-        });
+            });
+        }
 
         // QUICK LOGIN
-        document.getElementById('quick-login-form').addEventListener('submit', async (e) => {
+        document.getElementById('quick-login-form')?.addEventListener('submit', async (e) => {
             e.preventDefault();
             const pass = document.getElementById('admin-pass').value;
             const errBox = document.getElementById('login-error');
@@ -847,7 +372,7 @@
         });
 
         window.forceReset = async () => {
-            if (auth) await signOut(auth);
+            try { if (auth) await signOut(auth); } catch (_) {}
             window.location.reload();
         };
 
@@ -898,7 +423,7 @@
             const icon = type === 'success' ? 'fa-check' : 'fa-triangle-exclamation';
 
             toast.className = `${colorClass} text-white px-6 py-3 rounded shadow-lg flex items-center gap-3 text-xs font-bold uppercase tracking-wide toast-enter transform transition-all duration-500`;
-            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${message}</span>`;
+            toast.innerHTML = `<i class="fa-solid ${icon}"></i> <span>${escapeHtml(message)}</span>`;
 
             container.appendChild(toast);
 
@@ -909,8 +434,103 @@
             }, 3000);
         };
 
-        async function loadAdminOrders() {
+        // ✅ NEW: render from memory (after initial load) + filters
+        function renderOrdersTable() {
             const tbody = document.getElementById('admin-orders-list');
+            const q = (orderSearch?.value || '').trim().toLowerCase();
+            const sf = (statusFilter?.value || 'All');
+
+            let list = [...allOrders];
+            if (sf !== 'All') list = list.filter(o => (o.status || 'Processing') === sf);
+
+            if (q) {
+                list = list.filter(o => {
+                    const id = String(o.id || '').toLowerCase();
+                    const cid = String(o.orderId || '').toLowerCase();
+                    const c = o.customer || {};
+                    const name = String(c.name || '').toLowerCase();
+                    const phone = String(c.phone || '').toLowerCase();
+                    const email = String(c.email || '').toLowerCase();
+                    return id.includes(q) || cid.includes(q) || name.includes(q) || phone.includes(q) || email.includes(q);
+                });
+            }
+
+            // newest first (timestamp seconds if available)
+            list.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
+
+            tbody.innerHTML = "";
+
+            if (list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="p-10 text-center text-gray-400 italic">No matching orders.</td></tr>`;
+            }
+
+            list.forEach(order => {
+                const customer = order.customer || {};
+                const items = Array.isArray(order.items) ? order.items : [];
+
+                const itemsSummary = items.length
+                    ? items.map(i => `${Number(i.qty || 1)}x ${String(i.name || 'Item')}`).join(', ').slice(0, 46) + (items.length > 1 ? '...' : '')
+                    : "No items";
+
+                const safeTotal = Number(order.totalAmount || 0);
+
+                // Prefer a human date if stored. Else derive from timestamp.
+                let dateStr = order.date || '—';
+                if ((!order.date || order.date === '—') && order.timestamp?.toDate) {
+                    try {
+                        const d = order.timestamp.toDate();
+                        dateStr = d.toLocaleDateString([], { year: 'numeric', month: 'short', day: '2-digit' });
+                    } catch {}
+                }
+
+                const row = `
+                    <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0 group">
+                        <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">
+                            #${String(order.id).slice(0, 6).toUpperCase()}
+                        </td>
+                        <td class="order-cell p-4" data-label="Customer">
+                            <div class="md:text-left text-right">
+                                <p class="font-bold text-gray-800 text-sm">${escapeHtml(customer.name || 'N/A')}</p>
+                                <p class="text-[10px] text-gray-400 font-mono">${escapeHtml(customer.phone || '')}</p>
+                            </div>
+                        </td>
+                        <td class="order-cell p-4 text-xs text-gray-600" data-label="Items">
+                            ${escapeHtml(itemsSummary)}
+                        </td>
+                        <td class="order-cell p-4 font-bold text-sm text-adminDark" data-label="Total">
+                            Rs. ${safeTotal.toLocaleString()}
+                        </td>
+                        <td class="order-cell p-4 text-xs text-gray-400 font-mono" data-label="Date">
+                            ${escapeHtml(dateStr)}
+                        </td>
+                        <td class="order-cell p-4" data-label="Status">
+                            <select onchange="updateStatus('${order.id}', this)" class="status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(order.status)}">
+                                <option value="Processing" ${order.status==='Processing'?'selected':''}>Processing</option>
+                                <option value="Shipped" ${order.status==='Shipped'?'selected':''}>Shipped</option>
+                                <option value="Delivered" ${order.status==='Delivered'?'selected':''}>Delivered</option>
+                                <option value="Cancelled" ${order.status==='Cancelled'?'selected':''}>Cancelled</option>
+                            </select>
+                        </td>
+                        <td class="order-cell p-4 text-center" data-label="Actions">
+                            <button onclick="viewOrder('${order.id}')" class="w-full md:w-auto bg-white border border-gray-200 text-gray-600 hover:text-adminAccent hover:border-adminAccent px-3 py-1.5 rounded-md transition shadow-sm flex items-center justify-center gap-2 text-[10px] uppercase font-bold" title="View Details">
+                                <i class="fa-solid fa-eye"></i> <span class="md:hidden">Details</span>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+
+            if (pageMsg) {
+                pageMsg.classList.remove('hidden');
+                pageMsg.innerText = `Showing ${list.length} of ${allOrders.length}`;
+            }
+        }
+
+        orderSearch?.addEventListener('input', renderOrdersTable);
+        statusFilter?.addEventListener('change', renderOrdersTable);
+
+        async function loadAdminOrders() {
             const loadingMsg = document.getElementById('loading-msg');
 
             try {
@@ -920,7 +540,7 @@
                 let revenue = 0, pending = 0, cancelled = 0;
 
                 querySnapshot.forEach((d) => {
-                    const data = d.data();
+                    const data = d.data() || {};
                     allOrders.push({ id: d.id, ...data });
 
                     if (data.status !== 'Cancelled') revenue += Number(data.totalAmount || 0);
@@ -933,63 +553,7 @@
                 document.getElementById('pending-orders').innerText = pending;
                 document.getElementById('cancelled-orders').innerText = cancelled;
 
-                allOrders.sort((a, b) => (b.timestamp?.seconds || 0) - (a.timestamp?.seconds || 0));
-
-                tbody.innerHTML = "";
-
-                if (allOrders.length === 0) {
-                    loadingMsg.innerText = "No orders found in database.";
-                    return;
-                }
-
-                allOrders.forEach(order => {
-                    const customer = order.customer || {};
-                    const items = Array.isArray(order.items) ? order.items : [];
-
-                    const itemsSummary = items.length
-                        ? items.map(i => `${i.qty}x ${i.name}`).join(', ').slice(0, 40) + (items.length > 1 ? '...' : '')
-                        : "No items";
-
-                    const safeTotal = Number(order.totalAmount || 0);
-
-                    const row = `
-                        <tr class="order-row hover:bg-gray-50 transition border-b border-gray-50 last:border-0 group">
-                            <td class="order-cell p-4 font-mono text-xs font-bold text-gray-500" data-label="Order ID">
-                                #${order.id.slice(0, 6).toUpperCase()}
-                            </td>
-                            <td class="order-cell p-4" data-label="Customer">
-                                <div class="md:text-left text-right">
-                                    <p class="font-bold text-gray-800 text-sm">${customer.name || 'N/A'}</p>
-                                    <p class="text-[10px] text-gray-400 font-mono">${customer.phone || ''}</p>
-                                </div>
-                            </td>
-                            <td class="order-cell p-4 text-xs text-gray-600" data-label="Items">
-                                ${itemsSummary}
-                            </td>
-                            <td class="order-cell p-4 font-bold text-sm text-adminDark" data-label="Total">
-                                Rs. ${safeTotal.toLocaleString()}
-                            </td>
-                            <td class="order-cell p-4 text-xs text-gray-400 font-mono" data-label="Date">
-                                ${order.date || '—'}
-                            </td>
-                            <td class="order-cell p-4" data-label="Status">
-                                <select onchange="updateStatus('${order.id}', this)" class="status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(order.status)}">
-                                    <option value="Processing" ${order.status==='Processing'?'selected':''}>Processing</option>
-                                    <option value="Shipped" ${order.status==='Shipped'?'selected':''}>Shipped</option>
-                                    <option value="Delivered" ${order.status==='Delivered'?'selected':''}>Delivered</option>
-                                    <option value="Cancelled" ${order.status==='Cancelled'?'selected':''}>Cancelled</option>
-                                </select>
-                            </td>
-                            <td class="order-cell p-4 text-center" data-label="Actions">
-                                <button onclick="viewOrder('${order.id}')" class="w-full md:w-auto bg-white border border-gray-200 text-gray-600 hover:text-adminAccent hover:border-adminAccent px-3 py-1.5 rounded-md transition shadow-sm flex items-center justify-center gap-2 text-[10px] uppercase font-bold" title="View Details">
-                                    <i class="fa-solid fa-eye"></i> <span class="md:hidden">Details</span>
-                                </button>
-                            </td>
-                        </tr>
-                    `;
-                    tbody.innerHTML += row;
-                });
-
+                renderOrdersTable();
                 loadingMsg.classList.add('hidden');
 
             } catch (e) {
@@ -1015,6 +579,10 @@
                 await updateDoc(doc(db, "orders", orderId), { status: newStatus });
                 selectElem.className = `status-select w-full md:w-auto border border-gray-200 text-[10px] font-bold uppercase rounded py-2 md:py-1.5 pl-3 pr-8 focus:outline-none focus:border-adminAccent transition cursor-pointer shadow-sm ${getStatusColor(newStatus)}`;
                 showToast("Order Updated", "success");
+
+                // keep local cache updated so filters stay correct
+                const idx = allOrders.findIndex(o => o.id === orderId);
+                if (idx >= 0) allOrders[idx].status = newStatus;
             } catch(e) {
                 console.error(e);
                 showToast("Update Failed");
@@ -1031,7 +599,7 @@
             const customer = order.customer || {};
             const items = Array.isArray(order.items) ? order.items : [];
 
-            document.getElementById('modal-order-id').innerText = `#${order.id.slice(0,8).toUpperCase()}`;
+            document.getElementById('modal-order-id').innerText = `#${String(order.id).slice(0,8).toUpperCase()}`;
             document.getElementById('modal-customer-name').innerText = customer.name || 'N/A';
             document.getElementById('modal-customer-email').innerText = customer.email || 'N/A';
             document.getElementById('modal-customer-phone').innerText = customer.phone || 'N/A';
@@ -1044,10 +612,10 @@
                 const unit = Number(item.discountPrice || item.price || 0);
                 return `
                     <div class="flex items-center gap-4 bg-white p-3 rounded border border-gray-100">
-                        <img src="${item.image || ''}" class="w-12 h-16 object-cover rounded bg-gray-50 border border-gray-100" onerror="this.style.display='none'">
+                        <img src="${escapeAttr(item.image || '')}" class="w-12 h-16 object-cover rounded bg-gray-50 border border-gray-100" onerror="this.style.display='none'">
                         <div class="flex-grow">
-                            <p class="text-sm font-bold text-gray-800 line-clamp-1">${item.name || 'Item'}</p>
-                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Size: ${item.selectedSize || '—'} | Qty: ${item.qty || 1}</p>
+                            <p class="text-sm font-bold text-gray-800 line-clamp-1">${escapeHtml(item.name || 'Item')}</p>
+                            <p class="text-[10px] text-gray-500 uppercase font-bold tracking-wide">Size: ${escapeHtml(item.selectedSize || '—')} | Qty: ${Number(item.qty || 1)}</p>
                         </div>
                         <p class="text-sm font-bold text-gray-700 font-mono">Rs. ${unit.toLocaleString()}</p>
                     </div>
@@ -1072,6 +640,19 @@
             card.classList.add('scale-95');
             setTimeout(() => m.classList.add('hidden'), 300);
         };
+
+        // ---------- XSS SAFETY ----------
+        function escapeHtml(unsafe) {
+            return String(unsafe ?? "")
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+        function escapeAttr(unsafe) {
+            return escapeHtml(unsafe).replaceAll("`", "&#096;");
+        }
     </script>
 </body>
 </html>

@@ -1,47 +1,78 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="scroll-smooth">
 <head>
     <meta charset="UTF-8">
     <title>My Wishlist - Brand</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Performance preconnects -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://unpkg.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
-    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
-    
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              themeBg: '#E6D8C5',
+              themeText: '#4A3B32',
+              themeSub: '#7A6B63',
+              themeBtn: '#4A3B32',
+              themeLight: '#F5EBE0'
+            }
+          }
+        }
+      }
+    </script>
+
     <style>
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #E6D8C5; overflow-x: hidden; }
-        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+        :root { --theme-bg: #E6D8C5; --theme-text: #4A3B32; }
+        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: var(--theme-bg); overflow-x: hidden; }
+        h1, h2, h3, h4, .font-serif { font-family: 'Playfair Display', serif; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #E6D8C5; }
+        ::-webkit-scrollbar-thumb { background: #4A3B32; }
+
         .glass-panel { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.3); }
+
         /* Smooth fade for removed items */
         .product-card { transition: opacity 0.4s ease, transform 0.4s ease; }
         .removing { opacity: 0; transform: scale(0.9); pointer-events: none; }
-        .loader-overlay { position: fixed; inset: 0; background: #E6D8C5; z-index: 9999; display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease; }
-        
-        /* Mobile Menu Fix */
-        #mobile-menu { 
-            position: fixed;
-            inset: 0;
-            z-index: 9999 !important;
-            background-color: #E6D8C5 !important;
-            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            pointer-events: auto;
+
+        .loader-overlay {
+          position: fixed; inset: 0; background: #E6D8C5; z-index: 9999;
+          display: flex; justify-content: center; align-items: center; transition: opacity 0.5s ease;
         }
 
         /* Fade Animation for Chat */
         .fade-in { animation: fadeIn 0.5s ease-in forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-        
+
         /* Pulse for Dot */
         @keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(255, 255, 255, 0); } 100% { box-shadow: 0 0 0 0 rgba(255, 255, 255, 0); } }
         .dot-pulse { animation: pulse-ring 2s infinite; }
+
+        /* Reduce motion */
+        @media (prefers-reduced-motion: reduce) {
+          [data-aos] { transition: none !important; transform: none !important; }
+          .dot-pulse { animation: none !important; }
+        }
     </style>
 </head>
+
 <body class="bg-themeBg text-themeText min-h-screen flex flex-col">
 
-    <div id="preloader" class="loader-overlay">
+    <div id="preloader" class="loader-overlay" aria-hidden="true">
         <h1 class="text-4xl font-serif font-bold tracking-[0.5em] animate-pulse text-themeText">BRAND.</h1>
     </div>
 
@@ -53,8 +84,11 @@
             <p class="text-xs text-themeSub uppercase tracking-[0.2em]">Your curated collection of favorites</p>
         </div>
 
-        <div id="loading" class="text-center py-20"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn"></i></div>
-        
+        <div id="loading" class="text-center py-20">
+          <i class="fa-solid fa-circle-notch fa-spin text-3xl text-themeBtn"></i>
+          <p class="text-xs font-bold uppercase tracking-widest text-themeSub mt-4">Loading wishlist...</p>
+        </div>
+
         <div id="empty-state" class="hidden text-center py-20 border border-dashed border-[#D6C8B5] rounded glass-panel max-w-2xl mx-auto">
             <div class="w-16 h-16 bg-[#4A3B32] rounded-full flex items-center justify-center mx-auto mb-6 text-[#E6D8C5] text-2xl shadow-lg"><i class="fa-solid fa-heart-crack"></i></div>
             <p class="text-xl font-serif font-bold mb-2">Your wishlist is empty</p>
@@ -67,295 +101,436 @@
 
     <footer id="app-footer"></footer>
 
-    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[60] flex flex-col border-l border-[#D6C8B5]">
-        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]"><h2 class="text-2xl font-serif font-bold">Shopping Bag</h2><button onclick="toggleCart()" class="text-2xl hover:text-red-500">&times;</button></div>
+    <!-- Cart -->
+    <div id="cart-sidebar" class="fixed inset-y-0 right-0 w-full md:w-[400px] bg-[#F5EBE0] shadow-2xl translate-x-full transition-transform duration-300 z-[110] flex flex-col border-l border-[#D6C8B5]">
+        <div class="p-6 flex justify-between items-center border-b border-[#D6C8B5]">
+          <h2 class="text-2xl font-serif font-bold">Shopping Bag</h2>
+          <button onclick="toggleCart()" class="text-2xl hover:rotate-90 transition-transform duration-300" aria-label="Close cart">&times;</button>
+        </div>
         <div id="cart-items" class="flex-1 overflow-y-auto p-6 space-y-6"></div>
-        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]"><div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div><button onclick="window.location.href='checkout.html'" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22]">Checkout</button></div>
+        <div class="p-6 border-t border-[#D6C8B5] bg-[#E6D8C5]">
+          <div class="flex justify-between text-xl font-serif font-bold mb-6"><span>Subtotal</span><span id="cart-total">Rs. 0</span></div>
+          <button onclick="checkout()" class="w-full bg-themeBtn text-[#E6D8C5] py-4 font-bold uppercase tracking-widest hover:bg-[#3A2B22] transition shadow-lg">Checkout</button>
+        </div>
     </div>
-    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-50 backdrop-blur-sm"></div>
+    <div id="overlay" onclick="toggleCart()" class="fixed inset-0 bg-black/40 hidden z-[105] backdrop-blur-sm"></div>
 
+    <!-- Chat -->
     <div id="chat-container" class="fixed bottom-8 right-8 z-50 hidden flex items-center gap-3 flex-row-reverse group">
-        <a id="chat-btn-link" href="chat.html" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]">
+        <a id="chat-btn-link" href="#" onclick="window.hideChatDot()" class="relative bg-[#4A3B32] text-[#E6D8C5] w-12 h-12 rounded-full shadow-2xl hover:bg-[#3A2B22] transition-all duration-300 flex items-center justify-center border border-[#E6D8C5]" aria-label="Open chat">
             <i class="fa-solid fa-message text-xl"></i>
             <span id="chat-notification-dot" class="absolute top-0 right-0 w-3 h-3 bg-white rounded-full border border-[#4A3B32] hidden dot-pulse z-20"></span>
         </a>
         <div id="chat-tooltip" class="bg-white text-themeText px-3 py-1 rounded-sm shadow-xl border border-[#D6C8B5] text-[10px] font-bold uppercase tracking-widest whitespace-nowrap hidden relative transition-opacity duration-500 flex items-center">
             <span id="chat-tooltip-text">Support</span>
-            <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none">&times;</button>
+            <button onclick="window.closeChatTooltip()" class="ml-3 text-sm font-bold hover:text-red-500 focus:outline-none" aria-label="Close tooltip">&times;</button>
             <div class="absolute top-1/2 -right-1 w-2 h-2 bg-white transform -translate-y-1/2 rotate-45 border-r border-t border-[#D6C8B5]"></div>
         </div>
     </div>
 
+    <!-- ✅ Internal Toast (no alert) -->
+    <div id="toast" class="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] hidden">
+      <div id="toast-inner" class="bg-[#2E241E] text-[#E6D8C5] px-5 py-3 rounded-full shadow-2xl border border-black/10 text-xs font-bold uppercase tracking-widest"></div>
+    </div>
+
+    <!-- ✅ Internal Confirm (no confirm) -->
+    <div id="confirm-modal" class="fixed inset-0 z-[9999] hidden">
+      <div class="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+      <div class="absolute inset-0 flex items-center justify-center p-6">
+        <div class="w-full max-w-sm bg-[#E6D8C5] text-[#2E241E] border border-black/10 rounded-2xl shadow-2xl overflow-hidden">
+          <div class="p-6 border-b border-black/10">
+            <h3 id="confirm-title" class="text-lg font-serif font-bold tracking-widest uppercase">Confirm</h3>
+            <p id="confirm-message" class="text-sm text-[#4A3B32] mt-2">Are you sure?</p>
+          </div>
+          <div class="p-4 flex gap-3 justify-end">
+            <button id="confirm-cancel" class="px-4 py-2 rounded-full border border-black/10 font-bold uppercase tracking-widest text-xs hover:bg-black/5 transition">Cancel</button>
+            <button id="confirm-ok" class="px-4 py-2 rounded-full bg-[#2E241E] text-[#E6D8C5] font-bold uppercase tracking-widest text-xs hover:opacity-90 transition">Yes</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <script src="components.js"></script>
+
     <script type="module">
-        import { auth, db, collection, query, where, getDocs, deleteDoc, doc, onAuthStateChanged, signOut, onSnapshot } from './firebase-config.js';
+        import {
+          auth, db,
+          collection, query, where, getDocs, deleteDoc, doc,
+          onAuthStateChanged, signOut, onSnapshot,
+          ensureSignedIn
+        } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         let currentUser = null;
 
-        // 0. PRELOADER
-        window.addEventListener('load', () => {
-            const preloader = document.getElementById('preloader');
-            preloader.style.opacity = '0';
-            setTimeout(() => preloader.style.display = 'none', 500);
-            setNavbarDark(); // FORCE DARK NAVBAR ON LOAD
-        });
+        // ---- Internal UI (toast + confirm) ----
+        const toastEl = document.getElementById('toast');
+        const toastInner = document.getElementById('toast-inner');
+        let toastTimer = null;
 
-        // NAVBAR SCROLL LOGIC
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if(!nav) return;
-            
-            if(window.scrollY > 50) {
-                nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
-                nav.classList.remove('py-6', 'border-transparent');
-            } else {
-                nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
-                nav.classList.add('py-6', 'border-transparent');
-            }
-        });
-
-        // Function to force navbar text to dark brown
-        function setNavbarDark() {
-            const nav = document.getElementById('navbar');
-            const logo = document.getElementById('nav-logo');
-            const links = document.getElementById('nav-links');
-            const icons = document.getElementById('nav-icons');
-            const cartBadge = document.getElementById('cart-count');
-
-            if(nav) {
-                if(logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
-                if(links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
-                if(icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
-                if(cartBadge) {
-                    cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
-                    cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
-                }
-            }
+        function showToast(message) {
+          if (!toastEl || !toastInner) return;
+          toastInner.textContent = message;
+          toastEl.classList.remove('hidden');
+          clearTimeout(toastTimer);
+          toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 2500);
         }
 
-        // --- CHAT HELPERS ---
-        window.hideChatDot = () => document.getElementById('chat-notification-dot').classList.add('hidden');
+        const confirmModal = document.getElementById('confirm-modal');
+        const confirmTitle = document.getElementById('confirm-title');
+        const confirmMessage = document.getElementById('confirm-message');
+        const confirmOk = document.getElementById('confirm-ok');
+        const confirmCancel = document.getElementById('confirm-cancel');
+
+        function openConfirm({ title = 'Confirm', message = 'Are you sure?' }) {
+          return new Promise((resolve) => {
+            confirmTitle.textContent = title;
+            confirmMessage.textContent = message;
+            confirmModal.classList.remove('hidden');
+
+            const cleanup = () => {
+              confirmModal.classList.add('hidden');
+              confirmOk.removeEventListener('click', onOk);
+              confirmCancel.removeEventListener('click', onCancel);
+              confirmModal.removeEventListener('click', onBackdrop);
+              document.removeEventListener('keydown', onKey);
+            };
+
+            const onOk = () => { cleanup(); resolve(true); };
+            const onCancel = () => { cleanup(); resolve(false); };
+            const onBackdrop = (e) => { if (e.target === confirmModal) { cleanup(); resolve(false); } };
+            const onKey = (e) => { if (e.key === 'Escape') { cleanup(); resolve(false); } };
+
+            confirmOk.addEventListener('click', onOk);
+            confirmCancel.addEventListener('click', onCancel);
+            confirmModal.addEventListener('click', onBackdrop);
+            document.addEventListener('keydown', onKey);
+          });
+        }
+
+        // Preloader
+        window.addEventListener('load', () => {
+          const preloader = document.getElementById('preloader');
+          if (!preloader) return;
+          preloader.style.opacity = '0';
+          setTimeout(() => preloader.style.display = 'none', 500);
+          setNavbarDark();
+        }, { passive: true });
+
+        // NAVBAR SCROLL
+        window.addEventListener('scroll', () => {
+          const nav = document.getElementById('navbar');
+          if (!nav) return;
+
+          if (window.scrollY > 50) {
+            nav.classList.add('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+            nav.classList.remove('py-6', 'border-transparent');
+          } else {
+            nav.classList.remove('bg-[#E6D8C5]', 'shadow-sm', 'py-4');
+            nav.classList.add('py-6', 'border-transparent');
+          }
+        }, { passive: true });
+
+        function setNavbarDark() {
+          const logo = document.getElementById('nav-logo');
+          const links = document.getElementById('nav-links');
+          const icons = document.getElementById('nav-icons');
+          const cartBadge = document.getElementById('cart-count');
+
+          if (logo) logo.classList.replace('text-white', 'text-[#4A3B32]');
+          if (links) links.classList.replace('text-white/90', 'text-[#4A3B32]');
+          if (icons) icons.classList.replace('text-white', 'text-[#4A3B32]');
+          if (cartBadge) {
+            cartBadge.classList.replace('text-[#E6D8C5]', 'text-white');
+            cartBadge.classList.replace('border-[#E6D8C5]', 'border-[#4A3B32]');
+          }
+        }
+
+        // Chat helpers
+        window.hideChatDot = () => document.getElementById('chat-notification-dot')?.classList.add('hidden');
         window.closeChatTooltip = () => {
-            document.getElementById('chat-tooltip').classList.add('hidden');
-            sessionStorage.setItem('chatPromptDismissed', 'true');
+          document.getElementById('chat-tooltip')?.classList.add('hidden');
+          sessionStorage.setItem('chatPromptDismissed', 'true');
         };
 
-        // 1. AUTH CHECK
-        onAuthStateChanged(auth, user => {
-            if (user) {
-                currentUser = user;
-                if(window.setupNavbarAuth) window.setupNavbarAuth(user, ADMIN_EMAIL);
-                setNavbarDark(); // Ensure dark text after auth update
-                loadWishlist(user.uid);
+        // AUTH + INIT (✅ matches your women.html pattern: allow guest via ensureSignedIn)
+        onAuthStateChanged(auth, async (user) => {
+          if (!user) user = await ensureSignedIn();
+          currentUser = user;
 
-                // --- CHAT LOGIC ---
-                const chatContainer = document.getElementById('chat-container');
-                const chatTooltip = document.getElementById('chat-tooltip');
-                const chatText = document.getElementById('chat-tooltip-text');
-                const chatLink = document.getElementById('chat-btn-link');
+          window.setupNavbarAuth?.(user, ADMIN_EMAIL);
+          setNavbarDark();
 
-                chatLink.href = "chat.html";
-                chatText.innerText = "Need assistance?";
-                chatContainer.classList.remove('hidden');
+          setupChat(user);
 
-                if (sessionStorage.getItem('sessionChatStarted')) {
-                    chatContainer.classList.remove('hidden');
-                } else {
-                    setTimeout(() => {
-                        chatContainer.classList.remove('hidden');
-                        chatContainer.classList.add('fade-in');
-                        sessionStorage.setItem('sessionChatStarted', 'true');
-                        if (!sessionStorage.getItem('chatPromptDismissed')) {
-                            chatTooltip.classList.remove('hidden');
-                            setTimeout(() => chatTooltip.classList.add('hidden'), 5000);
-                        }
-                    }, 5000); 
-                }
+          // Sync cart from local storage to memory
+          const latestCart = JSON.parse(localStorage.getItem('myCart')) || [];
+          cart.length = 0;
+          cart.push(...latestCart);
 
-                onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
-                    if(docSnap.exists() && docSnap.data().userUnread) {
-                        document.getElementById('chat-notification-dot').classList.remove('hidden');
-                        chatTooltip.classList.remove('hidden');
-                        chatText.innerText = "New Message";
-                    }
-                });
-
-            } else {
-                window.location.href = "login.html";
-            }
+          await loadWishlist(user.uid);
+          updateCartUI();
         });
 
-        window.toggleUserMenu = () => { document.getElementById('user-dropdown')?.classList.toggle('hidden'); }
-        window.toggleMobileMenu = () => document.getElementById('mobile-menu')?.classList.toggle('translate-x-full');
-        window.handleLogout = async () => { if(confirm("Sign out?")) { await signOut(auth); localStorage.removeItem('myCart'); window.location.href = "login.html"; } }
+        function setupChat(user) {
+          const chatContainer = document.getElementById('chat-container');
+          const chatTooltip = document.getElementById('chat-tooltip');
+          const chatText = document.getElementById('chat-tooltip-text');
+          const chatLink = document.getElementById('chat-btn-link');
 
-        // 2. LOAD WISHLIST (OPTIMIZED RENDER)
+          if (user) {
+            chatLink.href = "chat.html";
+            chatText.innerText = "Need assistance?";
+
+            onSnapshot(doc(db, "chats", user.uid), (docSnap) => {
+              if (docSnap.exists() && docSnap.data().userUnread) {
+                document.getElementById('chat-notification-dot')?.classList.remove('hidden');
+                chatTooltip?.classList.remove('hidden');
+                chatText.innerText = "New Message";
+              }
+            });
+          } else {
+            chatLink.href = "login.html";
+            chatText.innerText = "Login to chat";
+          }
+
+          if (sessionStorage.getItem('sessionChatStarted')) {
+            chatContainer?.classList.remove('hidden');
+          } else {
+            setTimeout(() => {
+              chatContainer?.classList.remove('hidden');
+              chatContainer?.classList.add('fade-in');
+              sessionStorage.setItem('sessionChatStarted', 'true');
+
+              if (!sessionStorage.getItem('chatPromptDismissed')) {
+                chatTooltip?.classList.remove('hidden');
+                setTimeout(() => chatTooltip?.classList.add('hidden'), 5000);
+              }
+            }, 5000);
+          }
+        }
+
+        // Logout (internal confirm)
+        window.handleLogout = async () => {
+          const ok = await openConfirm({ title: "Sign Out", message: "Do you want to sign out?" });
+          if (!ok) return;
+
+          await signOut(auth);
+          localStorage.removeItem('myCart');
+          showToast("Signed out.");
+          window.location.href = "login.html";
+        };
+
+        // LOAD WISHLIST (✅ optimized render, safe toLocaleString)
         async function loadWishlist(uid) {
-            const grid = document.getElementById('wishlist-grid');
-            const loading = document.getElementById('loading');
-            const empty = document.getElementById('empty-state');
+          const grid = document.getElementById('wishlist-grid');
+          const loading = document.getElementById('loading');
+          const empty = document.getElementById('empty-state');
 
-            try {
-                const q = query(collection(db, "wishlist"), where("userId", "==", uid));
-                const snap = await getDocs(q);
+          try {
+            const q = query(collection(db, "wishlist"), where("userId", "==", uid));
+            const snap = await getDocs(q);
 
-                loading.classList.add('hidden');
-                
-                if (snap.empty) {
-                    empty.classList.remove('hidden');
-                    grid.innerHTML = "";
-                    return;
-                }
+            loading?.classList.add('hidden');
 
-                empty.classList.add('hidden');
-                
-                // --- OPTIMIZATION: String Builder Pattern ---
-                let wishlistHTML = "";
-                const seenProducts = new Set();
-
-                snap.forEach(d => {
-                    const item = d.data();
-                    const docId = d.id; 
-                    
-                    // Deduplication
-                    if (seenProducts.has(item.productId)) return;
-                    seenProducts.add(item.productId);
-                    
-                    wishlistHTML += `
-                        <div id="card-${docId}" data-aos="fade-up" class="bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30 product-card">
-                            <div class="relative h-[300px] overflow-hidden bg-gray-100">
-                                <img src="${item.image}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" alt="${item.name}">
-                                <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
-                                <button onclick="removeFromWishlist('${docId}')" class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md" title="Remove">
-                                    <i class="fa-solid fa-xmark"></i>
-                                </button>
-                            </div>
-                            <div class="p-6 text-center">
-                                <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${item.category}</p>
-                                <h3 class="text-xl font-serif font-bold text-themeText mb-2 line-clamp-1">${item.name}</h3>
-                                <p class="text-themeBtn font-mono text-sm mb-6">Rs. ${item.price.toLocaleString()}</p>
-                                <a href="product-details.html?id=${item.productId}" class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition rounded-sm">
-                                    View Product
-                                </a>
-                            </div>
-                        </div>
-                    `;
-                });
-
-                // Update DOM Once
-                grid.innerHTML = wishlistHTML;
-
-            } catch (e) {
-                console.error("Wishlist error:", e);
-                loading.innerHTML = `<p class="text-red-500 font-bold">Error loading wishlist.</p>`;
+            if (snap.empty) {
+              empty?.classList.remove('hidden');
+              if (grid) grid.innerHTML = "";
+              return;
             }
-        }
 
-        // 3. REMOVE ITEM
-        window.removeFromWishlist = async (docId) => {
-            const card = document.getElementById(`card-${docId}`);
-            const btn = event.target.closest('button');
-            
-            if (card) card.classList.add('removing');
-            if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-            
-            try {
-                await deleteDoc(doc(db, "wishlist", docId));
-                
-                setTimeout(() => {
-                    if (card) card.remove();
-                    const grid = document.getElementById('wishlist-grid');
-                    if (grid.children.length === 0) {
-                        document.getElementById('empty-state').classList.remove('hidden');
-                    }
-                }, 400);
+            empty?.classList.add('hidden');
 
-            } catch (e) {
-                console.error(e);
-                alert("Could not remove item.");
-                if (card) card.classList.remove('removing');
-                if (btn) btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
-            }
-        }
+            let wishlistHTML = '';
+            const seenProducts = new Set();
 
-        // CART LOGIC
-        const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+            snap.forEach(d => {
+              const item = d.data();
+              const docId = d.id;
 
-        function updateCartUI() {
-            const badge = document.getElementById('cart-count');
-            if (badge) badge.innerText = cart.reduce((a,b)=>a+b.qty,0);
+              // Dedup (by productId) to avoid duplicates if any
+              if (item?.productId && seenProducts.has(item.productId)) return;
+              if (item?.productId) seenProducts.add(item.productId);
 
-            const con = document.getElementById('cart-items');
-            if(!con) return;
+              const priceNum = Number(item?.price || 0);
+              const priceText = `Rs. ${priceNum.toLocaleString()}`;
 
-            con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10">Your bag is empty.</p>';
-            let t = 0;
+              const safeName = String(item?.name || 'Item');
+              const safeImg = String(item?.image || '');
+              const safeCat = String(item?.category || 'Product');
+              const pid = String(item?.productId || '');
 
-            cart.forEach(i => {
-                const price = i.discountPrice > 0 ? i.discountPrice : i.price;
-                t += price * i.qty;
+              wishlistHTML += `
+                <div id="card-${docId}" data-aos="fade-up"
+                  class="bg-white group relative shadow-xl hover:shadow-2xl transition-all duration-300 rounded-sm overflow-hidden border border-[#D6C8B5]/30 product-card">
+                  <div class="relative h-[300px] overflow-hidden bg-gray-100">
+                    <img src="${safeImg}" class="w-full h-full object-cover transform group-hover:scale-105 transition duration-700" alt="${safeName}" loading="lazy" decoding="async">
+                    <div class="absolute inset-0 bg-black/10 group-hover:bg-black/0 transition"></div>
 
-                const uid = `${i.id}-${i.selectedSize}-${i.selectedColor}`;
+                    <button
+                      onclick="removeFromWishlist(event,'${docId}')"
+                      class="absolute top-4 right-4 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center text-red-500 hover:bg-red-500 hover:text-white transition shadow-md"
+                      aria-label="Remove from wishlist" title="Remove">
+                      <i class="fa-solid fa-xmark"></i>
+                    </button>
+                  </div>
 
-                con.innerHTML += `
-                    <div class="flex justify-between border-b border-[#D6C8B5] pb-2">
-                        <div>
-                            <p class="font-bold text-sm">${i.name}</p>
-                            <p class="text-xs text-gray-500">Size: ${i.selectedSize}</p>
-                            <div class="flex items-center gap-2 border border-gray-300 w-fit px-2 mt-1 rounded-sm bg-white">
-                                <button onclick="changeQty('${uid}', -1)" class="text-xs font-bold px-1 hover:text-red-500">-</button>
-                                <span class="text-xs font-bold w-4 text-center">${i.qty}</span>
-                                <button onclick="changeQty('${uid}', 1)" class="text-xs font-bold px-1 hover:text-green-500">+</button>
-                            </div>
-                        </div>
-                        <div class="text-right">
-                            <p class="font-bold text-sm">Rs. ${(price*i.qty).toLocaleString()}</p>
-                            <button onclick="removeItem('${uid}')" class="text-xs text-red-500 hover:underline">Remove</button>
-                        </div>
-                    </div>`;
+                  <div class="p-6 text-center">
+                    <p class="text-[10px] uppercase font-bold text-[#7A6B63] tracking-widest mb-2">${safeCat}</p>
+                    <h3 class="text-xl font-serif font-bold text-themeText mb-2 line-clamp-1">${safeName}</h3>
+                    <p class="text-themeBtn font-mono text-sm mb-6">${priceText}</p>
+                    <a href="${pid ? `product-details.html?id=${pid}` : '#'}"
+                      class="block w-full border border-[#4A3B32] text-[#4A3B32] py-3 text-xs font-bold uppercase tracking-widest hover:bg-[#4A3B32] hover:text-[#E6D8C5] transition rounded-sm">
+                      View Product
+                    </a>
+                  </div>
+                </div>
+              `;
             });
 
-            const total = document.getElementById('cart-total');
-            if(total) total.innerText = 'Rs. ' + t.toLocaleString();
+            if (grid) grid.innerHTML = wishlistHTML;
+
+          } catch (e) {
+            console.error("Wishlist error:", e);
+            if (loading) loading.innerHTML = `<p class="text-red-500 font-bold">Error loading wishlist.</p>`;
+          }
         }
 
-        window.changeQty = (uid, c) => {
-            const i = cart.find(x => `${x.id}-${x.selectedSize}-${x.selectedColor}` === uid);
-            if(i){
-                i.qty += c;
-                if(i.qty < 1) i.qty = 1;
-                localStorage.setItem('myCart', JSON.stringify(cart));
-                updateCartUI();
-            }
-        }
+        // REMOVE ITEM (✅ no global event reliance + internal confirm/toast)
+        window.removeFromWishlist = async (ev, docId) => {
+          ev?.preventDefault?.();
+          ev?.stopPropagation?.();
+
+          const ok = await openConfirm({ title: "Remove Item", message: "Remove this item from your wishlist?" });
+          if (!ok) return;
+
+          const card = document.getElementById(`card-${docId}`);
+          const btn = ev?.currentTarget;
+
+          if (card) card.classList.add('removing');
+          if (btn) btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+          try {
+            await deleteDoc(doc(db, "wishlist", docId));
+            showToast("Removed from wishlist");
+
+            setTimeout(() => {
+              card?.remove();
+              const grid = document.getElementById('wishlist-grid');
+              if (grid && grid.children.length === 0) {
+                document.getElementById('empty-state')?.classList.remove('hidden');
+              }
+            }, 400);
+
+          } catch (e) {
+            console.error(e);
+            showToast("Could not remove item");
+            if (card) card.classList.remove('removing');
+            if (btn) btn.innerHTML = '<i class="fa-solid fa-xmark"></i>';
+          }
+        };
+
+        // CART (same pattern as women.html: keyed id-size-color)
+        const cart = JSON.parse(localStorage.getItem('myCart')) || [];
+
+        window.updateCartUI = () => {
+          const badge = document.getElementById('cart-count');
+          if (badge) badge.innerText = cart.reduce((a, b) => a + (Number(b.qty) || 0), 0);
+
+          const con = document.getElementById('cart-items');
+          if (!con) return;
+
+          con.innerHTML = cart.length ? '' : '<p class="text-center text-sm text-themeSub py-10 font-serif italic">Your bag is empty.</p>';
+
+          let t = 0;
+
+          cart.forEach(i => {
+            const finalPrice = (Number(i.discountPrice) || 0) > 0 ? Number(i.discountPrice) : Number(i.price || 0);
+            const qty = Number(i.qty || 0);
+            t += finalPrice * qty;
+
+            const uid = `${i.id}-${i.selectedSize || 'Standard'}-${i.selectedColor || 'Standard'}`;
+
+            con.innerHTML += `
+              <div class="flex justify-between border-b border-[#D6C8B5] pb-4 mb-2">
+                <div class="flex gap-3">
+                  <img src="${i.image}" class="w-16 h-20 object-cover rounded-sm" loading="lazy" decoding="async" alt="${i.name}">
+                  <div>
+                    <p class="font-bold text-sm font-serif line-clamp-1">${i.name}</p>
+                    <p class="text-xs text-gray-500 mb-2">Size: ${i.selectedSize || 'Standard'}</p>
+                    <div class="flex items-center gap-3 border border-[#D6C8B5] w-fit px-2 py-1 rounded-sm">
+                      <button onclick="changeQty('${uid}', -1)" class="text-xs font-bold px-1 hover:text-red-500" aria-label="Decrease quantity">-</button>
+                      <span class="text-xs font-bold w-4 text-center">${qty}</span>
+                      <button onclick="changeQty('${uid}', 1)" class="text-xs font-bold px-1 hover:text-green-500" aria-label="Increase quantity">+</button>
+                    </div>
+                  </div>
+                </div>
+                <div class="text-right flex flex-col justify-between">
+                  <p class="font-bold text-sm">Rs. ${(finalPrice * qty).toLocaleString()}</p>
+                  <button onclick="removeItem('${uid}')" class="text-xs text-red-500 hover:text-red-700 underline uppercase tracking-wider">Remove</button>
+                </div>
+              </div>
+            `;
+          });
+
+          const total = document.getElementById('cart-total');
+          if (total) total.innerText = 'Rs. ' + t.toLocaleString();
+        };
+
+        window.changeQty = (uid, change) => {
+          const item = cart.find(i => `${i.id}-${i.selectedSize || 'Standard'}-${i.selectedColor || 'Standard'}` === uid);
+          if (!item) return;
+          item.qty = (Number(item.qty) || 1) + change;
+          if (item.qty < 1) item.qty = 1;
+          localStorage.setItem('myCart', JSON.stringify(cart));
+          updateCartUI();
+        };
 
         window.toggleCart = () => {
-            const s = document.getElementById('cart-sidebar'), o = document.getElementById('overlay');
-            if(s.classList.contains('translate-x-full')) {
-                s.classList.remove('translate-x-full');
-                o.classList.remove('hidden');
-                updateCartUI();
-            } else {
-                s.classList.add('translate-x-full');
-                o.classList.add('hidden');
-            }
-        }
+          // ✅ close user dropdown if open
+          window.closeUserMenu?.();
+
+          const sb = document.getElementById('cart-sidebar');
+          const ov = document.getElementById('overlay');
+          if (!sb || !ov) return;
+
+          if (sb.classList.contains('translate-x-full')) {
+            sb.classList.remove('translate-x-full');
+            ov.classList.remove('hidden');
+            updateCartUI();
+          } else {
+            sb.classList.add('translate-x-full');
+            ov.classList.add('hidden');
+          }
+        };
 
         window.removeItem = (uid) => {
-            const x = cart.findIndex(i => `${i.id}-${i.selectedSize}-${i.selectedColor}` === uid);
-            if(x > -1){
-                cart.splice(x,1);
-                localStorage.setItem('myCart', JSON.stringify(cart));
-                updateCartUI();
-            }
-        }
+          const x = cart.findIndex(i => `${i.id}-${i.selectedSize || 'Standard'}-${i.selectedColor || 'Standard'}` === uid);
+          if (x > -1) {
+            cart.splice(x, 1);
+            localStorage.setItem('myCart', JSON.stringify(cart));
+            updateCartUI();
+            showToast("Removed from cart");
+          }
+        };
 
-        window.checkout = () => { if(!cart.length) return alert("Your bag is empty."); window.location.href="checkout.html"; }
+        window.checkout = () => {
+          if (!cart.length) {
+            showToast("Your bag is empty.");
+            return;
+          }
+          window.location.href = "checkout.html";
+        };
 
         updateCartUI();
     </script>
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script>AOS.init({ duration: 800, once: true });</script>
+
+    <!-- AOS -->
+    <script defer src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    <script>
+      window.addEventListener('load', () => {
+        if (window.AOS) window.AOS.init({ duration: 800, once: true, offset: 50 });
+      }, { passive: true });
+    </script>
 </body>
 </html>

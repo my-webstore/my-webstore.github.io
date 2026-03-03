@@ -329,6 +329,8 @@
 
         let selectedUserId = null;
         let selectedUserFullName = null;
+        let lastSelectedUserId = null;
+
         let unsubscribeMessages = null;
         let unsubscribePresence = null;
         let inboxSnapshotCache = [];
@@ -461,6 +463,33 @@
                 }
             }, 250);
         };
+
+        // ---------- ADMIN PRESENCE (for user header "Online Now") ----------
+        async function setAdminPresenceSafe(userId, isOnline) {
+            try {
+                if (!db || !userId) return;
+                await setDoc(doc(db, "chats", userId), {
+                    adminOnline: !!isOnline,
+                    adminLastSeen: serverTimestamp(),
+                    lastActive: serverTimestamp()
+                }, { merge: true });
+            } catch (_) {}
+        }
+
+        async function setAdminOfflineForLastThread() {
+            try {
+                if (lastSelectedUserId) await setAdminPresenceSafe(lastSelectedUserId, false);
+            } catch (_) {}
+        }
+
+        window.addEventListener('beforeunload', () => {
+            // best effort; no await
+            setAdminOfflineForLastThread();
+        });
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') setAdminOfflineForLastThread();
+            if (document.visibilityState === 'visible' && lastSelectedUserId) setAdminPresenceSafe(lastSelectedUserId, true);
+        });
 
         // ---------- AUTH ----------
         if (auth) {
@@ -642,31 +671,7 @@
             }
         }
 
-        // mark admin messages read when user is online (double-ticks)
-        async function markAdminMessagesReadIfLikelySeen(userId) {
-            try {
-                const msgsQ = query(
-                    collection(db, "chats", userId, "messages"),
-                    where("isAdmin", "==", true),
-                    where("read", "==", false)
-                );
-
-                const snap = await getDocs(msgsQ);
-                if (snap.empty) return;
-
-                if (typeof writeBatch === 'function') {
-                    const batch = writeBatch(db);
-                    snap.forEach(d => batch.update(d.ref, { read: true }));
-                    await batch.commit();
-                } else {
-                    await Promise.all(snap.docs.map(d => updateDoc(d.ref, { read: true })));
-                }
-            } catch (e) {
-                console.warn("Admin read-receipt update failed", e);
-            }
-        }
-
-        // mark client messages as read (so they don't appear unread to admin)
+        // mark client messages as read (so user messages show double-tick on client side)
         async function markClientMessagesRead(userId) {
             try {
                 const qUnread = query(
@@ -692,7 +697,13 @@
 
         // ---------- LOAD CHAT ----------
         async function loadChat(userId, userName, userEmail) {
+            // turn off admin presence for previous thread
+            if (lastSelectedUserId && lastSelectedUserId !== userId) {
+                await setAdminPresenceSafe(lastSelectedUserId, false);
+            }
+
             selectedUserId = userId;
+            lastSelectedUserId = userId;
             selectedUserFullName = userName || "Guest";
 
             chatPanel.classList.remove('hidden');
@@ -705,7 +716,6 @@
             document.getElementById('header-name').innerText = selectedUserFullName;
             applyHeaderNameResponsive();
 
-            // keep lowercase
             const emailOrId = (userEmail || userId);
             document.getElementById('header-email').innerText = String(emailOrId || "").toLowerCase();
 
@@ -715,22 +725,14 @@
 
             setTimeout(() => document.getElementById('admin-input').focus(), 50);
 
-            // presence listener
+            // mark admin online for this thread (so user header can show Online Now)
+            await setAdminPresenceSafe(userId, true);
+
+            // presence listener (user online/offline)
             if (unsubscribePresence) unsubscribePresence();
-            unsubscribePresence = onSnapshot(doc(db, "chats", userId), async (snap) => {
-                if (snap.exists()) {
-                    const data = snap.data();
-                    setOnlineStatusFromChatDoc(data);
-
-                    const rawOnline =
-                        data?.userOnline ?? data?.isOnline ?? data?.online ?? data?.presence ?? data?.status;
-                    const online =
-                        rawOnline === true || rawOnline === "online" || rawOnline === "ONLINE" || rawOnline === 1;
-
-                    if (online) await markAdminMessagesReadIfLikelySeen(userId);
-                } else {
-                    setOnlineStatusFromChatDoc(null);
-                }
+            unsubscribePresence = onSnapshot(doc(db, "chats", userId), (snap) => {
+                if (snap.exists()) setOnlineStatusFromChatDoc(snap.data());
+                else setOnlineStatusFromChatDoc(null);
             });
 
             // clear admin unread flags on open
@@ -759,12 +761,8 @@
                     box.innerHTML += `<div class="text-center mt-16 text-gray-400 text-sm font-serif italic">This conversation is empty.</div>`;
                 }
 
-                let sawClientActivity = false;
-
                 snapshot.forEach((d) => {
                     const msg = d.data();
-                    if (msg.isAdmin === false) sawClientActivity = true;
-
                     const isAdmin = msg.isAdmin === true;
 
                     let timeString = "";
@@ -773,10 +771,8 @@
                         timeString = date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                     }
 
-                    // TICKS RULES (keep old style):
-                    // - single tick = sent
-                    // - double tick = read by customer
-                    // - tick colour is black (NOT blue)
+                    // TICKS:
+                    // - For ADMIN messages: msg.read is set by the USER client when they view the chat.
                     let tickHTML = "";
                     if (isAdmin) {
                         const iconClass = msg.read ? "fa-check-double" : "fa-check";
@@ -799,9 +795,6 @@
                     box.appendChild(wrap);
                 });
 
-                // If user is active in the thread, mark admin messages "read" (double tick on admin msgs)
-                if (sawClientActivity) await markAdminMessagesReadIfLikelySeen(userId);
-
                 box.scrollTo({ top: box.scrollHeight, behavior: 'smooth' });
             });
         }
@@ -817,25 +810,23 @@
             input.focus();
 
             try {
-                // Add message
                 await addDoc(collection(db, "chats", selectedUserId, "messages"), {
                     text,
                     senderId: "ADMIN",
                     isAdmin: true,
-                    read: false,
+                    read: false, // will become true when USER views chat.html
                     timestamp: serverTimestamp()
                 });
 
-                // Update thread flags:
-                // - userUnread true (so user sees dot)
-                // - adminUnread false (admin just sent)
-                // - keep legacy unread false (admin doesn't need unread dot)
                 await setDoc(doc(db, "chats", selectedUserId), {
                     lastMessage: "You: " + text,
                     lastMessageTime: serverTimestamp(),
                     userUnread: true,
                     adminUnread: false,
-                    unread: false
+                    unread: false,
+                    adminOnline: true,
+                    adminLastSeen: serverTimestamp(),
+                    lastActive: serverTimestamp()
                 }, { merge: true });
 
             } catch (error) {
@@ -873,7 +864,10 @@
                     lastMessageTime: serverTimestamp(),
                     adminUnread: false,
                     userUnread: false,
-                    unread: false
+                    unread: false,
+                    adminOnline: true,
+                    adminLastSeen: serverTimestamp(),
+                    lastActive: serverTimestamp()
                 }, { merge: true });
 
                 showToast("History cleared", "success");
@@ -903,6 +897,8 @@
         window.executeDeleteChat = async () => {
             closeDeleteModal();
             try {
+                await setAdminPresenceSafe(selectedUserId, false);
+
                 const msgs = await getDocs(collection(db, "chats", selectedUserId, "messages"));
                 await Promise.all(msgs.docs.map(d => deleteDoc(d.ref)));
                 await deleteDoc(doc(db, "chats", selectedUserId));
@@ -912,6 +908,8 @@
 
                 selectedUserId = null;
                 selectedUserFullName = null;
+                lastSelectedUserId = null;
+
                 document.getElementById('messages-box').innerHTML = '';
                 chatInterface.classList.add('hidden');
                 emptyState.classList.remove('hidden');
@@ -938,7 +936,7 @@
 
         // Prevent XSS (since we inject into innerHTML)
         function escapeHtml(unsafe) {
-            return String(unsafe)
+            return String(unsafe ?? "")
                 .replaceAll("&", "&amp;")
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")

@@ -4,17 +4,44 @@
     <meta charset="UTF-8">
     <title>System Core - Brand</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <!-- Performance preconnects -->
+    <link rel="preconnect" href="https://cdn.tailwindcss.com">
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script>tailwind.config = { theme: { extend: { colors: { themeBg: '#E6D8C5', themeText: '#4A3B32', themeSub: '#7A6B63', themeBtn: '#4A3B32' } } } }</script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              themeBg: '#E6D8C5',
+              themeText: '#4A3B32',
+              themeSub: '#7A6B63',
+              themeBtn: '#4A3B32'
+            }
+          }
+        }
+      }
+    </script>
+
     <style>
         .terminal-scroll::-webkit-scrollbar { width: 6px; }
         .terminal-scroll::-webkit-scrollbar-thumb { background: #555; border-radius: 3px; }
         .terminal-scroll::-webkit-scrollbar-track { background: #111; }
+
         .blink { animation: blink 1s step-end infinite; }
         @keyframes blink { 50% { opacity: 0; } }
+
+        /* Reduce motion */
+        @media (prefers-reduced-motion: reduce) {
+          .blink { animation: none !important; }
+        }
     </style>
 </head>
+
 <body class="bg-gray-950 text-gray-300 min-h-screen font-mono flex flex-col items-center justify-center p-6 relative">
 
     <div class="absolute top-0 left-0 w-full bg-red-600 text-white text-center py-2 text-xs font-bold uppercase tracking-widest animate-pulse z-50">
@@ -103,7 +130,13 @@
     </div>
 
     <script type="module">
-        import { db, collection, addDoc, auth, onAuthStateChanged, serverTimestamp } from './firebase-config.js';
+        import {
+          db, collection, addDoc,
+          auth, onAuthStateChanged,
+          serverTimestamp,
+          // ✅ to match other updated pages: prevents anonymous/guest bypass patterns elsewhere
+          ensureSignedIn
+        } from './firebase-config.js';
 
         const ADMIN_EMAIL = "mr.awaisaltaf@gmail.com";
         const btn = document.getElementById('btn-start');
@@ -120,7 +153,7 @@
             toastTimer = setTimeout(() => toastEl.classList.add('hidden'), 2500);
         }
 
-        // ✅ Confirm Modal
+        // ✅ Confirm Modal (close on Esc + outside click)
         const confirmModal = document.getElementById('confirm-modal');
         const confirmTitle = document.getElementById('confirm-title');
         const confirmMessage = document.getElementById('confirm-message');
@@ -137,45 +170,23 @@
                     confirmModal.classList.add('hidden');
                     confirmOk.removeEventListener('click', onOk);
                     confirmCancel.removeEventListener('click', onCancel);
+                    confirmModal.removeEventListener('click', onBackdrop);
                     document.removeEventListener('keydown', onKey);
                 };
 
                 const onOk = () => { cleanup(); resolve(true); };
                 const onCancel = () => { cleanup(); resolve(false); };
+                const onBackdrop = (e) => { if (e.target === confirmModal) { cleanup(); resolve(false); } };
                 const onKey = (e) => { if (e.key === 'Escape') { cleanup(); resolve(false); } };
 
                 confirmOk.addEventListener('click', onOk);
                 confirmCancel.addEventListener('click', onCancel);
+                confirmModal.addEventListener('click', onBackdrop);
                 document.addEventListener('keydown', onKey);
             });
         }
 
-        // 1. STRICT AUTH CHECK
-        onAuthStateChanged(auth, (user) => {
-            if (!user || user.email !== ADMIN_EMAIL) {
-                // FAIL
-                log("Error: Access Denied. Admin authentication required.", "text-red-500");
-                log("Redirecting to secure login...", "text-red-500");
-                document.getElementById('status-text').innerText = "Denied";
-                document.getElementById('status-text').className = "text-red-500 font-bold";
-                setTimeout(() => window.location.href = "login.html", 2000);
-            } else {
-                // PASS
-                log(`> Access Granted. Identity: ${user.email}`, "text-blue-400");
-                log(`> Write Access: ENABLED`, "text-green-500");
-
-                // Enable UI
-                btn.disabled = false;
-                btn.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
-                btn.classList.add('bg-green-600', 'hover:bg-green-500', 'text-white', 'cursor-pointer');
-                btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Execute Sequence';
-
-                document.getElementById('status-text').innerText = "Ready";
-                document.getElementById('status-text').className = "text-green-500 font-bold";
-            }
-        });
-
-        // 2. CONSOLE LOGGER
+        // 0. Console logger
         function log(msg, colorClass = "text-green-400") {
             const consoleDiv = document.getElementById('console-output');
             const p = document.createElement('div');
@@ -185,7 +196,40 @@
             consoleDiv.scrollTop = consoleDiv.scrollHeight;
         }
 
-        // 3. SAMPLE DATA
+        // 1. STRICT AUTH CHECK (✅ also blocks anonymous sessions)
+        onAuthStateChanged(auth, async (user) => {
+            // If your app uses ensureSignedIn elsewhere, we still MUST NOT allow anonymous here.
+            // We'll call ensureSignedIn only to stabilize auth state; then verify admin email.
+            if (!user) user = await ensureSignedIn();
+
+            const email = user?.email || "";
+            const isAnonymous = !!user?.isAnonymous;
+
+            if (!user || isAnonymous || email !== ADMIN_EMAIL) {
+                log("Error: Access Denied. Admin authentication required.", "text-red-500");
+                log("Redirecting to secure login...", "text-red-500");
+                document.getElementById('status-text').innerText = "Denied";
+                document.getElementById('status-text').className = "text-red-500 font-bold";
+                showToast("Access denied");
+                setTimeout(() => window.location.href = "login.html", 1500);
+                return;
+            }
+
+            // PASS
+            log(`> Access Granted. Identity: ${email}`, "text-blue-400");
+            log(`> Write Access: ENABLED`, "text-green-500");
+
+            // Enable UI
+            btn.disabled = false;
+            btn.classList.remove('bg-gray-700', 'text-gray-400', 'cursor-not-allowed');
+            btn.classList.add('bg-green-600', 'hover:bg-green-500', 'text-white', 'cursor-pointer');
+            btn.innerHTML = '<i class="fa-solid fa-bolt"></i> Execute Sequence';
+
+            document.getElementById('status-text').innerText = "Ready";
+            document.getElementById('status-text').className = "text-green-500 font-bold";
+        });
+
+        // 2. SAMPLE DATA
         const sampleProducts = [
             // --- MEN ---
             {
@@ -326,12 +370,20 @@
             }
         ];
 
-        // 4. MAIN EXECUTION FUNCTION
+        // 3. MAIN EXECUTION FUNCTION (✅ idempotency guard + better logging)
+        let isRunning = false;
+
         window.startSetup = async () => {
-            // DOUBLE CHECK SECURITY IN FUNCTION CONTEXT
-            if (!auth.currentUser || auth.currentUser.email !== ADMIN_EMAIL) {
-                showToast("Security Violation: Action Logged.");
-                window.location.href = "index.html";
+            if (isRunning) return;
+
+            const u = auth.currentUser;
+            const email = u?.email || "";
+            const isAnonymous = !!u?.isAnonymous;
+
+            // DOUBLE CHECK SECURITY
+            if (!u || isAnonymous || email !== ADMIN_EMAIL) {
+                showToast("Security violation. Redirecting.");
+                window.location.href = "login.html";
                 return;
             }
 
@@ -340,6 +392,8 @@
                 message: "⚠️ Warning: This will inject 12 products into the LIVE database. Continue?"
             });
             if (!ok) return;
+
+            isRunning = true;
 
             btn.disabled = true;
             btn.classList.remove('bg-green-600', 'hover:bg-green-500');
@@ -360,22 +414,23 @@
                         createdAt: serverTimestamp(),
                         media: [{ type: 'image', url: product.image }],
                         stock: randomStock,
-                        description: `Premium quality ${product.name.toLowerCase()} designed for style and comfort. Handcrafted with attention to detail.`
+                        description: `Premium quality ${String(product.name || '').toLowerCase()} designed for style and comfort. Handcrafted with attention to detail.`,
+                        isVisible: product.isVisible !== false
                     };
 
                     log(`> Processing: ${product.name}...`);
 
-                    // Artificial Delay for effect
+                    // Small delay for effect (reduce motion friendly: harmless)
                     await new Promise(r => setTimeout(r, 100));
 
-                    // THIS WRITE WILL FAIL IF FIREBASE RULES ARE SET AND USER IS NOT ADMIN
                     await addDoc(collection(db, "products"), finalData);
 
                     log(`  [200 OK] Data Synced.`, "text-green-500 ml-4");
                     successCount++;
 
                 } catch (error) {
-                    log(`  [403 FORBIDDEN] Database Rejected Write: ${error.code}`, "text-red-500 ml-4 font-bold");
+                    const code = error?.code || 'UNKNOWN';
+                    log(`  [ERROR] Write failed: ${code}`, "text-red-500 ml-4 font-bold");
                     console.error(error);
                 }
             }
@@ -386,7 +441,7 @@
                 btn.innerHTML = '<i class="fa-solid fa-check"></i> Done';
                 showToast("Success: Products injected");
             } else {
-                log(`> COMPLETED WITH ERRORS.`, "text-red-400 font-bold");
+                log(`> COMPLETED WITH ERRORS. (${successCount}/${sampleProducts.length} created)`, "text-red-400 font-bold");
                 btn.innerHTML = '<i class="fa-solid fa-triangle-exclamation"></i> Failed';
                 btn.classList.remove('bg-gray-700');
                 btn.classList.add('bg-red-900', 'text-red-200');
@@ -402,9 +457,12 @@
                     Launch Store <i class="fa-solid fa-external-link-alt ml-1"></i>
                 </a>
             `;
-            document.getElementById('console-output').appendChild(linkBox);
-            document.getElementById('console-output').scrollTop = document.getElementById('console-output').scrollHeight;
-        }
+            const consoleDiv = document.getElementById('console-output');
+            consoleDiv.appendChild(linkBox);
+            consoleDiv.scrollTop = consoleDiv.scrollHeight;
+
+            isRunning = false;
+        };
     </script>
 </body>
 </html>
