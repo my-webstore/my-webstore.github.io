@@ -101,7 +101,7 @@ const footerHTML = `
             <div class="flex gap-4 text-lg text-white">
                 <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-instagram"></i></a>
                 <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
-                <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-twitter"></i></a>
+                <a href="#" class="w-10 h-10 rounded-full border border-[#4A3B32] flex items-center justify-center hover:bg-[#E6D8C5] hover:text-[#2E241E] transition duration-300"><i class="fa-brands fa-tiktok"></i></a>
             </div>
         </div>
     </div>
@@ -182,11 +182,11 @@ if (typeof window.toggleCart === 'function') {
 }
 
 /**
- * ✅ Auth UI rules (matches your requirements)
+ * ✅ Auth UI rules (updated per your requirement)
  * - Guest (anonymous): show ONLY Sign In in dropdown (hide Profile + Admin + Sign Out)
  * - Logged-in user: show Profile + Sign Out
- * - Admin: show Dashboard only if email matches AND emailVerified === true
- * - Wishlist + Orders available for BOTH guest + user (because guests can use them via anonymous uid)
+ * - Admin: show Dashboard if email matches (no emailVerified dependency)
+ * - Dashboard must appear ABOVE My Profile
  */
 window.setupNavbarAuth = (user, adminEmail) => {
     const container = document.getElementById('auth-container');
@@ -195,7 +195,9 @@ window.setupNavbarAuth = (user, adminEmail) => {
 
     const hasUser = !!user;
     const isGuest = !!(user && user.isAnonymous === true);
-    const isAdmin = !!(user && user.email && user.email === adminEmail && user.emailVerified === true);
+
+    // ✅ ADMIN RULE: only email match (case-insensitive)
+    const isAdmin = !!(user && user.email && String(user.email).toLowerCase() === String(adminEmail).toLowerCase());
 
     // Desktop Navbar (always person button)
     container.innerHTML = `
@@ -217,7 +219,7 @@ window.setupNavbarAuth = (user, adminEmail) => {
 
             ${isAdmin ? `
               <a href="admin.html" class="block w-full px-5 py-3 text-xs font-bold uppercase bg-[#2E241E] text-[#E6D8C5] hover:opacity-90 transition border-b border-black/10">
-                Dashboard
+                <i class="fa-solid fa-gauge-high mr-2"></i> Dashboard
               </a>` : ''
             }
 
